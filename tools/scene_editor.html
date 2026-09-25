@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Scene Editor</title>
+<style>
+  :root { --bg:#111418; --panel:#1b2027; --line:#2c333d; --text:#e8ecf1; --muted:#98a2b3; --accent:#4c9aff; }
+  * { box-sizing:border-box; }
+  body { margin:0; font:14px/1.4 system-ui, -apple-system, Segoe UI, Roboto, sans-serif; background:var(--bg); color:var(--text); }
+  header { display:flex; gap:12px; align-items:center; padding:10px 16px; border-bottom:1px solid var(--line); flex-wrap:wrap; }
+  header h1 { font-size:16px; margin:0 12px 0 0; }
+  main { display:grid; grid-template-columns:minmax(0,1fr) 360px; gap:12px; padding:12px 16px; }
+  @media (max-width:1000px) { main { grid-template-columns:1fr; } }
+  canvas { width:100%; background:#000; border-radius:6px; cursor:crosshair; display:block; }
+  .panel { background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:10px; margin-bottom:10px; }
+  button, select, input { background:#252c36; color:var(--text); border:1px solid var(--line); border-radius:6px; padding:5px 9px; font:inherit; }
+  button:hover { border-color:var(--accent); cursor:pointer; }
+  button.primary { background:var(--accent); border-color:var(--accent); color:#fff; }
+  .tools { display:grid; grid-template-columns:1fr 1fr; gap:4px; }
+  .tool { padding:5px 7px; border-radius:6px; border:1px solid transparent; cursor:pointer; display:flex; gap:6px; align-items:center; font-size:13px; }
+  .tool.active { border-color:var(--accent); background:#223049; }
+  .sw { width:10px; height:10px; border-radius:2px; flex:none; }
+  .item { display:flex; gap:6px; align-items:center; padding:3px 0; border-bottom:1px solid var(--line); font-size:13px; flex-wrap:wrap; }
+  .item input { width:90px; padding:2px 5px; }
+  .muted { color:var(--muted); font-size:12px; }
+  video { display:none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Scene Editor</h1>
+  <label>Frame image or video <input type="file" id="media" accept="image/*,video/*"></label>
+  <label>scene.json <input type="file" id="json" accept=".json"></label>
+  <button class="primary" id="export">Export scene.json</button>
+  <span class="muted" id="status">Load a frame from the camera first.</span>
+</header>
+<main>
+  <section>
+    <canvas id="cv"></canvas>
+    <p class="muted" id="hint"></p>
+    <div id="videoBar" style="display:none" class="muted">Video: <input type="range" id="seek" min="0" max="1" step="0.01" style="width:60%"> <span id="seekT"></span></div>
+    <video id="video" muted playsinline></video>
+  </section>
+  <aside>
+    <div class="panel"><div class="tools" id="tools"></div></div>
+    <div class="panel"><b>Items</b><div id="items"></div></div>
+    <p class="muted">Click to add points. <b>Enter</b> or double-click finishes a polygon / polyline,
+      <b>Backspace</b> removes the last point, <b>Esc</b> cancels. Stop lines and lanes then ask for one more click
+      that shows the direction of travel. Traffic lights: two clicks for opposite corners of the lamp housing.
+      Coordinates are stored in video pixels, so edit on a full-resolution frame.</p>
+  </aside>
+</main>
+<script>
+// type: [label, geometry, color, needsDirection, hasId]
+const TYPES = {
+  road:             ["Carriageway (road)", "polygon", "#3fb950", false, false],
+  crosswalks:       ["Pedestrian crossing", "polygon", "#ffffff", false, true],
+  intersection:     ["Junction box", "polygon", "#d29922", false, false],
+  stop_lines:       ["Stop line (+direction)", "line", "#ff4d4f", true, true],
+  traffic_lights:   ["Traffic light lamp", "rect", "#ff7b72", false, true],
+  solid_lines:      ["Solid marking", "polyline", "#f2cc60", false, true],
+  lanes:            ["Lane (+direction)", "polygon", "#58a6ff", true, true],
+  zones:            ["Entry/exit zone", "polygon", "#bc8cff", false, true],
+  direction_groups: ["Direction group", "polygon", "#39c5cf", false, true],
+  u_turn_allowed:   ["U-turn allowed", "polygon", "#7ee787", false, false],
+  parking:          ["Parking (not carriageway)", "polygon", "#8b949e", false, false],
+  ignore:           ["Ignore area", "polygon", "#6e7681", false, false],
+};
+const $ = id => document.getElementById(id);
+const cv = $("cv"), g = cv.getContext("2d");
+let img = null, W = 0, H = 0, tool = "road", draft = [], awaitingDir = null;
+let items = [];  // {type, pts:[[x,y]], id, light, dir:[dx,dy], allowed}
+
+function buildTools() {
+  $("tools").innerHTML = Object.entries(TYPES).map(([k, t]) =>
+    `<div class="tool ${k === tool ? "active" : ""}" data-k="${k}"><span class="sw" style="background:${t[2]}"></span>${t[0]}</div>`).join("");
+  document.querySelectorAll(".tool").forEach(el => el.onclick = () => { tool = el.dataset.k; draft = []; awaitingDir = null; buildTools(); draw(); });
+  hint();
+}
+function hint() {
+  const t = TYPES[tool];
+  $("hint").textContent = awaitingDir ? "Click where traffic goes (direction of travel)." :
+    `${t[0]}: ${t[1] === "rect" ? "click two corners" : t[1] === "line" ? "click the two ends of the line" : "click points, Enter to finish"}`;
+}
+function toImg(ev) { const r = cv.getBoundingClientRect(); return [Math.round((ev.clientX - r.left) / r.width * W), Math.round((ev.clientY - r.top) / r.height * H)]; }
+function centroid(pts) { return pts.reduce((a, p) => [a[0] + p[0] / pts.length, a[1] + p[1] / pts.length], [0, 0]); }
+function nextId(type) { const n = items.filter(i => i.type === type).length + 1; return type.slice(0, 2) + n; }
+
+function finish() {
+  const geom = TYPES[tool][1];
+  const need = geom === "polygon" ? 3 : 2;
+  if (draft.length < need) return;
+  const it = { type: tool, pts: draft, id: nextId(tool) };
+  if (tool === "stop_lines") it.light = (items.find(i => i.type === "traffic_lights") || {}).id || "";
+  draft = [];
+  if (TYPES[tool][3]) awaitingDir = it; else items.push(it);
+  hint(); list(); draw();
+}
+
+cv.addEventListener("click", ev => {
+  if (!img) return;
+  const p = toImg(ev);
+  if (awaitingDir) {
+    const c = centroid(awaitingDir.pts), d = [p[0] - c[0], p[1] - c[1]], n = Math.hypot(...d) || 1;
+    awaitingDir.dir = [+(d[0] / n).toFixed(3), +(d[1] / n).toFixed(3)];
+    items.push(awaitingDir); awaitingDir = null; hint(); list(); draw(); return;
+  }
+  draft.push(p);
+  const geom = TYPES[tool][1];
+  if ((geom === "line" || geom === "rect") && draft.length === 2) finish();
+  draw();
+});
+cv.addEventListener("dblclick", ev => { ev.preventDefault(); draft.pop(); finish(); });
+document.addEventListener("keydown", ev => {
+  if (ev.target.tagName === "INPUT") return;
+  if (ev.key === "Enter") finish();
+  else if (ev.key === "Escape") { draft = []; awaitingDir = null; hint(); draw(); }
+  else if (ev.key === "Backspace") { draft.pop(); draw(); }
+});
+
+function drawArrow(from, dir, color) {
+  const L = Math.max(W, H) * 0.05, to = [from[0] + dir[0] * L, from[1] + dir[1] * L];
+  g.strokeStyle = color; g.lineWidth = Math.max(2, W / 500);
+  g.beginPath(); g.moveTo(...from); g.lineTo(...to); g.stroke();
+  const a = Math.atan2(dir[1], dir[0]), s = L * 0.3;
+  g.beginPath(); g.moveTo(...to); g.lineTo(to[0] - s * Math.cos(a - 0.4), to[1] - s * Math.sin(a - 0.4));
+  g.lineTo(to[0] - s * Math.cos(a + 0.4), to[1] - s * Math.sin(a + 0.4)); g.closePath(); g.fillStyle = color; g.fill();
+}
+function drawItem(it, color, alpha) {
+  const geom = TYPES[it.type][1], pts = it.pts;
+  g.lineWidth = Math.max(2, W / 600); g.strokeStyle = color; g.fillStyle = color;
+  if (geom === "rect" && pts.length === 2) {
+    g.strokeRect(pts[0][0], pts[0][1], pts[1][0] - pts[0][0], pts[1][1] - pts[0][1]);
+  } else {
+    g.beginPath(); pts.forEach((p, i) => i ? g.lineTo(...p) : g.moveTo(...p));
+    if (geom === "polygon") { g.closePath(); g.globalAlpha = alpha; g.fill(); g.globalAlpha = 1; }
+    g.stroke();
+  }
+  pts.forEach(p => { g.beginPath(); g.arc(p[0], p[1], Math.max(3, W / 400), 0, 7); g.fill(); });
+  if (it.dir) drawArrow(centroid(pts), it.dir, color);
+  if (it.id && pts.length) { g.font = `${Math.max(12, W / 90)}px system-ui`; g.fillStyle = "#fff"; g.fillText(it.id, pts[0][0] + 6, pts[0][1] - 6); }
+}
+function draw() {
+  if (!img) return;
+  g.drawImage(img, 0, 0, W, H);
+  items.forEach(it => drawItem(it, TYPES[it.type][2], 0.22));
+  if (awaitingDir) drawItem(awaitingDir, "#ffffff", 0.3);
+  if (draft.length) drawItem({ type: tool, pts: draft }, "#ffffff", 0.15);
+}
+function list() {
+  $("items").innerHTML = items.map((it, i) => {
+    const t = TYPES[it.type];
+    let extra = "";
+    if (t[4]) extra += `<input data-i="${i}" data-f="id" value="${it.id || ""}" title="id">`;
+    if (it.type === "stop_lines") extra += ` light <input data-i="${i}" data-f="light" value="${it.light || ""}" title="traffic light id">`;
+    if (it.type === "lanes") extra += ` turns <input data-i="${i}" data-f="allowed" value="${(it.allowed || []).join(",")}" placeholder="straight,right" title="allowed turns: straight,left,right">`;
+    return `<div class="item"><span class="sw" style="background:${t[2]}"></span>${t[0]} ${extra}<button data-del="${i}">✕</button></div>`;
+  }).join("") || '<p class="muted">Nothing drawn yet.</p>';
+  document.querySelectorAll("#items input").forEach(el => el.onchange = () => {
+    const it = items[+el.dataset.i];
+    if (el.dataset.f === "allowed") it.allowed = el.value.split(",").map(s => s.trim()).filter(Boolean);
+    else it[el.dataset.f] = el.value.trim();
+    draw();
+  });
+  document.querySelectorAll("#items button").forEach(el => el.onclick = () => { items.splice(+el.dataset.del, 1); list(); draw(); });
+}
+
+function toScene() {
+  const s = { frame_size: [W, H] };
+  const polys = type => items.filter(i => i.type === type).map(i => i.pts);
+  if (polys("road").length) s.road = polys("road");
+  for (const k of ["ignore", "parking", "u_turn_allowed"]) if (polys(k).length) s[k] = polys(k);
+  if (polys("intersection").length) s.intersection = polys("intersection")[0];
+  const named = (type, f) => items.filter(i => i.type === type).map(f);
+  s.crosswalks = named("crosswalks", i => ({ id: i.id, polygon: i.pts }));
+  s.zones = named("zones", i => ({ id: i.id, polygon: i.pts }));
+  s.direction_groups = named("direction_groups", i => ({ id: i.id, polygon: i.pts }));
+  s.lanes = named("lanes", i => Object.assign({ id: i.id, polygon: i.pts, direction: i.dir }, i.allowed && i.allowed.length ? { allowed_turns: i.allowed } : {}));
+  s.stop_lines = named("stop_lines", i => ({ id: i.id, line: i.pts, forward: i.dir, light: i.light || null }));
+  s.traffic_lights = named("traffic_lights", i => ({ id: i.id, roi: [Math.min(i.pts[0][0], i.pts[1][0]), Math.min(i.pts[0][1], i.pts[1][1]), Math.max(i.pts[0][0], i.pts[1][0]), Math.max(i.pts[0][1], i.pts[1][1])] }));
+  s.solid_lines = named("solid_lines", i => ({ id: i.id, polyline: i.pts }));
+  s.prohibited_movements = (window.__scene && window.__scene.prohibited_movements) || [];
+  return s;
+}
+function fromScene(s) {
+  items = [];
+  const add = (type, pts, extra) => items.push(Object.assign({ type, pts }, extra || {}));
+  (s.road || []).forEach(p => add("road", p));
+  for (const k of ["ignore", "parking", "u_turn_allowed"]) (s[k] || []).forEach(p => add(k, p));
+  if (s.intersection) add("intersection", s.intersection);
+  (s.crosswalks || []).forEach(c => add("crosswalks", c.polygon, { id: c.id }));
+  (s.zones || []).forEach(c => add("zones", c.polygon, { id: c.id }));
+  (s.direction_groups || []).forEach(c => add("direction_groups", c.polygon, { id: c.id }));
+  (s.lanes || []).forEach(c => add("lanes", c.polygon, { id: c.id, dir: c.direction, allowed: c.allowed_turns }));
+  (s.stop_lines || []).forEach(c => add("stop_lines", c.line, { id: c.id, dir: c.forward, light: c.light }));
+  (s.traffic_lights || []).forEach(c => add("traffic_lights", [[c.roi[0], c.roi[1]], [c.roi[2], c.roi[3]]], { id: c.id }));
+  (s.solid_lines || []).forEach(c => add("solid_lines", c.polyline, { id: c.id }));
+  window.__scene = s; list(); draw();
+}
+
+function setImage(source, w, h) {
+  const c = document.createElement("canvas"); c.width = w; c.height = h; c.getContext("2d").drawImage(source, 0, 0, w, h);
+  img = c; W = w; H = h; cv.width = W; cv.height = H;
+  $("status").textContent = `frame ${W}×${H}`; draw();
+}
+$("media").onchange = ev => {
+  const f = ev.target.files[0]; if (!f) return;
+  const url = URL.createObjectURL(f);
+  if (f.type.startsWith("video")) {
+    const v = $("video"); v.src = url; $("videoBar").style.display = "block";
+    v.onloadeddata = () => { $("seek").max = v.duration; v.currentTime = Math.min(1, v.duration / 2); };
+    v.onseeked = () => { setImage(v, v.videoWidth, v.videoHeight); $("seekT").textContent = v.currentTime.toFixed(1) + " s"; };
+    $("seek").oninput = () => v.currentTime = +$("seek").value;
+  } else {
+    const im = new Image(); im.onload = () => setImage(im, im.naturalWidth, im.naturalHeight); im.src = url;
+  }
+};
+$("json").onchange = ev => { const f = ev.target.files[0]; if (f) f.text().then(t => fromScene(JSON.parse(t))); };
+$("export").onclick = () => {
+  const blob = new Blob([JSON.stringify(toScene(), null, 1)], { type: "application/json" });
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "scene.json"; a.click();
+};
+buildTools(); list();
+</script>
+</body>
+</html>

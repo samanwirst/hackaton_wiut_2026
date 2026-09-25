@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TrafficWatch · WIUT Hackathon 2026</title>
+<meta name="description" content="Traffic event detection and accident anticipation from a fixed road camera.">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<header class="top">
+  <div class="wrap top-inner">
+    <a class="brand" href="#top" aria-label="TrafficWatch home"><span class="brand-dot" aria-hidden="true"></span>TrafficWatch</a>
+    <nav aria-label="Sections">
+      <a href="#approach">Approach</a><a href="#eda">EDA</a><a href="#results">Results</a>
+      <a href="#demo">Live demo</a><a href="#report">Report</a><a href="#team">Team</a><a href="#links">Links</a>
+    </nav>
+    <button class="theme" id="themeBtn" type="button" aria-label="Toggle dark mode"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8 1.5a6.5 6.5 0 0 1 0 13z" fill="currentColor"/></svg></button>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero wrap">
+    <p class="eyebrow">WIUT Hackathon 2026 · Computer Vision track</p>
+    <h1>Every traffic event on one camera, as a time segment — and an alarm before the crash.</h1>
+    <p class="lede" id="heroLede">A detector, a tracker and fourteen explainable rules turn a fixed CCTV view into
+      labelled events; a causal risk model watches for conflicts frame by frame.</p>
+    <div class="tiles" id="heroTiles"></div>
+  </section>
+
+  <section id="approach" class="wrap block">
+    <h2>Problem and approach</h2>
+    <p class="section-lede">Part A returns <code>[start_sec, end_sec, label]</code> for 14 event classes; Part B returns,
+      at every frame, the probability that an accident starts within 5 s using only past frames.</p>
+    <figure class="card diagram" id="pipeline"></figure>
+    <div class="grid2">
+      <div class="card">
+        <h3>What is learned</h3>
+        <ul id="learnedList"></ul>
+      </div>
+      <div class="card">
+        <h3>What is rule-based</h3>
+        <ul id="rulesList"></ul>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Event rules</h3>
+      <div class="table-scroll"><table class="data" id="rulesTable"><thead><tr><th>Class</th><th>Rule</th></tr></thead><tbody></tbody></table></div>
+    </div>
+  </section>
+
+  <section id="eda" class="wrap block">
+    <h2>EDA of the sample videos</h2>
+    <p class="section-lede">What the camera sees, measured by our own detector and tracker.</p>
+    <div class="controls" role="group" aria-label="EDA video"><label>Video <select id="edaVideo"></select></label></div>
+    <div id="edaBody"><p class="empty">EDA data will appear here after <code>tools/eda.py</code> runs on the sample videos.</p></div>
+  </section>
+
+  <section id="results" class="wrap block">
+    <h2>Results on the sample videos</h2>
+    <p class="section-lede">Our annotated render of every sample video, its event timeline and the Part B risk curve.
+      Click any event or any point of the curve to jump the video there.</p>
+    <div class="controls" role="group" aria-label="Results video"><label>Video <select id="resVideo"></select></label></div>
+    <div id="resBody"><p class="empty">Results will appear here after <code>tools/export_results.py</code> runs.</p></div>
+  </section>
+
+  <section id="demo" class="wrap block">
+    <h2>Live demo</h2>
+    <p class="section-lede" id="demoLede">Upload an .mp4 from the road camera, of any length and size. The model runs on a CPU
+      and returns the events, an annotated video, the timeline and the risk curve.</p>
+    <div class="card demo-card" id="demoCard"></div>
+  </section>
+
+  <section id="report" class="wrap block">
+    <h2>Technical report</h2>
+    <div class="grid3" id="reportBody"></div>
+  </section>
+
+  <section id="team" class="wrap block">
+    <h2>Team</h2>
+    <div class="team" id="teamBody"></div>
+  </section>
+
+  <section id="links" class="wrap block">
+    <h2>Links</h2>
+    <ul class="links" id="linksBody"></ul>
+  </section>
+</main>
+
+<footer class="wrap foot"><span id="footText">TrafficWatch · WIUT Hackathon 2026</span></footer>
+<div class="tooltip" id="tooltip" role="status" aria-live="polite"></div>
+<script src="assets/app.js"></script>
+</body>
+</html>

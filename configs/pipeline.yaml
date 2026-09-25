@@ -1,0 +1,181 @@
+# TrafficWatch pipeline configuration.
+# Every threshold used by the detector, tracker, event rules, post-processing and the
+# Part B risk estimator lives here, so tuning never requires a code change.
+#
+# Units: *_s = seconds; *_nspeed = scale-normalised speed (object sizes per second,
+# where size = sqrt(box_w * box_h)); *_scale = distance in object sizes.
+
+seed: 0
+
+# Hardware profiles. "auto" picks gpu when CUDA is available, otherwise cpu.
+# stride = round(video_fps / target_fps) frames between processed frames.
+profile: auto
+profiles:
+  gpu:  {weights: weights/yolo11m.pt, imgsz: 960, half: true,  batch: 16, target_fps: 12.5}
+  cpu:  {weights: weights/yolo11n.pt, imgsz: 640, half: false, batch: 8,  target_fps: 6.25}   # fallback only
+  demo: {weights: weights/yolo11n.pt, imgsz: 640, half: false, batch: 8,  target_fps: 6.25}
+
+detector:
+  conf: 0.10              # low threshold: ByteTrack uses low-score boxes in its second association
+  iou: 0.60
+  vehicle_merge_iou: 0.70 # car/truck/bus duplicates of one object are merged class-agnostically
+
+tracker:
+  high: 0.30              # first-association score threshold
+  low: 0.10               # second-association score threshold
+  new: 0.40               # score needed to start a new track
+  buffer_s: 2.0           # how long a lost track can be re-found
+  match: 0.80
+
+kinematics:
+  smooth_s: 0.8           # Savitzky-Golay window for positions / velocities
+  min_track_s: 0.6        # shorter tracks are ignored by the rules
+  heading_min_nspeed: 0.30
+
+scene:
+  # Layouts of known cameras, picked by video size (exact size first, then the same aspect ratio).
+  cameras:
+    - {config: configs/scene_tashkent.json, model: configs/scene_model_tashkent.npz}   # official camera, 3840x2160
+  config: ""                         # any other camera: no layout, so rules that need geometry stay silent
+  model: ""
+
+rules:
+  stopped_vehicle:
+    enabled: true
+    stop_nspeed: 0.08
+    move_nspeed: 0.30
+    min_stop_s: 10.0
+    long_stop_s: 45.0        # a stop this long is anomalous even inside a queue
+    flow_past_min: 2         # moving vehicles passing within flow_radius_scale => not a queue
+    flow_radius_scale: 4.0
+    link_iou: 0.5            # joins stationary fragments of one vehicle across track ids
+    link_gap_s: 4.0
+    queue_release_s: 20.0    # a stop behind a signalised stop line that ends this soon after green = queue
+  congestion:
+    enabled: true
+    min_vehicles: 4
+    crawl_nspeed: 0.35
+    min_stopped_frac: 0.6
+    min_duration_s: 30.0
+    bin_s: 1.0
+  jaywalking:
+    enabled: true
+    min_s: 1.0
+    crosswalk_margin_px: 6   # *_px margins are for 1280-pixel-wide video and scale with the frame width
+    rider_overlap: 0.35      # person box overlapping a bike/motorbike this much = rider, not pedestrian
+    red_signal: true         # also: stepping onto a crossing against its red pedestrian signal
+    red_grace_s: 2.0         # ... red for at least this long when the pedestrian steps on
+    red_entry_share: 0.3     # ... from a kerb or island: first position within this share of either end
+    red_min_progress: 0.25   # ... and walking at least this share of the crossing length
+    red_early_s: 2.0         # ... but not when the green comes within this time (setting off early)
+    min_travel_scale: 1.5    # off a crossing: walks at least this far (body sizes); a rider waiting in traffic does not
+  failure_to_yield:
+    enabled: true
+    min_vehicle_nspeed: 0.5
+    ped_margin_px: 15
+    ped_moving_nspeed: 0.3   # only a walking pedestrian counts (one waiting at the kerb edge looks the same)
+    step_on_s: 1.0           # a pedestrian at the edge counts when on the crossing within this time (stepping on)
+    max_ped_distance_scale: 4.0
+  red_light:
+    enabled: true
+    red_grace_s: 0.3         # red must have been on this long when the front crosses the line
+    max_event_s: 12.0
+  stop_line:
+    enabled: true
+    stop_nspeed: 0.10
+    min_stop_s: 1.0
+    max_overshoot_scale: 2.0
+  wrong_way:
+    enabled: true
+    min_s: 1.5
+    min_nspeed: 0.5
+    field_p_max: 0.03        # heading this unlikely in the learned direction field ...
+    field_opposite_min: 0.25 # ... while the opposite direction is dominant
+    field_min_count: 30
+    lane_cos_max: -0.5       # for hand-made lanes: cos(heading, lane direction) below this
+  illegal_u_turn:
+    enabled: true
+    min_turn_deg: 150
+    max_turn_s: 20.0
+    min_approach_s: 1.0      # seconds of driving (valid heading) in the 3 s before the turn starts
+  illegal_turn:
+    enabled: true
+    min_turn_deg: 45
+  solid_line_crossing:
+    enabled: true
+    wheel_inset: 0.15
+    min_s: 0.3
+  accident:
+    enabled: true
+    contact_scale: 1.0       # ground points this close (object sizes); a rear-end seen along the road is ~0.9
+    min_closing_nspeed: 0.8
+    min_impact_nspeed: 0.8   # the striker still moves this fast just before contact (a queue creeps slower)
+    min_speed_drop: 0.6      # ... and loses this share of its speed ...
+    drop_within_s: 1.0       # ... this soon after contact (braking into a queue is gradual)
+    settle_nspeed: 0.25
+    max_settle_s: 6.0
+    rest_together_s: 1.0     # after coming to rest the pair stays within rest_scale (a pass-by moves on)
+    rest_scale: 1.5
+    min_score: 0.6
+  near_miss:
+    enabled: false           # 0 of 15 firings were right (8 synthetic samples + C3905): enable after validating
+    horizon_s: 2.0
+    miss_scale: 0.8
+    head_on_miss_scale: 0.3  # for road users driving towards each other (else: passing in the other lane)
+    min_rel_nspeed: 1.0
+    touch_scale: 0.5         # closer than this they (visually) touch: an accident candidate, not a near miss
+    min_vehicle_nspeed: 0.5  # at least one vehicle of the pair moves this fast at the conflict
+    min_decel: 1.5           # average nspeed drop per second over evasive_span_s that counts as sharp braking
+    min_yaw_rate_deg: 60     # average heading change per second over evasive_span_s that counts as swerving
+    min_evasive_nspeed: 0.5  # braking / swerving only counts from at least this speed
+    evasive_span_s: 0.5
+    clear_scale: 1.5
+    min_score: 0.6
+  road_obstacle:
+    enabled: false           # enable after validating on the sample videos
+    animal_min_s: 1.0
+    static_min_s: 5.0
+    static_min_area_frac: 0.0004
+    static_max_area_frac: 0.02
+    diff_thr: 28
+  fire_smoke:
+    enabled: false           # colour heuristic; enable only after validation
+    min_s: 2.0
+    min_area_frac: 0.0008
+
+# Segment post-processing per class: merge fragments closer than merge_gap_s,
+# drop segments shorter than min_len_s, shift boundaries by pad_start_s / pad_end_s.
+postprocess:
+  default:             {merge_gap_s: 1.0, min_len_s: 0.5, pad_start_s: 0.0, pad_end_s: 0.0}
+  stopped_vehicle:     {merge_gap_s: 3.0, min_len_s: 10.0}
+  congestion:          {merge_gap_s: 10.0, min_len_s: 20.0}
+  jaywalking:          {merge_gap_s: 1.5, min_len_s: 1.0}
+  accident:            {merge_gap_s: 2.0, min_len_s: 1.0}
+  near_miss:           {merge_gap_s: 1.0, min_len_s: 0.5}
+  wrong_way:           {merge_gap_s: 2.0, min_len_s: 1.5}
+  road_obstacle:       {merge_gap_s: 5.0, min_len_s: 3.0}
+  fire_smoke:          {merge_gap_s: 5.0, min_len_s: 2.0}
+
+# Part B: causal accident anticipation.
+risk:
+  profile: auto            # same profiles as above; gpu uses its own lighter weights below
+  weights_gpu: weights/yolo11s.pt
+  weights_cpu: weights/yolo11n.pt
+  imgsz: 640
+  target_fps: 8.34
+  target_fps_cpu: 6.25
+  horizon_s: 5.0
+  history_s: 1.5
+  pair_radius_scale: 8.0
+  collision_scale: 0.7
+  head_on_scale: 0.3        # opposite directions only count on a nearly head-on course
+  same_pace_ratio: 1.4      # same direction: one must be this much faster (perspective-corrected, see geometry.same_pace)
+  min_vehicle_nspeed: 0.5   # a pedestrian near a vehicle only counts when the vehicle moves
+  min_rel_nspeed: 0.8
+  ttc_full_s: 1.0          # predicted contact sooner than this gives full pair risk
+  brake_decel: 2.0
+  brake_weight: 0.35
+  wrong_way_weight: 0.30
+  decay_s: 1.5             # score rises immediately and decays with this time constant
+  calib_a: 7.0             # p = sigmoid(a * raw + b)
+  calib_b: -4.6

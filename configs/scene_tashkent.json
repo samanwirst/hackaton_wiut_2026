@@ -1,0 +1,89 @@
+{
+  "_comment": "Official camera (Tashkent junction seen from a building, 3840x2160). Drawn on C3905 frames; see docs/scene.md. Avenue: near carriageway flows from top-left towards the camera (approach A, stop line before the left crossing); far carriageway flows from the right to the top-left. Cross street leaves to the bottom-left over the diagonal crossing. The heads that govern approach A face away from the camera, so its signal follows the pedestrian signal of the diagonal crossing (same phase): green together, red 6 s after the pedestrian red (3 s flashing green + 3 s amber), measured on C3905 and confirmed by the vehicle signal on the island.",
+  "frame_size": [3840, 2160],
+  "road": [
+    [[170, 140], [490, 194], [800, 244], [1200, 306], [1690, 405], [1800, 480], [1930, 600], [2250, 625], [2580, 645], [2744, 700], [2911, 745], [3200, 820], [3350, 900], [3500, 950], [3700, 990], [3840, 1010], [3840, 2160], [0, 2160], [0, 1760], [360, 1580], [540, 1480], [640, 1400], [660, 1300], [700, 1085], [330, 760], [230, 560], [60, 250]]
+  ],
+  "road_exclude": [
+    [[190, 268], [1111, 585], [2000, 862], [2395, 1005], [2395, 1050], [2380, 1058], [2000, 955], [1111, 632], [170, 300]],
+    [[2370, 1085], [2440, 1068], [2600, 1080], [2632, 1130], [2560, 1158], [2420, 1152], [2372, 1120]],
+    [[1005, 1590], [1280, 1362], [1518, 1508], [1512, 1540]],
+    [[1370, 1750], [1400, 1716], [1740, 1654], [1930, 1770], [1910, 1794], [1520, 1830], [1380, 1792]],
+    [[240, 1910], [660, 1750], [845, 1870], [820, 1900], [260, 1940]]
+  ],
+  "crosswalks": [
+    {
+      "id": "cw_avenue_left",
+      "polygon": [[610, 1195], [2250, 960], [2430, 1010], [2440, 1150], [740, 1405]],
+      "signal": "avenue_crossing"
+    },
+    {
+      "id": "cw_avenue_right",
+      "polygon": [[2330, 990], [3480, 870], [3740, 975], [2660, 1120], [2330, 1110]],
+      "signal": "avenue_crossing"
+    },
+    {
+      "id": "cw_diagonal",
+      "polygon": [[270, 1590], [680, 1450], [1090, 1640], [1560, 1870], [1820, 2160], [1100, 2160], [1010, 2010], [800, 1880]],
+      "signal": "ped_diag"
+    }
+  ],
+  "intersection": [[750, 1370], [2360, 1130], [2640, 1105], [3720, 985], [3840, 1010], [3840, 2160], [1800, 2160], [1540, 1880], [1080, 1660], [680, 1470], [640, 1400]],
+  "traffic_lights": [
+    {
+      "id": "veh_island",
+      "kind": "vehicle",
+      "roi": [2305, 728, 2350, 835],
+      "lamps": {
+        "red": [2310, 735, 2348, 768],
+        "amber": [2310, 770, 2348, 802],
+        "green": [2310, 804, 2348, 836]
+      }
+    },
+    {
+      "id": "ped_diag",
+      "kind": "pedestrian",
+      "roi": [508, 1015, 545, 1088],
+      "lamps": {
+        "red": [510, 1016, 543, 1052],
+        "green": [510, 1052, 543, 1088]
+      }
+    }
+  ],
+  "signals": [
+    {
+      "id": "avenue",
+      "sources": [
+        {
+          "light": "ped_diag",
+          "red_delay_s": 6.0,
+          "amber_s": 3.0
+        },
+        {
+          "light": "veh_island"
+        }
+      ]
+    },
+    {
+      "id": "avenue_crossing",
+      "inverse_of": "avenue",
+      "green_after_s": 2.0,
+      "red_before_s": 4.0
+    }
+  ],
+  "stop_lines": [
+    {
+      "id": "sl_avenue_in",
+      "line": [[570, 1100], [1875, 935]],
+      "forward": [0.883, 0.47],
+      "light": "avenue"
+    }
+  ],
+  "parking": [
+    [[0, 700], [330, 760], [700, 1085], [660, 1130], [0, 1130]],
+    [[900, 262], [1200, 306], [1690, 405], [1800, 480], [1930, 600], [1930, 660], [1690, 545], [1200, 420], [900, 350]]
+  ],
+  "ignore": [
+    [[2400, 680], [2530, 680], [2530, 800], [2400, 800]]
+  ]
+}

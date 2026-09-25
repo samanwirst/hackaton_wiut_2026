@@ -1,0 +1,132 @@
+"""Pedestrian rules: jaywalking (off a crossing, or onto a crossing against its red pedestrian
+signal) and failure to yield at a crossing."""
+from __future__ import annotations
+
+import numpy as np
+
+from ..geometry import lookup
+from ..signal import GREEN, RED
+from ..tracks import Track, intervals
+from .common import Context, Event
+
+
+def _crossing_axis(poly: np.ndarray) -> tuple[np.ndarray, float, float]:
+    """Walking direction over a crossing (its long axis) and the extent of the crossing along it."""
+    pts = np.asarray(poly, dtype=np.float64)
+    centred = pts - pts.mean(axis=0)
+    _, _, vt = np.linalg.svd(centred, full_matrices=False)
+    u = vt[0]
+    s = pts @ u
+    return u, float(s.min()), float(s.max())
+
+
+def _red_crossings(ctx: Context, p: dict) -> list[Event]:
+    """A pedestrian steps onto a signalled crossing while its pedestrian signal has been red for at
+    least ``red_grace_s`` and walks on over it. Someone who started on green and is still finishing
+    the crossing when it turns red is not a violator; neither is someone waiting at the kerb edge."""
+    cw_map = ctx.scene.crosswalk_map
+    if cw_map is None:
+        return []
+    events = []
+    for c, sid in enumerate(ctx.scene.crosswalk_signals):
+        sig = ctx.signals.get(sid) if sid else None
+        if sig is None or c >= len(ctx.scene.crosswalk_polys):
+            continue
+        u, s0, s1 = _crossing_axis(ctx.scene.crosswalk_polys[c])
+        length = max(s1 - s0, 1.0)
+        for ped in ctx.pedestrians:
+            on_cw = (lookup(cw_map, ped.gp, outside=-1) == c) & ped.reliable
+            for a, b in intervals(on_cw, ped.t, min_len=p["min_s"], max_gap=0.5):
+                if sig.state_at(a) != RED or sig.since(a) < p["red_grace_s"]:
+                    continue
+                green = sig.next_change_to(a, GREEN)
+                if green is not None and green - a < p["red_early_s"]:
+                    continue  # set off just before the green: not crossing against the signal
+                s = ped.gp[ped.slice(a, b)] @ u
+                # stepped on from a kerb or an island: the first position is near an end of the crossing
+                end_share = min(s[0] - s0, s1 - s[0]) / length
+                if end_share > p["red_entry_share"]:
+                    continue
+                # ... and walked on while it was red (waiting at the edge and going at green is fine)
+                s_red = ped.gp[ped.slice(a, min(b, green) if green is not None else b)] @ u
+                if len(s_red) < 2 or (s_red.max() - s_red.min()) / length < p["red_min_progress"]:
+                    continue
+                events.append(Event(a, b, "jaywalking", tracks=(ped.tid,), info={"crossing_on_red": c}))
+    return events
+
+
+def jaywalking(ctx: Context) -> list[Event]:
+    p = ctx.params("jaywalking")
+    events = _red_crossings(ctx, p) if p.get("red_signal", True) else []
+    if not ctx.scene.has_road:
+        return events  # without a carriageway mask we cannot tell road from pavement
+    road = ctx.eroded_road(ctx.px(p.get("road_margin_px", 8)))
+    crossing = ctx.dilated(ctx.scene.crosswalk_map, ctx.px(p["crosswalk_margin_px"]))
+    for ped in ctx.pedestrians:
+        # a road user cut off by the frame border has no reliable feet (and a half-visible car at
+        # the edge is easily taken for a person)
+        on_road = lookup(road, ped.gp, outside=False) & ped.reliable
+        if crossing is not None:
+            on_road &= lookup(crossing, ped.gp, outside=-1) < 0
+        for a, b in intervals(on_road, ped.t, min_len=p["min_s"], max_gap=0.5):
+            m = ped.slice(a, b)
+            travel = np.hypot(*(ped.gp[m] - ped.gp[m][0]).T).max() / np.median(ped.scale[m])
+            if travel < p.get("min_travel_scale", 0.0):
+                continue  # not walking: a rider waiting with the traffic, or a false detection
+            events.append(Event(a, b, "jaywalking", tracks=(ped.tid,)))
+    return events
+
+
+def _net_speed(tr: Track, t: np.ndarray, half_s: float = 0.75) -> np.ndarray:
+    """Displacement over [t - half_s, t + half_s] in object sizes per second: jitter of someone
+    standing still averages out, walking does not."""
+    i0 = np.searchsorted(tr.t, t - half_s).clip(0, len(tr.t) - 1)
+    i1 = np.searchsorted(tr.t, t + half_s).clip(0, len(tr.t) - 1)
+    span = np.maximum(tr.t[i1] - tr.t[i0], 1e-6)
+    return np.hypot(*(tr.gp[i1] - tr.gp[i0]).T) / tr.scale[np.searchsorted(tr.t, t).clip(0, len(tr.t) - 1)] / span
+
+
+def failure_to_yield(ctx: Context) -> list[Event]:
+    p = ctx.params("failure_to_yield")
+    cw_map = ctx.scene.crosswalk_map
+    if cw_map is None:
+        return []
+    ped_map = ctx.dilated(cw_map, ctx.px(p["ped_margin_px"]))
+    peds = ctx.pedestrians
+    polys = ctx.scene.crosswalk_polys
+    events = []
+    for veh in ctx.vehicles:
+        cw = np.where(veh.reliable, lookup(cw_map, veh.gp, outside=-1), -1)
+        for c in np.unique(cw[cw >= 0]):
+            sid = ctx.scene.crosswalk_signals[c] if c < len(ctx.scene.crosswalk_signals) else None
+            sig = ctx.signals.get(sid) if sid else None
+            axis = _crossing_axis(polys[c])[0] if c < len(polys) else None
+            for a, b in intervals(cw == c, veh.t, min_len=0.2, max_gap=0.3):
+                m = veh.slice(a, b)
+                if np.median(veh.nspeed[m]) < p["min_vehicle_nspeed"]:
+                    continue  # the vehicle crept or stopped: it yielded
+                if axis is not None and veh.category == "two_wheeler":
+                    v = veh.vel[m].mean(axis=0)
+                    if abs(v @ axis) > 0.7 * np.hypot(*v):
+                        continue  # a cyclist riding over the crossing with the pedestrians is crossing too
+                for ped in peds:
+                    ia, ib = ctx.common(veh, ped)
+                    sel = (veh.t[ia] >= a) & (veh.t[ia] <= b)
+                    if not sel.any():
+                        continue
+                    ia, ib = ia[sel], ib[sel]
+                    # walking on the crossing or stepping onto it (at its edge now, on it within
+                    # step_on_s); someone waiting at the kerb edge looks just the same in the image
+                    on_now = lookup(cw_map, ped.gp, outside=-1) == c
+                    near = lookup(ped_map, ped.gp[ib], outside=-1) == c
+                    j = np.searchsorted(ped.t, ped.t[ib] + p["step_on_s"], side="right")
+                    soon = np.array([on_now[i:k].any() for i, k in zip(ib, j)], dtype=bool)
+                    on_cw = near & soon & (_net_speed(ped, ped.t[ib]) >= p["ped_moving_nspeed"]) & ped.reliable[ib]
+                    if sig is not None:
+                        # a pedestrian walking against a red pedestrian signal has no right of way
+                        on_cw &= np.array([sig.state_at(t) != RED for t in ped.t[ib]], dtype=bool)
+                    dist = np.hypot(*(ped.gp[ib] - veh.gp[ia]).T) / veh.scale[ia]
+                    if (on_cw & (dist <= p["max_ped_distance_scale"])).any():
+                        events.append(Event(a, b, "failure_to_yield", tracks=(veh.tid, ped.tid)))
+                        break
+    return events

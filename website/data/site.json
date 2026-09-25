@@ -1,0 +1,24 @@
+{
+  "lede": "A detector, a tracker and fourteen explainable rules turn a fixed CCTV view into labelled events; a causal risk model watches for conflicts frame by frame.",
+  "repo_url": "",
+  "weights_url": "",
+  "predictions_url": "",
+  "demo_url": "",
+  "demo_embed_url": "",
+  "metrics": {
+    "score_a_dev": null,
+    "speed": null,
+    "speed_note": null
+  },
+  "approach": null,
+  "report": {
+    "worked": ["TODO: fill in after tuning on the dev labels."],
+    "failed": ["TODO: honest failure cases with timestamps."],
+    "next": ["TODO: what we would do with more time."]
+  },
+  "team": [
+    {"name": "TODO Member 1", "role": "TODO role", "contributions": "TODO: what this member built.", "projects": "TODO", "github": "", "linkedin": "", "portfolio": ""},
+    {"name": "TODO Member 2", "role": "TODO role", "contributions": "TODO: what this member built.", "projects": "TODO", "github": "", "linkedin": "", "portfolio": ""},
+    {"name": "TODO Member 3", "role": "TODO role", "contributions": "TODO: what this member built.", "projects": "TODO", "github": "", "linkedin": "", "portfolio": ""}
+  ]
+}

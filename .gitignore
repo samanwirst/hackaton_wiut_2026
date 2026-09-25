@@ -1,3 +1,29 @@
-Videos.pdf
-WIUT Hackathon _ CV Track Elimination Task.pdf
-wiut_cv_scripts.zip
+# Local task materials
+/references/
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.venv/
+
+# Model and pipeline artefacts
+.cache/
+/space/
+/samples/
+/runs/
+/predictions.json
+*.pkl
+
+# Local video files
+*.mp4
+*.MP4
+*.mov
+*.MOV
+*.avi
+*.mkv
+
+# Editor and OS files
+.DS_Store
+.claude/
