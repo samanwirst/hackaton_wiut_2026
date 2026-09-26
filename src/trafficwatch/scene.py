@@ -37,6 +37,7 @@ class Scene:
     parking_mask: np.ndarray | None = None
     intersection_mask: np.ndarray | None = None
     uturn_ok_mask: np.ndarray | None = None
+    uturn_prohibited_mask: np.ndarray | None = None
     crosswalk_map: np.ndarray | None = None    # int16 label map, -1 = none
     crosswalk_ids: list[str] = field(default_factory=list)
     crosswalk_signals: list[str | None] = field(default_factory=list)   # pedestrian signal per crossing
@@ -77,6 +78,9 @@ class Scene:
 
     def uturn_allowed(self, pts: np.ndarray) -> np.ndarray:
         return self._in(self.uturn_ok_mask, pts)
+
+    def uturn_prohibited(self, pts: np.ndarray) -> np.ndarray:
+        return self._in(self.uturn_prohibited_mask, pts) & ~self.uturn_allowed(pts)
 
     def crosswalk_at(self, pts: np.ndarray) -> np.ndarray:
         return self._label(self.crosswalk_map, pts)
@@ -178,7 +182,8 @@ def load_scene(cfg: dict, width: int, height: int) -> Scene:
             scene.road_mask &= ~polygon_mask(raw["road_exclude"], width, height)
         scene.road_source = "config"
     for key, attr in (("ignore", "ignore_mask"), ("parking", "parking_mask"),
-                      ("intersection", "intersection_mask"), ("u_turn_allowed", "uturn_ok_mask")):
+                      ("intersection", "intersection_mask"), ("u_turn_allowed", "uturn_ok_mask"),
+                      ("u_turn_prohibited", "uturn_prohibited_mask")):
         if raw.get(key):
             setattr(scene, attr, polygon_mask(raw[key], width, height))
     scene.crosswalk_map, scene.crosswalk_ids = _label_map(raw.get("crosswalks", []), "polygon", width, height)

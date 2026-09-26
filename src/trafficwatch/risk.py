@@ -77,7 +77,7 @@ def _opposite(va: np.ndarray, sa: float, vb: np.ndarray, sb: float, min_nspeed: 
 
 
 class CausalRisk:
-    def __init__(self, cfg: dict | None = None):
+    def __init__(self, cfg: dict | None = None, *, with_detector: bool = True):
         self.cfg = cfg or load_config()
         self.p = self.cfg["risk"]
         set_determinism(int(self.cfg.get("seed", 0)))
@@ -88,7 +88,7 @@ class CausalRisk:
         dcfg = self.cfg.get("detector", {})
         self.detector = get_detector(self.p["weights_gpu" if gpu else "weights_cpu"], device,
                                      int(self.p["imgsz"]), device.startswith("cuda"), 1, float(dcfg.get("conf", 0.1)),
-                                     float(dcfg.get("iou", 0.6)), float(dcfg.get("vehicle_merge_iou", 0.7)))
+                                     float(dcfg.get("iou", 0.6)), float(dcfg.get("vehicle_merge_iou", 0.7))) if with_detector else None
         self.scene: Scene | None = None
         self.reset({"fps": 25.0, "width": 0, "height": 0})
 
@@ -110,6 +110,8 @@ class CausalRisk:
 
     # -- public API ------------------------------------------------------------------------
     def step(self, frame: np.ndarray, t_sec: float) -> float:
+        if self.detector is None:
+            raise RuntimeError("This risk estimator accepts detections via update(), not video frames.")
         i = self.i
         self.i += 1
         if i % self.stride:
@@ -217,7 +219,10 @@ def risk_curve_from_perception(perception, cfg: dict | None = None) -> tuple[np.
     """Part B scores for the frames Part A already detected, fed one by one through the same causal
     estimator. Used by the demo and the website export to avoid detecting every frame twice; the
     submission itself calls RiskEstimator.step on every frame."""
-    est = CausalRisk(cfg)
+    # Only raw, per-frame detections are reused. Part A's smoothed tracks, rules and
+    # future frames never enter this estimator. Do not load an unused second model:
+    # the CPU Space intentionally ships only the nano detector, even on a CUDA host.
+    est = CausalRisk(cfg, with_detector=False)
     info = perception.info
     est.reset({"fps": info.fps / perception.stride, "width": info.width, "height": info.height}, stride=1)
     scores = [est.update(det, t) for t, det in zip(perception.times, perception.detections)]

@@ -63,11 +63,6 @@ rules:
     min_s: 1.0
     crosswalk_margin_px: 6   # *_px margins are for 1280-pixel-wide video and scale with the frame width
     rider_overlap: 0.35      # person box overlapping a bike/motorbike this much = rider, not pedestrian
-    red_signal: true         # also: stepping onto a crossing against its red pedestrian signal
-    red_grace_s: 2.0         # ... red for at least this long when the pedestrian steps on
-    red_entry_share: 0.3     # ... from a kerb or island: first position within this share of either end
-    red_min_progress: 0.25   # ... and walking at least this share of the crossing length
-    red_early_s: 2.0         # ... but not when the green comes within this time (setting off early)
     min_travel_scale: 1.5    # off a crossing: walks at least this far (body sizes); a rider waiting in traffic does not
   failure_to_yield:
     enabled: true

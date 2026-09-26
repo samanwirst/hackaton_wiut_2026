@@ -1,7 +1,7 @@
 # Scene layout (`configs/scene_tashkent.json`)
 
 The camera never moves, so the road layout is a fixed fact of the scene. We draw it once on a
-full-resolution frame with `tools/scene_editor.html` (open the file in a browser, load a frame or a
+full-resolution frame with `tools/annotation/scene_editor.html` (open the file in a browser, load a frame or a
 sample video, draw, export) and save the result as `configs/scene_tashkent.json`. All coordinates
 are video pixels; if a video has a different size, coordinates are rescaled from `frame_size`.
 
@@ -18,7 +18,7 @@ Every key is optional. A rule whose geometry is missing does not fire.
 | `frame_size` | `[width, height]` of the annotated frame | rescaling |
 | `road` | list of polygons: the carriageway (where vehicles drive; not pavements, not parking bays) | jaywalking, stopped vehicle, congestion, obstacles |
 | `road_exclude` | polygons cut out of `road`: medians, traffic islands | same as `road` |
-| `crosswalks` | `[{id, polygon, signal?}]` pedestrian crossings; `signal` is the id of the pedestrian signal that controls it | jaywalking (excluded area; stepping on against a red `signal`), failure to yield |
+| `crosswalks` | `[{id, polygon, signal?}]` pedestrian crossings; `signal` can colour the visualisation | jaywalking (excluded area), failure to yield (regardless of pedestrian signal) |
 | `intersection` | polygon of the junction box | red light (end), stop line, wrong way (ignored inside) |
 | `traffic_lights` | `[{id, roi: [x1, y1, x2, y2], kind?, lamps?}]` box around the lamp housing; `kind` is `vehicle` or `pedestrian`; `lamps` (`{"red": box, "amber": box, "green": box}`) reads the state from which lamp is lit instead of from colour | signal state |
 | `signals` | derived signals for heads that face away from the camera (see below) | red light, stop line, jaywalking |
@@ -27,7 +27,8 @@ Every key is optional. A rule whose geometry is missing does not fire.
 | `lanes` | `[{id, polygon, direction: [dx, dy], allowed_turns: ["straight", "left", "right"]}]` | wrong way (overrides the learned field), illegal turn |
 | `zones` | `[{id, polygon}]` entry / exit areas at the edges of the junction | illegal turn |
 | `prohibited_movements` | `[["zoneA", "zoneB"], ...]` entry → exit pairs that are not allowed | illegal turn |
-| `u_turn_allowed` | polygons where U-turns are legal (default: nowhere) | illegal U-turn |
+| `u_turn_prohibited` | polygons where signs or markings explicitly prohibit U-turns; missing means unknown | illegal U-turn |
+| `u_turn_allowed` | allowed areas that override a prohibited polygon | illegal U-turn |
 | `direction_groups` | `[{id, polygon}]` one region per direction of travel | congestion |
 | `parking` | polygons of parking bays / lay-bys | stopped vehicle (excluded) |
 | `ignore` | polygons to ignore completely (timestamp overlay, far background) | all |
@@ -63,7 +64,7 @@ to the frame: green 34.5–72.4 s, amber 72.6–75.4 s, red 75.6–114.4 s.
 
 ## What is learned instead (`configs/scene_model_tashkent.npz`)
 
-`python tools/learn_scene.py --videos samples/` runs detection and tracking on the sample videos
+`python tools/learn_scene.py --videos data/samples/` runs detection and tracking on the sample videos
 and stores:
 
 - `road_mask` — the pixels that moving vehicles' wheels covered (used when `road` is not drawn),

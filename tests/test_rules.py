@@ -128,8 +128,14 @@ def test_illegal_u_turn():
     keys = [(0, 100, 400), (4, 600, 400)]
     keys += [(4 + 4 * (k + 1) / 20, 600 + 80 * np.cos(a), 480 + 80 * np.sin(a)) for k, a in enumerate(ang)]
     keys += [(12, 100, 560)]
-    ev = RULES["illegal_u_turn"](make_context([path_rows(1, CAR, keys)], 14, road_scene()))
+    rows = [path_rows(1, CAR, keys)]
+    scene = road_scene()
+    assert RULES["illegal_u_turn"](make_context(rows, 14, scene)) == []
+    scene.uturn_prohibited_mask = np.ones((H, W), dtype=bool)
+    ev = RULES["illegal_u_turn"](make_context(rows, 14, scene))
     assert len(ev) == 1 and 3.0 < ev[0].start < 5.5 and 7.0 < ev[0].end < 9.5
+    scene.uturn_ok_mask = np.ones((H, W), dtype=bool)
+    assert RULES["illegal_u_turn"](make_context(rows, 14, scene)) == []
 
 
 # -- congestion ---------------------------------------------------------------------------------
