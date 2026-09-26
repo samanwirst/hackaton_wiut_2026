@@ -1,0 +1,39 @@
+{
+  "kind": "sampled_visual_candidate_review",
+  "metric_ground_truth": false,
+  "reviewer": "AI-assisted development review; not organiser labels",
+  "baseline_predictions": "reports/original_gpu/predictions-all.json",
+  "baseline_predictions_sha256": "4c1b4eac12615298640f0077696f3bd8f16c95b3ec7610a7b4d3c4ec55018509",
+  "inputs": {
+    "C3896.MP4": "e9f3a2c159d69331428b84babd046ad9610c4ce26530db8f576ea7642a58ecff"
+  },
+  "limitations": [
+    "Only the listed candidate pairs/windows were reviewed; this is not an exhaustive event annotation.",
+    "Contact sheets sample at 2 fps and show cropped regions; brief or occluded contact may not be visible.",
+    "Do not pass this file to evaluate.py as ground truth or use it to claim whole-video F1."
+  ],
+  "reviews": [
+    {
+      "video": "C3896.MP4",
+      "prediction": [216.02, 217.62, "accident"],
+      "track_ids": [1013, 1163],
+      "review_window": [214.0, 222.0],
+      "crop_xywh": [3000, 500, 840, 660],
+      "sample_fps": 2,
+      "verdict": "false_positive_for_reviewed_pair",
+      "observation": "The vehicle remains parked at the kerb while pedestrians stand or walk beside it. The proposed pair does not show collision contact or an impact response in the reviewed sequence.",
+      "artifact": "reports/accident_review/C3896_214-222.jpg"
+    },
+    {
+      "video": "C3896.MP4",
+      "prediction": [274.74, 276.01, "accident"],
+      "track_ids": [1248, 1501],
+      "review_window": [272.0, 280.0],
+      "crop_xywh": [1900, 950, 1250, 700],
+      "sample_fps": 2,
+      "verdict": "unconfirmed",
+      "observation": "Vehicles close up and stop in dense traffic. No clear impact is visible in this sampled crop; full-rate review is required before labelling it a collision or a false positive.",
+      "artifact": "reports/accident_review/C3896_272-280.jpg"
+    }
+  ]
+}

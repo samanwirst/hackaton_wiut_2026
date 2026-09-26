@@ -1,17 +1,23 @@
-# Labeling the sample videos (our dev set)
+# Building a labelled dev set
 
-Without labels we would be tuning blind, so every sample video is annotated by hand with
-[`tools/label_tool.html`](../tools/label_tool.html) and scored with the official `evaluate.py`.
+A complete manually labelled dev set is **not included yet**. The workflow below uses
+[`tools/annotation/label_tool.html`](../tools/annotation/label_tool.html) to create one, then
+scores it with the official `evaluate.py`.
+
+`data/labels/candidate_reviews.json` contains only scoped, AI-assisted visual reviews of
+selected predictions. It is not an exhaustive annotation, and unreviewed time must not be
+treated as negative ground truth. Do not pass that file to the evaluator or claim F1 from it.
 
 ## Workflow
 
-1. Open `tools/label_tool.html` in Chrome, Edge or Safari (no server needed).
-2. Load a video; check that the FPS box matches the video (25 for this camera).
+1. Open `tools/annotation/label_tool.html` in Chrome, Edge or Safari (no server needed).
+2. Load a video; check that the FPS box matches the file. The four supplied originals are
+   `30000/1001` fps (approximately `29.97003`), not 25 fps. Check other inputs individually.
 3. Pick a class (hotkeys `1`–`0`, `q`, `w`, `t`, `y`), go to the start frame, press `[`; go to the
    end frame, press `]`. Arrow keys step one frame, `Shift`+arrow one second.
 4. Select a row and press `s` / `e` to move its start / end to the current time; `Del` removes it.
 5. Export JSON. Load the file again to continue, or to add the next video to the same file.
-6. Save the merged file as `labels/dev_labels.json` and commit it.
+6. Save the merged file as `data/labels/dev_labels.json` and commit it.
 
 Labels are auto-saved in the browser per video name, but export often.
 
@@ -46,6 +52,6 @@ Rules that matter for the score:
 ## Quality control
 
 - Two people label each video independently; a third resolves differences over 1 s.
-- Keep a short note of every doubtful case in `labels/notes.md` (time, what happened, decision), so
+- Keep a short note of every doubtful case in `data/labels/notes.md` (time, what happened, decision), so
   the rules and the labels follow the same interpretation.
 - Never label from the model's output; look at the video.
