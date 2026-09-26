@@ -64,6 +64,7 @@ const TYPES = {
   zones:            ["Entry/exit zone", "polygon", "#bc8cff", false, true],
   direction_groups: ["Direction group", "polygon", "#39c5cf", false, true],
   u_turn_allowed:   ["U-turn allowed", "polygon", "#7ee787", false, false],
+  u_turn_prohibited:["U-turn prohibited", "polygon", "#ff7b72", false, false],
   parking:          ["Parking (not carriageway)", "polygon", "#8b949e", false, false],
   ignore:           ["Ignore area", "polygon", "#6e7681", false, false],
 };
@@ -170,7 +171,7 @@ function toScene() {
   const s = { frame_size: [W, H] };
   const polys = type => items.filter(i => i.type === type).map(i => i.pts);
   if (polys("road").length) s.road = polys("road");
-  for (const k of ["ignore", "parking", "u_turn_allowed"]) if (polys(k).length) s[k] = polys(k);
+  for (const k of ["ignore", "parking", "u_turn_allowed", "u_turn_prohibited"]) if (polys(k).length) s[k] = polys(k);
   if (polys("intersection").length) s.intersection = polys("intersection")[0];
   const named = (type, f) => items.filter(i => i.type === type).map(f);
   s.crosswalks = named("crosswalks", i => ({ id: i.id, polygon: i.pts }));
@@ -187,7 +188,7 @@ function fromScene(s) {
   items = [];
   const add = (type, pts, extra) => items.push(Object.assign({ type, pts }, extra || {}));
   (s.road || []).forEach(p => add("road", p));
-  for (const k of ["ignore", "parking", "u_turn_allowed"]) (s[k] || []).forEach(p => add(k, p));
+  for (const k of ["ignore", "parking", "u_turn_allowed", "u_turn_prohibited"]) (s[k] || []).forEach(p => add(k, p));
   if (s.intersection) add("intersection", s.intersection);
   (s.crosswalks || []).forEach(c => add("crosswalks", c.polygon, { id: c.id }));
   (s.zones || []).forEach(c => add("zones", c.polygon, { id: c.id }));

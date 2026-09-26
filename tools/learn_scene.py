@@ -4,7 +4,7 @@ The carriageway is where moving vehicles put their wheels; the direction field i
 of vehicle headings per image cell. Both are saved to configs/scene_model_tashkent.npz and a preview image
 is written so the result can be checked by eye.
 
-    python tools/learn_scene.py --videos samples/ [--profile cpu]
+    python tools/learn_scene.py --videos data/samples/ [--profile cpu]
 """
 from __future__ import annotations
 

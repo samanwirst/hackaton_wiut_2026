@@ -1,0 +1,9 @@
+# Runtime dependencies shared by GPU evaluation and CPU development/demo profiles.
+ultralytics==8.3.253
+lap>=0.5.12
+# Ultralytics declares opencv-python explicitly. Pinning that distribution avoids
+# installing two packages that both provide the cv2 module.
+opencv-python>=4.9,<5
+numpy>=1.24,<2.3
+scipy>=1.10
+pyyaml>=6.0

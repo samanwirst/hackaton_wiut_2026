@@ -1,10 +1,8 @@
-# Evaluation machine: pip install -r requirements.txt   (Python 3.10 - 3.13)
-# torch 2.6 wheels on PyPI are built for CUDA 12.4 and run on NVIDIA drivers >= 525 (T4 OK).
-torch==2.6.0
-torchvision==0.21.0
-ultralytics==8.3.253
-lap>=0.5.12
-opencv-python-headless>=4.9,<5
-numpy>=1.24,<2.3
-scipy>=1.10
-pyyaml>=6.0
+# Evaluation profile: official PyTorch 2.6 CUDA 12.4 wheels for the organisers'
+# Linux/T4 machine. Other platforms use PyPI wheels and fall back to CPU/MPS.
+--extra-index-url https://download.pytorch.org/whl/cu124
+torch==2.6.0+cu124 ; sys_platform == "linux" and platform_machine == "x86_64"
+torchvision==0.21.0+cu124 ; sys_platform == "linux" and platform_machine == "x86_64"
+torch==2.6.0 ; sys_platform != "linux" or platform_machine != "x86_64"
+torchvision==0.21.0 ; sys_platform != "linux" or platform_machine != "x86_64"
+-r requirements/base.txt
