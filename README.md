@@ -4,9 +4,14 @@ TrafficWatch watches a fixed road camera, reports every traffic event as a time 
 class (Part A), and outputs, frame by frame, the probability that an accident starts within the
 next 5 seconds (Part B).
 
-- **Website:** `TODO: link` (team, approach, EDA, results, live demo, report)
-- **Live demo:** `TODO: Hugging Face Space link`
+- **Website source:** [`website/`](website) · deployment target:
+  `https://samanwirst.github.io/hackaton_wiut_2026/`
+- **Live demo source:** [`demo/`](demo) (Hugging Face Space package; public URL is added at deployment)
 - **Predictions on the sample videos:** [`predictions_samples.json`](predictions_samples.json)
+- **Development history:** [nine reviewable stages with commit links](docs/development-history.md)
+
+Local website preview: `python tools/serve_website.py`, then open `http://127.0.0.1:8765`.
+This server supports MP4 range requests, which are needed for clicks on the event timeline to seek.
 
 ## Quick start (what the organisers run)
 
@@ -15,6 +20,11 @@ pip install -r requirements.txt            # Python 3.10–3.13; or: docker buil
 bash weights/download.sh                   # once, with internet: fetches missing weights, checks SHA-256
 python run_submission.py --videos /data/test --out predictions.json
 ```
+
+`requirements.txt` selects the [official PyTorch 2.6 CUDA 12.4 wheels](https://docs.pytorch.org/get-started/previous-versions/#v260)
+used by the evaluation profile. For a smaller CPU-only local environment, use
+`pip install -r requirements/cpu.txt`; the public demo has its own self-contained CPU
+requirements in `demo/requirements.txt`.
 
 The model weights are three public Ultralytics YOLO11 files (≈ 64 MB in total, far below the 5 GB
 limit) in [`weights/`](weights). `weights/download.sh` downloads any that are missing from the
@@ -78,44 +88,74 @@ exiting car into a stopped vehicle, a crash with the car behind it, or a U-turn.
 | `stopped_vehicle` | vehicle still ≥ 10 s on the carriageway while traffic in its direction drives past it in a neighbouring lane (so a signal queue, or the car ahead driving off at green, does not count); stationary fragments of one vehicle are joined across track ids. A vehicle that stopped behind a signalised stop line on red and drives off within 20 s of green is queueing, however long the red |
 | `congestion` | per direction of travel: ≥ 4 vehicles, median speed crawling, most of them stopped, for ≥ 30 s; vehicles waiting behind a stop line on red (and the queue driving off after green) do not count |
 | `wrong_way` | heading that the learned direction field says is (almost) never seen at that place while the opposite heading is common, for ≥ 1.5 s — or against a hand-drawn lane direction |
-| `illegal_u_turn` | heading turns ≥ 150° within 20 s outside zones where U-turns are allowed |
+| `illegal_u_turn` | heading turns ≥ 150° within 20 s inside an explicitly annotated prohibited zone; allowed areas override the prohibition |
 | `illegal_turn` | turn into a prohibited entry→exit movement, or a turn not allowed from the entry lane |
 | `solid_line_crossing` | both approximate wheel points change side of a solid marking |
 | `red_light` | the vehicle's front crosses a stop line while its signal has been red for ≥ 0.3 s; ends when it has entered and left the junction box (or the frame). A vehicle that halts over the line and only goes on at green is a `stop_line` case |
 | `stop_line` | vehicle stops past the stop line on red without entering the junction; ends at green |
-| `jaywalking` | pedestrian (not a rider) walking on the carriageway outside a crossing for ≥ 1 s; or stepping from a kerb or island onto a crossing whose pedestrian signal has been red ≥ 2 s (not within 2 s of its green) and walking on over it |
+| `jaywalking` | pedestrian (not a rider) walking on the carriageway outside a crossing for ≥ 1 s; crossing on red is not a separate official class |
 | `failure_to_yield` | vehicle drives through a crossing while a pedestrian walks on it near its path (someone waiting at the kerb edge does not count) |
-| `accident` | two road users come within contact range (normalised distance < 1 / lower-box overlap) after a fast approach; the striker was still moving at contact, loses ≥ 60 % of its speed within 1 s, comes to rest and stays next to the other (a queue closing up or a car driving past a stopped bus is not) |
+| `accident` | two road users come within contact range (normalised distance < 1 / lower-box overlap) after a fast approach; the striker loses ≥ 60 % of its speed within 1 s and has a complete half-second settling window. Joint track evidence of remaining close is required; for a pedestrian/vehicle pair the vehicle must have been moving, so walking up to a parked car is insufficient |
 | `near_miss` | closest-approach analysis predicts contact within 2 s (road users driving towards each other only on a nearly head-on course; followers at the same pace never), a moving vehicle is involved, one of them brakes sharply or swerves (averaged over 0.5 s), and they never touch. **Off by default**: none of its 15 firings on the samples and C3905 was right |
 | `road_obstacle` | animal on the carriageway, or a static foreign object that differs from the long-term background where no tracked road user is |
 | `fire_smoke` | flickering saturated flame-coloured regions (off by default until validated) |
 
-Classes whose rule needs scene geometry that has not been drawn yet stay silent, which keeps them
-out of the macro-F1 average instead of adding a zero.
+Rules requiring missing scene geometry stay silent. Such a class still contributes false negatives
+and a zero F1 if it occurs in the hidden ground truth; only classes absent from both ground truth
+and predictions are excluded from the macro average. The current scene has no verified U-turn
+prohibitions, solid-line annotations or prohibited turn movements.
 
 ## Reproducing our results
 
-1. Put the organisers' sample videos (C3896, C3897, C3902, C3905) in `samples/`.
+1. Put the organisers' sample videos (C3896, C3897, C3902, C3905) in `data/samples/`, or fetch the
+   public files from the organiser-provided Drive ids with `python tools/download_samples.py`.
+   For quicker EDA and website generation, `python tools/download_samples.py --preview
+   --out data/previews` downloads Drive's 1080p transcodes; exact benchmarking must use the
+   original 4K files.
 2. The camera's layout is [`configs/scene_tashkent.json`](configs/scene_tashkent.json): crossings, the
    stop line before the crossing, the two visible signal heads and the signals derived from them. It
-   was drawn with [`tools/scene_editor.html`](tools/scene_editor.html) and is picked automatically
+   was drawn with [`tools/annotation/scene_editor.html`](tools/annotation/scene_editor.html) and is picked automatically
    for 3840×2160 video — see [`docs/scene.md`](docs/scene.md).
-3. Learn the road mask and direction field: `python tools/learn_scene.py --videos samples/`
-4. Run the harness on the samples: `python run_submission.py --videos samples/ --out predictions_samples.json`
+3. Learn the road mask and direction field: `python tools/learn_scene.py --videos data/samples/`
+4. Run the harness on the samples: `python run_submission.py --videos data/samples/ --out predictions_samples.json`
    On a machine with CUDA this uses the GPU profile, as on the evaluation machine. Without CUDA the
    CPU profile (a smaller model) would be picked instead. To get the evaluation machine's output
    there, force the GPU profile on another device:
-   `TRAFFICWATCH_PROFILE=gpu TRAFFICWATCH_DEVICE=mps python run_submission.py --videos samples/ --out predictions_samples.json`
-   (`mps` on Apple silicon, `cpu` elsewhere; only fp16 rounding differs from a T4). `predictions_samples.json`
-   was made this way.
-5. Dev labels: annotate the samples with [`tools/label_tool.html`](tools/label_tool.html)
-   ([`docs/labeling.md`](docs/labeling.md)) into `labels/dev_labels.json`, then
-   `python evaluate.py --pred predictions_samples.json --gt labels/dev_labels.json`
-6. Website data: `python tools/eda.py --videos samples/` and
-   `python tools/export_results.py --videos samples/ --pred predictions_samples.json`
+   `TRAFFICWATCH_PROFILE=gpu TRAFFICWATCH_DEVICE=mps python run_submission.py --videos data/samples/ --out predictions_samples.json`
+   (`mps` on Apple silicon, `cpu` elsewhere). Floating-point differences across devices can change
+   threshold decisions and tracker associations; exact reproduction is checked on the same machine.
+   The current `predictions_samples.json` is the validated GPU run on all four original 4K
+   samples: 165 events and 33,075 per-frame risk scores. `reports/submission_run.json` records
+   input/source/configuration hashes and package versions. The website's EDA, annotated videos,
+   event segments and risk charts use the same original inputs and output.
+   Immediately after any new run, record its inputs and source hashes:
+   `python tools/record_run.py --videos data/samples/ --source-kind original --profile gpu`.
+   Use `--videos data/previews --source-kind preview --profile cpu` only for a separate preview run.
+5. Dev labels: annotate the samples with [`tools/annotation/label_tool.html`](tools/annotation/label_tool.html)
+   ([`docs/labeling.md`](docs/labeling.md)) into `data/labels/dev_labels.json`, then
+   `python evaluate.py --pred predictions_samples.json --gt data/labels/dev_labels.json`
+6. Website data, in the CUDA environment: `python tools/eda.py --videos data/samples/ --profile gpu --source-kind original` and
+   `python tools/export_results.py --videos data/samples/ --profile gpu --pred predictions_samples.json --source-kind original`.
+   For a separate preview experiment use `--videos data/previews --profile cpu --source-kind preview`
+   and a separately generated preview prediction file. Do not mix preview assets with the original-run submission.
 
-Tests: `pytest -q` (rules on trajectories generated in code, derived signals, post-processing, the
-official metric, Part B).
+Tests: `pytest -q` (72 tests with the development/demo dependencies installed, covering
+trajectory rules, robustness cases, the official class definitions, signal phases,
+post-processing, offline weights, prefix-causal Part B, demo output/cache cleanup,
+and website risk-curve/input-metadata consistency with the submitted output).
+The three demo lifecycle tests are skipped in inference-only environments without Gradio/Plotly.
+CI also validates `predictions_samples.json`
+and all committed weight checksums.
+
+Run `python tools/check_submission.py` for a package audit, or add `--strict --online` before
+creating the final tag to require all four sample visualisations, complete team profiles,
+matching run provenance and reachable public URLs. Runtime on T4, visual correctness and an
+actual public demo upload still require direct verification beyond this static audit.
+
+The requirement-by-requirement status and remaining external prerequisites are tracked in
+[`docs/submission-readiness.md`](docs/submission-readiness.md).
+The publication steps and public-upload checklist are in
+[`docs/deployment.md`](docs/deployment.md); preparing files locally does not publish them.
 
 ## Determinism
 
@@ -127,48 +167,105 @@ noise aside).
 
 ## Runtime
 
-GPU profile (used when CUDA is available): YOLO11m at 960 px on every 2nd frame for Part A, YOLO11s
-at 640 px on every 3rd frame for Part B. CPU fallback: YOLO11n at 640 px on every 4th frame for both
-parts, which stays inside the budget even on a 2-core machine. Measured with the official harness
-on C3905 (127.6 s of 4K video): GPU profile on an Apple M5 (MPS) 245 s, CPU profile 150 s, against a
-budget of 383 s; a T4 is faster than the M5 for this model. The limit is 3× the video duration; frame subsampling is fixed per profile, never
-adapted to wall-clock time, so results stay deterministic.
+GPU profile: YOLO11m at 960 px for Part A (target 12.5 processed fps), YOLO11s at 640 px for
+Part B (target 8.34 fps). CPU: YOLO11n at 640 px for both parts (target 6.25 fps).
+Stride is `round(source_fps / target_fps)`: for 29.97 fps samples it is 2/4 on GPU and 5/5
+on CPU; at 25 fps it is 2/3 and 4/4. It never adapts to wall-clock time.
+
+The initial full CPU run on the 1080p previews took 249.6 s for C3902 (317.8 s of video) and
+109.4 s for C3905 (127.6 s), below their respective 953.5 s and 382.9 s limits. Hardware,
+input checksums and the preserved run are documented in [`reports/preview_cpu/`](reports/preview_cpu).
+The current run's timings are in `predictions_samples.json` under `log`.
+These CPU-preview measurements do not prove the runtime of original 4K files on a T4;
+that evaluation-profile benchmark remains outstanding.
+
+A fresh Python environment installed from the root CUDA requirements also completed the full
+C3905 preview offline on an RTX 3050 Laptop (4 GB), using the default GPU profile: 77.8 s and
+79.4 s in two fresh processes against a 382.9 s budget, with exactly matching events/risk.
+See [`reports/gpu_preview/`](reports/gpu_preview) for commands, source/input
+provenance and the limits of this local check; it is not a T4/original-footage benchmark.
+
+The first original 4K input, C3905, has now also passed two offline runs on the same GPU/profile:
+186.3 s and 170.5 s (Part A + Part B) against a 382.9 s budget, with exactly matching events
+and one risk score for all 3,825 frames.
+Its results and source/input hashes are separate in [`reports/original_gpu/`](reports/original_gpu).
+Before the latest accident-evidence correction, the complete original set passed the same
+offline GPU harness: C3896 440.2 s,
+C3897 415.7 s, C3902 422.3 s and C3905 159.0 s, or 1.25–1.33× input duration. All four logs
+are error-free, and `reports/original_gpu/predictions-all.json` passes the official validator
+with one risk score per frame. The matching input/source manifest is `run-all.json` in that
+directory. This historical baseline remains separate from the current root output.
+The correction and its reviewed evidence are recorded in
+[`reports/accident_review/`](reports/accident_review). The updated rule has now passed a fresh
+full-set offline run: **403.7 / 386.5 / 380.7 / 161.5 s**, or **1.19–1.27× input duration**,
+with 165 events and 33,075 per-frame risk scores. `predictions-reviewed.json` and
+`run-reviewed.json` in the original-GPU report directory hold the validated output/provenance.
+All risk curves and non-accident events match the baseline exactly; accident segments match the
+scoped rule comparison. Neither this check nor the event counts establish detection accuracy.
+The reviewed output is now `predictions_samples.json`, with a matching root run manifest,
+four H.264 annotated videos, four result timelines/risk curves and all 20 original EDA images.
+T4-class verification remains outstanding.
 
 ## Data and models
 
 | Item | Licence | Use |
 |---|---|---|
-| Organisers' sample videos | provided for the hackathon | EDA, rule tuning, our dev labels (`labels/`) |
+| Organisers' sample videos | provided for the hackathon | EDA, rule development and scoped visual-review notes (`data/labels/`); a complete dev-label set is not yet included |
 | YOLO11 n/s/m COCO weights (Ultralytics) | AGPL-3.0 | detection |
 | ByteTrack (Ultralytics implementation) | AGPL-3.0 (orig. MIT) | tracking |
-| COCO dataset (via the pretrained weights) | CC BY 4.0 | — |
+| COCO (indirectly through pretrained weights) | annotations: CC BY 4.0; images: their respective Flickr terms ([official terms](https://github.com/cocodataset/cocodataset.github.io/blob/master/dataset/termsofuse.htm)) | no COCO images redistributed or fine-tuning performed here |
 
 No other dataset is used for training. Because Ultralytics is AGPL-3.0, this repository is
 released under AGPL-3.0 as well (see [`LICENSE`](LICENSE)).
 
 ## Repository layout
 
+```text
+.
+├── solution.py                 public interface imported by the harness
+├── run_submission.py           organisers' harness, unchanged
+├── evaluate.py                 organisers' metric, unchanged
+├── predictions_samples.json    sample submission output
+├── requirements.txt            evaluation (GPU) entry point
+├── requirements/
+│   ├── base.txt                shared runtime dependencies
+│   ├── cpu.txt                 CPU environment and CI
+│   └── dev.txt                 local tools, tests and demo dependencies
+├── src/trafficwatch/            inference pipeline and event rules
+├── configs/                     pipeline settings and scene models
+├── weights/                     model weights and download script
+├── data/
+│   ├── samples/                original videos (local, ignored by Git)
+│   ├── previews/               smaller preview videos (local, ignored by Git)
+│   └── labels/                 dev annotations, when available
+├── tools/
+│   ├── annotation/             standalone HTML labelling and scene editors
+│   └── *.py                    downloads, EDA, exports and package checks
+├── tests/                       automated tests
+├── reports/                     run provenance and preserved results
+├── docs/
+│   └── references/             organiser PDFs/archives (local, ignored by Git)
+├── demo/                        self-contained Hugging Face / Gradio app
+├── website/                     static website, its data and media
+├── .github/workflows/           tests and website deployment
+├── pyproject.toml               test and lint settings
+├── Dockerfile                  evaluation container
+├── README.md
+└── LICENSE
 ```
-solution.py              interface imported by the harness (thin wrapper)
-run_submission.py        organisers' harness, unchanged
-evaluate.py              organisers' metric, unchanged
-configs/                 pipeline.yaml (all thresholds), scene_tashkent.json, scene_model_tashkent.npz
-src/trafficwatch/        detector, tracking, kinematics, scene, rules, post-processing, Part B, rendering
-tools/                   labeling + scene tools (HTML), EDA, scene learning, result export
-tests/                   unit tests on trajectories generated in code
-docs/                    scene layout and labelling conventions
-demo/                    Hugging Face Space (Gradio) for the live demo
-website/                 static team website (GitHub Pages)
-weights/                 YOLO11 weights + download.sh
-```
+
+Run commands from the repository root. `requirements.txt`, the organiser scripts,
+`solution.py` and `weights/` stay at their submission-compatible paths. Generated
+`.cache/`, `runs/` and `space/` directories are local artefacts and stay out of Git.
 
 ## Team
 
 | Member | Role | Contributions | Links |
 |---|---|---|---|
-| TODO | TODO | TODO | GitHub · LinkedIn · portfolio |
-| TODO | TODO | TODO | GitHub · LinkedIn · portfolio |
-| TODO | TODO | TODO | GitHub · LinkedIn · portfolio |
+| Samandar Muhammadiev | Computer Vision & Platform | detection, tracking, event rules, causal risk, tooling, demo and website | [GitHub](https://github.com/samanwirst) |
+
+The remaining team-member names, roles and portfolio links must be filled from the team's confirmed
+submission details before publishing; they are intentionally not invented here.
 
 Code, website and report were written with the help of AI assistants, which the rules allow; no
 hosted model is called at inference.
