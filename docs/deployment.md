@@ -4,6 +4,11 @@ Keep the confirmed repository owner: `samanwirst/hackaton_wiut_2026`.
 This is a preparation checklist, not evidence that any service has been deployed.
 See [submission readiness](submission-readiness.md) for the measured results and open gates.
 
+**Publication is deliberately deferred by the owner.** Keep the repository private, preserve
+`main`, and prepare/verify changes on `feat/trafficwatch-submission`. Do not enable the public
+website, publish the demo or change repository visibility until the owner confirms the final
+publication step. The commands below describe that later release, not permission to run it now.
+
 ## 1. Confirm access and the release contents
 
 These commands are read-only and do not print credentials:

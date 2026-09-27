@@ -159,8 +159,11 @@ or horizontal overflow occurred. This is a website-only fix and leaves inference
 ## External prerequisites
 
 The [publication runbook](deployment.md) covers repository access, Pages, a freshly assembled
-demo package, actual public uploads and the final handoff. Its preparation does not imply that
-remote CI or either public service has run successfully.
+demo package, actual public uploads and the final handoff. Preparing it does not publish either
+service. Remote CI is now independently verified: [run 36299069627](https://github.com/samanwirst/hackaton_wiut_2026/actions/runs/36299069627)
+passed on commit `e02faf2` with 72 passing tests, Ruff, official prediction validation, all
+weight checksums and the package audit (77 passes / 3 warnings / 0 failures). The earlier
+CI failure and test-only correction remain visible in [development history](development-history.md).
 
 Both GitHub workflows now pin verified action release commits; CI has read-only repository
 permissions and keys its pip cache from the actual CPU/shared/demo dependency files.
@@ -177,8 +180,10 @@ caches, and none of its files reaches 100 MiB. These are local checks, not remot
    `samanwirst/hackaton_wiut_2026`; the remote remains unchanged. The repository is currently
    private, so authenticated access is not proof of public availability. The user requested
    a separate development branch with reviewable commits; preserve `main` and its existing
-   history while preparing that branch. Public visibility and the final publication remain
-   outstanding. Do not send tokens in chat.
+   history while preparing that branch. The user explicitly requested that publication be the
+   final step: keep the repository private, do not merge to `main`, and do not publish the
+   website or demo before a later confirmation. Continue preparation and private-branch
+   verification in the meantime. Do not send tokens in chat.
 3. Confirm access to an eligible public demo host. No Hugging Face owner or Space URL has
    been supplied. Current [HF documentation](https://huggingface.co/docs/hub/spaces-overview)
    requires a paid plan for ordinary Gradio Space creation, apart from a limited ZeroGPU

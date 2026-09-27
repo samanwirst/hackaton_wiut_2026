@@ -41,9 +41,10 @@ remain ordinary diffs. This follows
   desktop/mobile playback, event/risk seeking and the delayed-selection regression.
 - Full-run measurements and source/input hashes are in [the original-GPU report](../reports/original_gpu/README.md).
 
-These are local checks, not evidence that remote CI, public hosting or hidden-set accuracy
-has been verified. The complete repeat was interrupted by a host restart before its final
-output was written, so full-set determinism remains an open verification gate.
+These were local checks at the nine-stage checkpoint; the remote CI result is recorded below.
+They do not establish public hosting or hidden-set accuracy. The complete repeat was interrupted
+by a host restart before its final output was written, so full-set determinism remains an open
+verification gate.
 
 ## Post-push verification
 
@@ -59,9 +60,16 @@ threshold. The corrected fixture uses slightly sloped parallel lanes, retains th
 one-event/track-id/duration assertions, and adds a legal vehicle in the opposite lane. It does
 not change inference code, thresholds, model weights or the submitted sample outputs.
 The complete 72-test suite passes locally with automatic kernel selection and separately with
-each of Nehalem, Sandybridge and Haswell. Follow the current
+each of Nehalem, Sandybridge and Haswell. The correction is preserved in
+[e02faf2](https://github.com/samanwirst/hackaton_wiut_2026/commit/e02faf2d4a327384c5445363d6cfa9114279e154).
+The [subsequent GitHub CI run](https://github.com/samanwirst/hackaton_wiut_2026/actions/runs/36299069627)
+**completed successfully** on Ubuntu 24.04 with Python 3.11: all 72 tests passed, Ruff passed,
+the official validator accepted all four videos / 165 events without errors or warnings,
+all three weight checksums matched, and the package audit reported 77 passes / 3 warnings /
+0 failures. This is remote CI evidence, not a GPU benchmark or a public deployment.
+Follow the current
 [branch checks](https://github.com/samanwirst/hackaton_wiut_2026/actions?query=branch%3Afeat%2Ftrafficwatch-submission)
-for the remote verification results.
+for later verification results.
 
 This follow-up is a new commit rather than a rewrite of the nine-stage checkpoint. It makes
 the scenario test portable; it does not claim that angular-bin boundary decisions are
@@ -74,6 +82,9 @@ three-person team details, the complete identical-source repeat and target-hardw
 verification remain tracked in [submission readiness](submission-readiness.md).
 The user deferred team details until the final stage. Do not replace missing information with
 invented profiles or convert candidate-review notes into a claimed accuracy score.
+The user also explicitly deferred public publication: keep the repository private and prepare
+changes in this branch. Making the repository public, merging to `main` and enabling the public
+website/demo are final actions requiring a later confirmation.
 
 Later verification or publication work should be added as new focused commits so its evidence
 and remaining limitations stay visible in the branch history.
