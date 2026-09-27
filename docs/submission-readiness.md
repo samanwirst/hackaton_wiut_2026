@@ -129,7 +129,9 @@ contacts are intended for Git. The optional notebook environment is not a runtim
 1. Add the deferred GitHub/LinkedIn/portfolio/previous-project details without inventing them.
    The user has confirmed names and contributions; these are already in README/site.
 2. Supply three T-shirt sizes in portal order: Samandar, Shohruxxo’ja, Doniyorbek.
-3. Confirm a demo host/account and operational availability. Do not purchase hosting or
+3. The captain confirms that neither he nor the team has an existing Space/server/host.
+   Choose and provision an approved demo host/account and confirm operational availability.
+   Do not purchase hosting or
    substitute a different execution platform without approval.
 4. Wait for explicit publication confirmation before making the repository public, merging
    to `main`, enabling Pages, publishing the demo or creating a final release tag.
