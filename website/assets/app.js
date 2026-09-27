@@ -392,7 +392,7 @@ function renderDemo(site) {
   if (!url) {
     card.replaceChildren(el("div", { class: "demo-local" },
       el("div", {}, el("h3", { text: "Deployment-ready Gradio application" }),
-        el("p", { text: "The public Space URL is added at deployment. The same CPU pipeline can be launched locally from the repository now." }),
+        el("p", { text: "The public demo URL is added after deployment checks. The same CPU pipeline can be launched locally from the repository now." }),
         el("code", { text: "pip install -r demo/requirements.txt && python demo/app.py" })),
       el("div", { class: "demo-features" },
         el("span", { text: "MP4 up to 2 minutes / 500 MB" }),
@@ -402,7 +402,7 @@ function renderDemo(site) {
     return;
   }
   card.replaceChildren(el("p", {}, el("a", { href: url, target: "_blank", rel: "noopener", text: "Open the demo in a new tab ↗" }),
-    el("span", { class: "muted", text: " — the Space may need a minute to wake up if nobody used it recently." })),
+    el("span", { class: "muted", text: " — CPU processing is queued one clip at a time; progress is shown while your clip runs." })),
     el("iframe", { src: embed, title: "TrafficWatch live demo", loading: "lazy", allow: "fullscreen" }));
 }
 
@@ -423,13 +423,14 @@ function renderTeam(site) {
   $("#teamName").textContent = site?.team_name || "Team";
   $("#teamBody").replaceChildren(...team.map(p => el("div", { class: "card member" }, el("h3", { text: p.name }), el("div", { class: "role", text: p.role }),
     el("p", { text: p.contributions }), p.projects ? el("p", { text: `Proud of: ${p.projects}` }) : null,
+    p.profile_note ? el("p", { class: "muted", text: p.profile_note }) : null,
     el("div", { class: "mlinks" }, ...[["GitHub", p.github], ["LinkedIn", p.linkedin], ["Portfolio", p.portfolio]]
       .filter(([, u]) => u).map(([t, u]) => el("a", { href: u, target: "_blank", rel: "noopener", text: t }))))));
 }
 
 function renderLinks(site) {
   const L = [["Code repository", site?.repo_url], ["Model weights", site?.weights_url], ["predictions_samples.json", site?.predictions_url],
-    ["Live demo (Hugging Face Space)", site?.demo_url]].filter(([, u]) => u);
+    ["Live upload demo", site?.demo_url]].filter(([, u]) => u);
   $("#linksBody").replaceChildren(...(L.length ? L.map(([t, u]) => el("li", {}, el("a", { href: u, target: "_blank", rel: "noopener", text: t }))) : [el("li", { class: "muted", text: "Links will be added at submission." })]));
 }
 

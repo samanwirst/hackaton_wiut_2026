@@ -6,7 +6,7 @@ frame (Part B). The risk output follows the probability interface but is not emp
 
 - **Website source:** [`website/`](website) · deployment target:
   `https://samanwirst.github.io/hackaton_wiut_2026/`
-- **Live demo source:** [`demo/`](demo) (Hugging Face Space package; public URL is added at deployment)
+- **Live demo source:** [`demo/`](demo) (Gradio app with isolated [server deployment](demo/server); public URL is added after verification)
 - **Predictions on the sample videos:** [`predictions_samples.json`](predictions_samples.json)
 - **Development history:** [reviewable stages and verification follow-ups](docs/development-history.md)
 
@@ -294,15 +294,15 @@ outputs use the project identifier `trafficwatch` in their non-scoring `team` me
 
 | Member | Role | Contributions | Links |
 |---|---|---|---|
-| Mukhammadiev Samandar Shavkatovich | Captain · Core development & engineering | Equal core contributor: substantially refactored and re-engineered the basic implementation into a professional-grade codebase | [GitHub](https://github.com/samanwirst) |
-| Muxiddinov Shohruxxo’ja Usmonxo’ja o’g’li | Polish & debugging | Polished the project and debugged implementation issues | Links pending |
-| Doniyorbek Raximov Mehriddinovich | Core development & foundation | Equal core contributor: created the project foundation and initial baseline implementation | Links pending |
+| Mukhammadiev Samandar Shavkatovich | Captain · Core development & engineering | Equal core contributor: substantially refactored and re-engineered the basic implementation into a professional-grade codebase | [GitHub](https://github.com/samanwirst) · [LinkedIn](https://www.linkedin.com/in/samandar-mukhammadiev-0279b8274/) |
+| Muxiddinov Shohruxxo’ja Usmonxo’ja o’g’li | Polish & debugging | Polished the project and debugged implementation issues | [GitHub](https://github.com/TopGuzb) · [LinkedIn](https://www.linkedin.com/in/shohrukh-mukhiddinov-015b83277) |
+| Doniyorbek Raximov Mehriddinovich | Core development & foundation | Equal core contributor: created the project foundation and initial baseline implementation | [GitHub](https://github.com/doniyorproject) · No LinkedIn profile |
 
 All three names and the captain designation are verified against the official participant portal;
 the captain confirmed this contribution breakdown. Samandar and Doniyorbek share equal core
 development credit; refactoring and engineering are substantial development work, not a
-supporting role. The remaining profile/portfolio links and
-previous projects still need to be supplied before publication. Private registration contact
+supporting role. The captain supplied the profile links above and confirmed that Doniyorbek
+has no LinkedIn profile. Portfolio links and previous projects remain incomplete. Private registration contact
 details are intentionally excluded.
 
 Code, website and report were written with the help of AI assistants, which the rules allow; no
