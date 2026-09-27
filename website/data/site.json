@@ -5,8 +5,8 @@
   "website_url": "https://samanwirst.github.io/hackaton_wiut_2026/",
   "weights_url": "https://github.com/samanwirst/hackaton_wiut_2026/tree/main/weights",
   "predictions_url": "https://github.com/samanwirst/hackaton_wiut_2026/blob/main/predictions_samples.json",
-  "demo_url": "",
-  "demo_embed_url": "",
+  "demo_url": "https://trafficwatch.31-130-151-28.sslip.io/",
+  "demo_embed_url": "https://trafficwatch.31-130-151-28.sslip.io/",
   "metrics": {
     "score_a_dev": null,
     "speed": "1.24–1.69× duration",
@@ -78,29 +78,29 @@
       "name": "Mukhammadiev Samandar Shavkatovich",
       "role": "Captain · Core development & engineering",
       "contributions": "Equal core contributor alongside Doniyorbek. Substantially refactored and re-engineered the basic implementation into a professional-grade codebase.",
-      "projects": "TrafficWatch — an offline, explainable traffic-safety pipeline from inference to operator-facing visualisation.",
+      "projects": "taskmanager_tgbot — a lightweight Telegram task manager; json_python_tool — a Python JSON helper. Public repositories are linked in the GitHub portfolio.",
       "github": "https://github.com/samanwirst",
       "linkedin": "https://www.linkedin.com/in/samandar-mukhammadiev-0279b8274/",
-      "portfolio": ""
+      "portfolio": "https://github.com/samanwirst?tab=repositories"
     },
     {
       "name": "Muxiddinov Shohruxxo’ja Usmonxo’ja o’g’li",
       "role": "Polish & debugging",
       "contributions": "Polished the project and debugged implementation issues.",
-      "projects": "",
+      "projects": "proptech-uz — a public TypeScript repository, linked in the GitHub portfolio.",
       "github": "https://github.com/TopGuzb",
       "linkedin": "https://www.linkedin.com/in/shohrukh-mukhiddinov-015b83277",
-      "portfolio": ""
+      "portfolio": "https://github.com/TopGuzb?tab=repositories"
     },
     {
       "name": "Doniyorbek Raximov Mehriddinovich",
       "role": "Core development & foundation",
       "contributions": "Equal core contributor alongside Samandar. Created the project foundation and initial baseline implementation.",
-      "projects": "",
+      "projects": "fast-reklama — a public Python repository; my-telegram-bot-taxi — an earlier public repository. Both are linked in the GitHub portfolio.",
       "github": "https://github.com/doniyorproject",
       "linkedin": "",
       "profile_note": "No LinkedIn profile; GitHub linked below.",
-      "portfolio": ""
+      "portfolio": "https://github.com/doniyorproject?tab=repositories"
     }
   ]
 }

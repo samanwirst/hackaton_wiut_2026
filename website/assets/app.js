@@ -422,7 +422,7 @@ function renderTeam(site) {
   const team = site?.team || [];
   $("#teamName").textContent = site?.team_name || "Team";
   $("#teamBody").replaceChildren(...team.map(p => el("div", { class: "card member" }, el("h3", { text: p.name }), el("div", { class: "role", text: p.role }),
-    el("p", { text: p.contributions }), p.projects ? el("p", { text: `Proud of: ${p.projects}` }) : null,
+    el("p", { text: p.contributions }), p.projects ? el("p", { text: `Projects: ${p.projects}` }) : null,
     p.profile_note ? el("p", { class: "muted", text: p.profile_note }) : null,
     el("div", { class: "mlinks" }, ...[["GitHub", p.github], ["LinkedIn", p.linkedin], ["Portfolio", p.portfolio]]
       .filter(([, u]) => u).map(([t, u]) => el("a", { href: u, target: "_blank", rel: "noopener", text: t }))))));

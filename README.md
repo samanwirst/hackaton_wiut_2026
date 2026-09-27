@@ -4,9 +4,10 @@ TrafficWatch analyses a fixed road camera and returns candidate traffic events a
 time segments (Part A), plus a causal accident-risk score for the next 5 seconds at every
 frame (Part B). The risk output follows the probability interface but is not empirically calibrated.
 
-- **Website source:** [`website/`](website) · deployment target:
-  `https://samanwirst.github.io/hackaton_wiut_2026/`
-- **Live demo source:** [`demo/`](demo) (Gradio app with isolated [server deployment](demo/server); public URL is added after verification)
+- **Website:** [TrafficWatch](https://samanwirst.github.io/hackaton_wiut_2026/) · [`website/` source](website)
+- **Live demo:** [upload an MP4](https://trafficwatch.31-130-151-28.sslip.io/) · [`demo/` source](demo)
+  with isolated [server deployment](demo/server). Accepts up to 2 minutes / 500 MiB;
+  long clips queue behind the current job. This limit does not apply to offline evaluation.
 - **Predictions on the sample videos:** [`predictions_samples.json`](predictions_samples.json)
 - **Development history:** [reviewable stages and verification follow-ups](docs/development-history.md)
 
