@@ -1,7 +1,8 @@
 # Publication runbook
 
 Keep the confirmed repository owner: `samanwirst/hackaton_wiut_2026`.
-This is a preparation checklist, not evidence that any service has been deployed.
+This is the operating runbook. Actual deployment evidence is recorded separately in
+[server verification](../reports/server_demo/).
 See [submission readiness](submission-readiness.md) for the measured results and open gates.
 
 Registered team: **Zero Context** (project: TrafficWatch). The captain's participant portal,
@@ -9,10 +10,11 @@ checked on 27 September 2026, gives the deadline as **27 September, 23:59 Tashke
 (UTC+5)**.
 
 **Publication was authorised by the owner during the evening session**, conditional on a
-successful server-demo check and protecting credentials/private registration data. Until those
-checks pass, retain private staging and `feat/trafficwatch-submission`. The approval covers the
-public repository, merging to `main`, the website and an isolated HTTPS demo. Portal submission
-still requires a separate instruction. Do not interpret release approval as permission to
+successful server-demo check and protecting credentials/private registration data. Those checks
+passed before the repository and demo were made public. The approval covers the
+public repository, merging to `main`, the website and an isolated HTTPS demo. The captain later
+lifted the submission pause and authorised sending the form after final specification checks.
+Do not interpret release approval as permission to
 modify or restart other sites on the shared server.
 
 ## 1. Confirm access and the release contents
@@ -80,7 +82,7 @@ Do not purchase a plan, allocate paid hardware or switch platforms without appro
 Free hardware can also sleep after inactivity; agree how the demo will remain available through
 judging. See [Spaces creation and lifecycle](https://huggingface.co/docs/hub/spaces-overview).
 
-### Hosting decision before the evening release
+### Historical hosting alternatives (not used for this release)
 
 The captain confirmed that the team has no existing host. Official HF terms were checked
 again on **27 September 2026**; a newly created free account is not a ready CPU-demo host.
@@ -103,10 +105,9 @@ The [ZeroGPU requirements](https://huggingface.co/docs/hub/spaces-zerogpu) also 
 supported Python/PyTorch runtime from this tested Python 3.11 / PyTorch 2.6 CPU package.
 Do not simply relabel the existing package as ZeroGPU or promise a same-evening free deployment.
 
-The shortest prepared path is an approved ordinary Gradio Space, since no application migration
-is needed. If the budget is zero, select and verify another eligible host before promising a
-release time. Account registration, any subscription/hardware purchase and public publication
-remain separate owner decisions; none has been performed.
+An ordinary Gradio Space was the initial prepared option before the captain supplied a server.
+The final release uses that server, not HF. No hosting subscription or paid hardware purchase
+was made. The following Space-specific assembly notes are retained only as an alternative.
 
 ### Assemble the approved package
 
@@ -184,10 +185,10 @@ on 27 September. It is still **not submitted**. It requests:
 
 | Field | Prepared value / remaining action |
 |---|---|
-| Repository | `https://github.com/samanwirst/hackaton_wiut_2026` — make public only after approval |
+| Repository | `https://github.com/samanwirst/hackaton_wiut_2026` — public with owner approval |
 | Tag or commit hash | The final tested tag or full 40-character commit hash; not an intermediate checkpoint |
 | Team website | Confirm the deployed website, including its working public live demo, before copying the URL |
-| T-shirt sizes | Captain Samandar, then Shohruxxo’ja, then Doniyorbek; sizes still need the team's input |
+| T-shirt sizes | Captain Samandar, then Shohruxxo’ja, then Doniyorbek; supplied privately, use the latest captain corrections |
 | Message to reviewers | Optional; draft below |
 
 Draft reviewer message (revise against the final verified package before sending):

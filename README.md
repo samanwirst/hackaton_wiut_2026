@@ -163,7 +163,7 @@ Browser verification: start `python tools/serve_website.py`, then in a second te
 all four original playbacks, event/timeline/risk seeking, HTTP range requests and every EDA
 image on desktop and mobile, including delayed video-selection responses, and saves screenshots
 under `.cache/browser-qa/`.
-Use `--base-url https://your-site/` to repeat it against the eventual public deployment.
+Use `--base-url https://samanwirst.github.io/hackaton_wiut_2026/` for the public deployment.
 
 The executed [evidence audit](notebooks/evidence_audit.ipynb) independently recomputes
 run counts, runtime ratios, exact repeat equality and the scoped lamp-reader comparison.
@@ -174,7 +174,8 @@ held-out accuracy; no official event F1 is claimed without independent labels.
 The [prepared-demo verification](reports/demo_verification/README.md) records actual two-minute
 uploads on desktop/mobile, offline processing, progress, playback, chart/table/download and
 over-length rejection. Run `python tools/verify_demo.py --video <test.mp4>` against a separately
-started local demo; public testing is deferred until hosting and publication are authorised.
+started local demo. The [server verification](reports/server_demo/) additionally records a
+successful two-minute public HTTPS upload, with 190 s CPU processing and a valid certificate.
 
 Run `python tools/check_submission.py` for a package audit, or add `--strict --online` before
 creating the final tag to require all four sample visualisations, complete team profiles,
@@ -303,8 +304,16 @@ All three names and the captain designation are verified against the official pa
 the captain confirmed this contribution breakdown. Samandar and Doniyorbek share equal core
 development credit; refactoring and engineering are substantial development work, not a
 supporting role. The captain supplied the profile links above and confirmed that Doniyorbek
-has no LinkedIn profile. Portfolio links and previous projects remain incomplete. Private registration contact
-details are intentionally excluded.
+has no LinkedIn profile. The website uses the supplied GitHub accounts as public project
+portfolios. Examples verified from their public repository listings are
+[taskmanager_tgbot](https://github.com/samanwirst/taskmanager_tgbot) and
+[json_python_tool](https://github.com/samanwirst/json_python_tool) (Samandar),
+[proptech-uz](https://github.com/TopGuzb/proptech-uz) (Shohruxxo’ja), and
+[fast-reklama](https://github.com/doniyorproject/fast-reklama) /
+[my-telegram-bot-taxi](https://github.com/doniyorproject/my-telegram-bot-taxi) (Doniyorbek).
+Repository existence is not a claim about deployment, commercial use or individual contribution
+size. Private registration contact details are intentionally excluded. The strict completeness
+audit retains its warning for Doniyorbek's unavailable LinkedIn profile; no substitute is invented.
 
 Code, website and report were written with the help of AI assistants, which the rules allow; no
 hosted model is called at inference.

@@ -22,9 +22,9 @@ Machine-readable evidence is in `private-mobile.json` and `public-desktop.json`.
 The public completion screenshot was visually inspected before inclusion.
 HTTPS certificate validation passed without ignoring certificate errors.
 
-## Deployment boundary
+## Deployment boundary and follow-up
 
-- Only a new dedicated Compose project was added. Model: 0.75 CPU, 1.5 GiB RAM including
+- Only a new dedicated Compose project was added. Model: 0.75 CPU, 2 GiB RAM including
   swap, unprivileged user, read-only image, internal network, no host port or Docker socket.
 - A small separate Nginx gateway routes through the existing proxy using unique labels.
   Existing proxy configuration and unrelated containers were not restarted or edited.
@@ -44,3 +44,36 @@ The imported server manifest ID is
 The differing IDs reflect image-store conversion: all RootFS layer hashes and runtime-critical
 configuration fields were compared and matched. The app, inference source/configuration and
 YOLO11n weights are unchanged from the previously verified package.
+
+The table above records the initial 1.5 GiB staging configuration. Subsequent embedded
+browser checks exposed two distinct failures: a client `ERR_NETWORK_CHANGED` interrupted
+the event stream, and a later repeated request reached the demo's cgroup memory limit.
+Docker recorded an OOM event and restarted only that demo container. A healthy status after
+restart did not mean the interrupted request had succeeded.
+
+Commit `4a79c08` raises only the isolated demo's memory limit to 2 GiB (the host had about
+3.4 GiB available while the app was idle), sets `OPENCV_FFMPEG_THREADS=1` and
+`MALLOC_ARENA_MAX=2`, and retains the 0.75 CPU limit. Model code, weights, sampling and
+official evaluation files are unchanged. Existing sites continued to return HTTP 200.
+The follow-up two-minute upload inside the public website passed in a fresh browser context
+at 390×844: **198 s**, all four progress stages, 17 candidates / 720 sampled risk points,
+120-second input/output, playback/seek to 90 s, chart/table and HTTP-200 JSON download,
+no JavaScript errors or horizontal overflow. See `public-embedded-mobile.json` and its
+visually inspected screenshot. During that request, the observed cgroup peak was
+1,000,558,592 bytes, with zero OOM events and zero restarts. This is a bounded smoke test,
+not a prolonged load/availability guarantee. Interrupted client connections must be retried.
+
+A second consecutive two-minute upload through the public queued API completed in **182 s**:
+17 candidates, 720 risk samples, downloaded JSON and a 6,556,907-byte annotated video.
+See `public-warm-repeat.json`; this is an API repeat, not a second independent UI test.
+After both requests the container still had zero OOM events and zero restarts; observed peak
+memory was **1,402,064,896 bytes**. The demo and both existing sites returned HTTP 200.
+The public desktop/mobile website checks also covered all four sample videos, image assets,
+event/risk seeking, range requests and delayed-selection behaviour without page errors.
+
+The final read-only deployment audit compared all **30 runtime source/configuration/weight
+files** against both the verified package manifest and the current checkout: every SHA-256
+matched. All **13 pre-existing containers** retained their original IDs, start times, running
+states and restart counts. The server runs the documented lightweight CPU upload profile;
+the complete organiser evaluation package, including `solution.py`, lives in the repository.
+The web demo is not a T4 evaluation environment or a substitute for that offline package.

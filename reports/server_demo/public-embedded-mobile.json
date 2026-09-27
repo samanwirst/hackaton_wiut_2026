@@ -1,0 +1,24 @@
+{
+  "website": "https://samanwirst.github.io/hackaton_wiut_2026/",
+  "demo": "https://trafficwatch.31-130-151-28.sslip.io/",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "summary": "17 events in 120.0 s of video (1280\u00d7720 @ 30 fps), processed in 198 s on CPU.",
+  "events": 17,
+  "risk_samples": 720,
+  "progress_stages": [
+    "Detecting and tracking",
+    "Part B: accident risk",
+    "Rendering",
+    "Ready"
+  ],
+  "video_durations": [
+    120,
+    120
+  ],
+  "json_status": 200,
+  "seek_time": 90,
+  "page_errors": []
+}

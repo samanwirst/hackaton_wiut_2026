@@ -1,0 +1,9 @@
+{
+  "base_url": "https://trafficwatch.31-130-151-28.sslip.io/",
+  "summary": "**17 events** in 120.0 s of video (1280\u00d7720 @ 30 fps), processed in 182 s on CPU.",
+  "events": 17,
+  "risk_samples": 720,
+  "video_bytes": 6556907,
+  "json_downloaded": true,
+  "scope": "Queued API repeat after the embedded browser upload; not a separate UI check."
+}

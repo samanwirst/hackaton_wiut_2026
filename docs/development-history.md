@@ -113,16 +113,20 @@ passed on `d0583f7`: 102 tests, Ruff, official prediction format, all weight che
 files also passed the package audit. This is not a target-GPU benchmark or public deployment.
 Publication remains a separate final action.
 
-## Work still outside the current checkpoint
+## Authorised public release
 
-Public repository/website/demo availability, a real upload to the public demo, remaining
-profile/previous-project links, labelled accuracy and target-hardware/clean-host
-verification remain tracked in [submission readiness](submission-readiness.md).
-The user deferred team details until the final stage. Do not replace missing information with
-invented profiles or convert candidate-review notes into a claimed accuracy score.
-The user also explicitly deferred public publication: keep the repository private and prepare
-changes in this branch. Making the repository public, merging to `main` and enabling the public
-website/demo are final actions requiring a later confirmation.
+The captain subsequently supplied the team's profile links and a shared server, then explicitly
+approved publication after successful demo and privacy checks. The initial private-only
+instruction no longer describes the release state.
 
-Later verification or publication work should be added as new focused commits so its evidence
-and remaining limitations stay visible in the branch history.
+| Stage | Commit | Change and evidence |
+|---|---|---|
+| 20 · Isolated deployment | `7a3db1a`, `a12b8f6`, `3688eb9`, `aded919` | Resource-limited CPU container, writable runtime cache, HTTPS forwarding and internal-network preview; existing services left unchanged |
+| 21 · Public demo and team portfolios | `42b7c04`, `339b506` | Confirmed profile links, publicly verifiable repository examples, real private/mobile and public/desktop uploads with certificate validation |
+| 22 · Preserve and publish the branch | `0188d54` | [Pull request #1](https://github.com/samanwirst/hackaton_wiut_2026/pull/1) merged with an ordinary merge commit after both GitHub test runs passed; no squashing or history rewrite |
+| 23 · Repeated-upload hardening | `4a79c08` | Isolated 2 GiB limit and bounded decoder/native allocation; post-fix embedded mobile upload and consecutive API repeat passed with no OOM/restarts |
+
+The full-history privacy scan through `339b506` examined 35 reachable commits with no
+findings. Public deployment and final handoff checks are tracked in
+[submission readiness](submission-readiness.md) and [server evidence](../reports/server_demo/).
+Model accuracy and T4 runtime remain unverified; a public release does not establish either.

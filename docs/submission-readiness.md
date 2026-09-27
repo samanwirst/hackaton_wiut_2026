@@ -1,8 +1,11 @@
 # Submission readiness
 
-**Prepared locally; not ready for final public handoff.** The repository remains private and
-`main` is unchanged. The owner has now approved publication after successful server-demo and
-credential/privacy checks. Portal submission is still not authorised.
+**Public release verified; portal submission not yet sent.** The repository and isolated
+HTTPS demo are public with the owner's approval after server-demo and privacy checks.
+The reviewed feature history was merged intact through PR #1; GitHub Pages is public.
+Public desktop/mobile site and post-fix two-minute embedded-upload checks passed.
+The captain subsequently authorised final portal submission after the specification recheck.
+At this release snapshot the form has not yet been submitted; acceptance must be verified separately.
 This checklist follows the organisers' task; passing tests is not proof of detection accuracy.
 
 Official participant-portal deadline: **27 September 2026, 23:59 Asia/Tashkent (UTC+5)**.
@@ -32,8 +35,18 @@ exactly**. The unchanged official validator reports zero errors and zero warning
 - Current-version desktop/mobile site checks pass for all playback/seek paths, 20 EDA images,
   report images and team content; no page errors or horizontal overflow were found.
   The delayed-selection regression also passes. The current prepared demo passed offline
-  direct calls and actual two-minute desktop/mobile uploads; public URL and public upload
-  checks remain deliberately pending.
+  direct calls and actual two-minute desktop/mobile uploads. The shared-server app also
+  passed a private mobile upload (172 s CPU) and a public HTTPS desktop upload (190 s CPU),
+  including playback/chart/table/JSON and clear 124-second rejection. See
+  [server evidence](../reports/server_demo/). The public site passed the same complete
+  desktop/mobile playback/EDA checks. A later repeated upload hit the initial 1.5 GiB
+  container cap; the isolated service now has 2 GiB and bounded decoder/native allocation.
+  The post-fix two-minute upload inside the public website passed on a 390×844 viewport:
+  198 s CPU, all four progress stages, 17 candidates / 720 risk samples, playback/seek and
+  HTTP-200 JSON download, no page errors. Earlier successes do not hide the resolved failure.
+  A second consecutive two-minute queued upload passed in 182 s with the same 17 candidates
+  and 720 risk samples. The deployed container has zero OOM events and zero restarts since
+  the fix; observed peak memory across both requests was 1,402,064,896 bytes.
 
 See [full run evidence](../reports/original_gpu/calibrated/),
 [scoped signal review](../reports/scene_review/) and the
@@ -55,18 +68,21 @@ Historical runs remain in [original GPU reports](../reports/original_gpu/),
 | Runtime ≤ 3× input duration | All twelve completed current-model video runs pass locally | Same-host observations, not an isolated T4 benchmark |
 | Same-machine determinism | Exact event/risk equality across all four originals | Reverify after any source/config/weight change |
 | All sample predictions and provenance | Current root output bound to source/config/input hashes and package versions | Keep output and manifest together |
-| Team names, roles, contributions and links | Three official names and GitHub accounts, two captain-supplied LinkedIn links; equal core credit for Samandar/Doniyorbek and polish/debugging for Shohruxxo’ja | Doniyorbek has no LinkedIn; portfolios and previous projects remain incomplete |
+| Team names, roles, contributions and links | Three official names, GitHub project portfolios and public repository examples; two captain-supplied LinkedIn links; equal core credit for Samandar/Doniyorbek | Doniyorbek has no LinkedIn; its absence remains explicit and the strict audit warns |
 | Approach diagram and technical report | Learned/rule-based paths, failure cases and scoped visual evidence | Final review against the released revision |
-| EDA for every sample | Four original GPU entries and 20 JPEGs; metadata/profile checks pass | Repeat rendering checks at eventual public URL |
-| Annotated playback, timelines and risk | Four full-decode H.264 files; all events/curves match root output; current desktop/mobile browser checks pass | Verify again at the eventual public deployment |
-| Live upload demo | Self-contained current-source package passed offline 6 s / 120 s clips, actual desktop/mobile uploads, progress, playback, chart/table/download and over-length rejection | Publish only when authorised, then verify a real public upload |
-| Public repo, website, weights, predictions | Links and Pages workflow prepared | Publication intentionally deferred; private authenticated access is not public availability |
+| EDA for every sample | Four original GPU entries and 20 JPEGs; metadata/profile and public desktop/mobile image checks pass | No labelled detection accuracy is inferred |
+| Annotated playback, timelines and risk | Four full-decode H.264 files; all events/curves match root output; public desktop/mobile playback, range and seek checks pass | Browser checks establish interaction, not event correctness |
+| Live upload demo | Current-source package passed offline/local, public standalone and post-fix public embedded uploads | Final limit is 2 minutes / 500 MiB; a broken client connection requires retrying |
+| Public repo, website, weights, predictions | All five public URLs pass anonymous HTTPS checks; Pages deployment and merge CI passed | Availability must be maintained through judging |
 | Final tag or full commit hash | Reviewable feature branch; original history preserved | Final immutable reference only after release gates pass |
-| Availability through judging | Deployment runbook present | Confirm demo host/account and availability arrangements |
+| Availability through judging | Resource-limited server deployment with automatic restart and cache/log cleanup | Keep the existing host online and monitor disk/load through judging |
 
-Warnings deliberately make `python tools/check_submission.py --strict` fail. The current
-three warnings concern incomplete profile fields, an absent live-demo URL and unchecked
-public links. A non-strict green audit is not submission completeness.
+Warnings deliberately make `python tools/check_submission.py --strict` fail. The absent
+LinkedIn profile is not fabricated or waived by changing the audit. Run `--online` after
+Pages deployment to distinguish that known profile limitation from public-link failures.
+A non-strict green audit is not proof of accuracy or submission completeness.
+The completed online audit reports **85 passes / 1 warning / 0 failures**. Its strict exit
+status is nonzero because Doniyorbek has no LinkedIn, not because a public URL failed.
 
 ## What the model evidence does and does not support
 
@@ -130,21 +146,18 @@ contacts are intended for Git. The optional notebook environment is not a runtim
 
 ## External prerequisites and final release gates
 
-1. Add portfolio/previous-project details without inventing them. The captain supplied all three
-   GitHub accounts and two LinkedIn links and confirmed that Doniyorbek has no LinkedIn.
-   These links, names and contributions are already in README/site.
-2. Supply three T-shirt sizes in portal order: Samandar, Shohruxxo’ja, Doniyorbek.
-3. The captain subsequently provided an existing server for the demo, explicitly requiring
-   that its existing sites remain unaffected. A separate private, resource-limited
-   [Compose deployment](../demo/server/README.md) is being prepared. Confirm actual uploads,
-   existing-site health and judging-period availability before public release; no HF purchase
-   is needed for this route.
-4. Publication approval has been received. Complete its prerequisites: verify the shared-server
-   demo without disrupting existing sites and scan current files plus Git history for secrets
-   and private registration details before changing visibility or enabling public routes.
-5. After authorised publication, run strict online/package checks, desktop/mobile website
-   checks and a real public demo upload. Record the exact public commit/tag and URLs.
-6. Final portal submission is a separate action; no form has been submitted.
+1. Team links and public project examples are added from the captain-confirmed accounts.
+   Doniyorbek has no LinkedIn. T-shirt sizes have been supplied privately for all three members.
+2. The isolated shared-server demo is public and verified; both existing sites returned HTTP
+   200 after deployment, with their containers unchanged. No HF account or purchase is needed.
+3. Before visibility changed, Gitleaks scanned all 35 reachable commits through `339b506`
+   with no findings. Private registration/browser/SSH data remain excluded from the package.
+4. Public Pages/embedded-demo checks and the anonymous online audit passed with the documented
+   profile warning. Record the final revision after saving the follow-up evidence and checking
+   its CI. Preserve the profile warning and model/runtime caveats in the final status.
+5. The captain lifted the earlier pause and authorised submission after the final specification
+   and server checks. Submit the immutable release reference, then verify the portal receipt;
+   publication alone is not acceptance. No guarantee of perfect accuracy is made.
 
 The [publication runbook](deployment.md) lists the portal fields, deployment steps and final
 public-upload checklist. Preparing files and pushing to the private feature branch is not
