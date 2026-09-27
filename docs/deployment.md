@@ -71,6 +71,36 @@ Do not purchase a plan, allocate paid hardware or switch platforms without appro
 Free hardware can also sleep after inactivity; agree how the demo will remain available through
 judging. See [Spaces creation and lifecycle](https://huggingface.co/docs/hub/spaces-overview).
 
+### Hosting decision before the evening release
+
+The captain confirmed that the team has no existing host. Official HF terms were checked
+again on **27 September 2026**; a newly created free account is not a ready CPU-demo host.
+
+| Option | Published cost / eligibility | Consequence for this package |
+|---|---|---|
+| Personal PRO + CPU Basic | $9/month subscription; no hourly CPU charge; 2 vCPU / 16 GB RAM | Uses the prepared Gradio package; remote build and upload still need testing |
+| Personal PRO + CPU Upgrade | $9/month plus $0.03/hour; 8 vCPU / 32 GB RAM | Same package; paid hardware stays awake by default |
+| Free ZeroGPU | Verified email and account older than 30 days | Not an immediate option for a new account; this CPU package is not ZeroGPU-verified |
+
+Prices: [HF pricing](https://huggingface.co/pricing). CPU Upgrade computes to **$0.72 per
+24 running hours**, additional to the subscription; that is an estimate from the hourly rate,
+not a checkout quote or an authorised purchase. Agree a spending cap and hosting duration
+before enabling it. Do not treat the PRO subscription alone as an always-awake hardware upgrade.
+
+CPU Basic currently sleeps after 48 hours of inactivity and wakes when visited; upgraded
+hardware does not sleep by default. This affects the judging-period availability plan:
+see [sleep settings](https://huggingface.co/docs/hub/spaces-gpus#set-a-custom-sleep-time).
+The [ZeroGPU requirements](https://huggingface.co/docs/hub/spaces-zerogpu) also list a different
+supported Python/PyTorch runtime from this tested Python 3.11 / PyTorch 2.6 CPU package.
+Do not simply relabel the existing package as ZeroGPU or promise a same-evening free deployment.
+
+The shortest prepared path is an approved ordinary Gradio Space, since no application migration
+is needed. If the budget is zero, select and verify another eligible host before promising a
+release time. Account registration, any subscription/hardware purchase and public publication
+remain separate owner decisions; none has been performed.
+
+### Assemble the approved package
+
 Assemble from the current source into a new, ignored directory:
 
 ```bash

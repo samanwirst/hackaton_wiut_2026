@@ -119,7 +119,10 @@ These checks are local, not evidence of public availability or model accuracy.
 CI uses pinned action commits and read-only repository permissions. [Run 36314791805](https://github.com/samanwirst/hackaton_wiut_2026/actions/runs/36314791805)
 passed on promoted commit `d0583f7`: 102 tests, Ruff, official format, weight checksums,
 79 package checks and clean-kernel notebook execution. Later commits must be checked again.
-A clean export of that commit's 177 tracked files also passes the same package audit;
+The subsequent [run 36319693756](https://github.com/samanwirst/hackaton_wiut_2026/actions/runs/36319693756)
+also passed on `a63bb081b4f37608853cac6416fc423d5b797e90`; its log confirms the same 102 tests,
+79 package passes / 3 warnings / 0 failures and notebook execution.
+A clean export of `d0583f7`'s 177 tracked files also passes the same package audit;
 this export is not a fresh OS/container or a separate GPU inference environment.
 No inference cache, original/preview inputs, virtual environment or private registration
 contacts are intended for Git. The optional notebook environment is not a runtime dependency.
