@@ -94,3 +94,88 @@ def test_failed_render_or_cache_copy_cleans_workspace(app, monkeypatch, fail_at)
         module.run(str(upload), progress=lambda *args, **kwargs: None)
     assert not rendered[0].parent.exists()
     assert upload.exists()
+
+
+@pytest.mark.parametrize("case,message", [
+    ("empty", "Upload an .mp4 first"),
+    ("extension", "Only .mp4 files"),
+    ("missing", "not a readable MP4"),
+    ("corrupt", "not a readable MP4"),
+    ("zero_frames", "no readable frames"),
+    ("zero_width", "no readable frames"),
+    ("zero_height", "no readable frames"),
+    ("too_long", "up to 2 minutes"),
+])
+def test_invalid_upload_is_rejected_before_inference(app, monkeypatch, case, message):
+    module, upload = app
+
+    def should_not_run(*args, **kwargs):
+        pytest.fail("Rejected uploads must not start inference")
+
+    monkeypatch.setattr(module, "analyze", should_not_run)
+    path = str(upload)
+    if case == "empty":
+        path = ""
+    elif case == "extension":
+        path = str(upload.with_suffix(".mov"))
+    elif case == "missing":
+        path = str(upload.with_name("missing.mp4"))
+    elif case == "corrupt":
+        def unreadable(_):
+            raise OSError("Cannot decode input")
+        monkeypatch.setattr(module, "probe", unreadable)
+    else:
+        info = SimpleNamespace(n_frames=25, width=1280, height=720, fps=25.0, duration=1.0)
+        if case == "too_long":
+            info.duration = module.MAX_DURATION_S + 0.11
+        else:
+            setattr(info, {"zero_frames": "n_frames", "zero_width": "width", "zero_height": "height"}[case], 0)
+        monkeypatch.setattr(module, "probe", lambda _: info)
+    with pytest.raises(module.gr.Error, match=message):
+        module.run(path, progress=lambda *args, **kwargs: None)
+    assert upload.exists()
+
+
+def test_oversize_upload_is_rejected_before_decoding(app, monkeypatch):
+    module, upload = app
+    original_stat = Path.stat
+
+    def stat(path, *args, **kwargs):
+        if path == upload:
+            return SimpleNamespace(st_size=module.MAX_UPLOAD_BYTES + 1)
+        return original_stat(path, *args, **kwargs)
+
+    def should_not_run(*args, **kwargs):
+        pytest.fail("Oversize upload must be rejected before decoding or inference")
+
+    monkeypatch.setattr(Path, "stat", stat)
+    monkeypatch.setattr(module, "probe", should_not_run)
+    monkeypatch.setattr(module, "analyze", should_not_run)
+    with pytest.raises(module.gr.Error, match="up to 500 MB"):
+        module.run(str(upload), progress=lambda *args, **kwargs: None)
+
+
+@pytest.mark.parametrize("duration", [119.99, 120.0, 120.1])
+def test_duration_limit_allows_boundary_and_frame_rounding_tolerance(app, monkeypatch, duration):
+    module, upload = app
+    info = SimpleNamespace(n_frames=3600, width=1280, height=720, fps=30.0, duration=duration)
+    monkeypatch.setattr(module, "probe", lambda _: info)
+
+    def reached_inference(*args, **kwargs):
+        raise RuntimeError("Accepted upload reached inference")
+
+    monkeypatch.setattr(module, "analyze", reached_inference)
+    with pytest.raises(RuntimeError, match="Accepted upload reached inference"):
+        module.run(str(upload), progress=lambda *args, **kwargs: None)
+
+
+def test_uppercase_mp4_extension_is_accepted(app, monkeypatch):
+    module, upload = app
+    uppercase = upload.rename(upload.with_suffix(".MP4"))
+
+    def reached_inference(*args, **kwargs):
+        raise RuntimeError("Accepted upload reached inference")
+
+    monkeypatch.setattr(module, "analyze", reached_inference)
+    with pytest.raises(RuntimeError, match="Accepted upload reached inference"):
+        module.run(str(uppercase), progress=lambda *args, **kwargs: None)
