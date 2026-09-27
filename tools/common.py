@@ -10,6 +10,7 @@ sys.path.insert(0, str(ROOT / "src"))
 
 from trafficwatch.config import load_config  # noqa: E402
 from trafficwatch.pipeline import perceive  # noqa: E402
+from trafficwatch.runtime import set_determinism  # noqa: E402
 from trafficwatch.scene import load_scene  # noqa: E402
 from trafficwatch.video import probe  # noqa: E402
 
@@ -27,6 +28,8 @@ def perceive_cached(video: Path, profile: str | None = None, cfg: dict | None = 
     """Perception with the developer cache switched on (tools re-run rules many times)."""
     os.environ.setdefault("TRAFFICWATCH_CACHE", str(DEFAULT_CACHE))
     cfg = cfg or load_config()
+    # Match the official Part A entry point before generating EDA/overlay tracks.
+    set_determinism(int(cfg.get("seed", 0)))
     info = probe(str(video))
     scene = load_scene(cfg, info.width, info.height)
     return perceive(str(video), cfg, scene, profile), scene, cfg

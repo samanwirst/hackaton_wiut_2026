@@ -4,7 +4,7 @@ Per video: resolution, fps, duration, lighting over time, object counts over tim
 speed distribution, where vehicles / pedestrians move and stop (heatmaps), trajectories coloured
 by direction, and detected traffic-light positions (used to set up configs/scene_tashkent.json).
 
-    python tools/eda.py --videos samples/ --out website/data
+    python tools/eda.py --videos data/samples/ --out website/data
 """
 from __future__ import annotations
 
@@ -109,6 +109,7 @@ def analyse(video: Path, profile: str | None, img_dir: Path, site_root: Path) ->
     per_sec = np.interp(sec, P.times, bright) if len(bright) else np.zeros(len(sec))
     return {
         "video": video.name, "width": info.width, "height": info.height, "fps": round(info.fps, 3),
+        "profile": P.profile, "stride": P.stride,
         "duration": round(info.duration, 2), "n_frames": info.n_frames,
         "brightness": {"mean": round(float(bright.mean()), 1) if len(bright) else None,
                        "per_second": [round(float(v), 1) for v in per_sec]},
@@ -126,14 +127,22 @@ def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--videos", required=True)
     ap.add_argument("--profile", default=None)
+    ap.add_argument("--source-kind", choices=("original", "preview", "unspecified"), default="unspecified",
+                    help="identify original samples versus transcoded previews explicitly")
     ap.add_argument("--out", default=str(ROOT / "website" / "data"))
     args = ap.parse_args()
     out = Path(args.out)
     img_dir = out / "eda"
     img_dir.mkdir(parents=True, exist_ok=True)
-    report = [analyse(v, args.profile, img_dir, out.parent) for v in list_videos(args.videos)]
+    video_dir = Path(args.videos)
+    report = [analyse(v, args.profile, img_dir, out.parent) for v in list_videos(video_dir)]
+    source = {
+        "original": "Original organiser-provided sample videos.",
+        "preview": "Official Google Drive preview transcodes; resolution and predictions may differ from the originals.",
+        "unspecified": "Input source has not been classified as original footage or a preview.",
+    }[args.source_kind]
     with open(out / "eda.json", "w") as f:
-        json.dump({"videos": report}, f)
+        json.dump({"source": source, "source_kind": args.source_kind, "videos": report}, f)
     for r in report:
         print(f"{r['video']}: {r['width']}x{r['height']} @ {r['fps']} fps, {r['duration']} s, "
               f"brightness {r['brightness']['mean']}, tracks {r['tracks_by_class']}, lights {len(r['traffic_lights'])}")
