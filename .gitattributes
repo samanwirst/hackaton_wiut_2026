@@ -10,3 +10,4 @@ website/data/eda/*.jpg linguist-generated
 website/data/results/*.json linguist-generated
 website/data/results_index.json linguist-generated
 website/media/*.mp4 linguist-generated
+reports/original_gpu/calibrated/**/*.json linguist-generated=true
