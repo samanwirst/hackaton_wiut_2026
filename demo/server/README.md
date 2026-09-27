@@ -28,7 +28,9 @@ docker compose -f /opt/trafficwatch-demo/compose.yaml ps
 
 Defaults deliberately **do not publish a demo**:
 
-- Bind only `127.0.0.1:17860`; preview through an authorised SSH local-port forward.
+- No host port is published. Docker 29 suppresses published ports on internal-only networks;
+  obtain this project's container IP with `docker inspect` and preview it through an
+  authorised SSH local-port forward. Bind the local end only to `127.0.0.1`.
 - A dedicated internal network has no shared application/database network membership.
 - `traefik.enable=false`; no changes to existing proxy routes, ports 80/443 or certificates.
 - Hard limits: 0.75 CPU, 1.5 GiB memory including swap, 256 processes; low relative CPU shares.
@@ -40,6 +42,9 @@ Defaults deliberately **do not publish a demo**:
   It is not a disk quota: check free disk space before public release and while operating.
 - Logs rotate at two 5 MB files. Model downloads and analytics are disabled.
 
+For example, after reading the actual private container IP on the server, use
+`ssh -N -L 127.0.0.1:17861:<private-container-ip>:7860 <approved-server>` on the development
+machine. Do not guess the IP or add a public host-port mapping to work around isolation.
 Verify an actual two-minute upload through the tunnel, not only the health endpoint.
 Check existing-site HTTP responses and container start/restart counts before and after.
 Resource limits reduce contention; they do not prove zero performance impact.

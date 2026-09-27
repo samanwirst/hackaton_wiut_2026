@@ -6,8 +6,8 @@ services:
     pull_policy: never
     init: true
     restart: unless-stopped
-    ports:
-      - "127.0.0.1:17860:7860"
+    # No host port. Reach the container's private IP through an SSH tunnel.
+    # Docker 29 suppresses port publishing on an internal-only network.
     cpus: 0.75
     cpu_shares: 128
     mem_limit: 1536m
