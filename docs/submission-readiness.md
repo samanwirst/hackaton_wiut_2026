@@ -1,7 +1,8 @@
 # Submission readiness
 
-**Prepared locally; not ready for final public handoff.** The repository remains private,
-`main` is unchanged, and no final tag, public website/demo or portal submission is authorised.
+**Prepared locally; not ready for final public handoff.** The repository remains private and
+`main` is unchanged. The owner has now approved publication after successful server-demo and
+credential/privacy checks. Portal submission is still not authorised.
 This checklist follows the organisers' task; passing tests is not proof of detection accuracy.
 
 Official participant-portal deadline: **27 September 2026, 23:59 Asia/Tashkent (UTC+5)**.
@@ -132,12 +133,14 @@ contacts are intended for Git. The optional notebook environment is not a runtim
 1. Add the deferred GitHub/LinkedIn/portfolio/previous-project details without inventing them.
    The user has confirmed names and contributions; these are already in README/site.
 2. Supply three T-shirt sizes in portal order: Samandar, Shohruxxo’ja, Doniyorbek.
-3. The captain confirms that neither he nor the team has an existing Space/server/host.
-   Choose and provision an approved demo host/account and confirm operational availability.
-   Do not purchase hosting or
-   substitute a different execution platform without approval.
-4. Wait for explicit publication confirmation before making the repository public, merging
-   to `main`, enabling Pages, publishing the demo or creating a final release tag.
+3. The captain subsequently provided an existing server for the demo, explicitly requiring
+   that its existing sites remain unaffected. A separate private, resource-limited
+   [Compose deployment](../demo/server/README.md) is being prepared. Confirm actual uploads,
+   existing-site health and judging-period availability before public release; no HF purchase
+   is needed for this route.
+4. Publication approval has been received. Complete its prerequisites: verify the shared-server
+   demo without disrupting existing sites and scan current files plus Git history for secrets
+   and private registration details before changing visibility or enabling public routes.
 5. After authorised publication, run strict online/package checks, desktop/mobile website
    checks and a real public demo upload. Record the exact public commit/tag and URLs.
 6. Final portal submission is a separate action; no form has been submitted.

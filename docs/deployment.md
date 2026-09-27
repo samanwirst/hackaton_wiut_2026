@@ -8,10 +8,12 @@ Registered team: **Zero Context** (project: TrafficWatch). The captain's partici
 checked on 27 September 2026, gives the deadline as **27 September, 23:59 Tashkent time
 (UTC+5)**.
 
-**Publication is deliberately deferred by the owner.** Keep the repository private, preserve
-`main`, and prepare/verify changes on `feat/trafficwatch-submission`. Do not enable the public
-website, publish the demo or change repository visibility until the owner confirms the final
-publication step. The commands below describe that later release, not permission to run it now.
+**Publication was authorised by the owner during the evening session**, conditional on a
+successful server-demo check and protecting credentials/private registration data. Until those
+checks pass, retain private staging and `feat/trafficwatch-submission`. The approval covers the
+public repository, merging to `main`, the website and an isolated HTTPS demo. Portal submission
+still requires a separate instruction. Do not interpret release approval as permission to
+modify or restart other sites on the shared server.
 
 ## 1. Confirm access and the release contents
 
@@ -64,7 +66,14 @@ cache key includes the CPU, shared, demo and optional notebook requirements, usi
 
 ## 3. Prepare and publish the live demo
 
-First confirm the team's Hugging Face owner, access and hosting eligibility. Current HF docs
+**Evening update:** the owner supplied a shared server and authorised preparation there,
+with an explicit requirement not to disrupt its existing sites. Use the isolated
+[server staging instructions](../demo/server/README.md) for this route. No HF account or
+purchase is now needed. Keep staging private until publication is approved; test real
+uploads and existing-site health before adding any HTTPS route. The HF instructions below
+remain an alternative, not the selected deployment or a purchase request.
+
+For the HF alternative, first confirm the team's owner, access and hosting eligibility. Current HF docs
 require a paid plan to create ordinary Gradio/Docker Spaces, with a limited ZeroGPU exception
 for eligible personal accounts. This package is a CPU Gradio app, not a verified ZeroGPU app.
 Do not purchase a plan, allocate paid hardware or switch platforms without approval.
