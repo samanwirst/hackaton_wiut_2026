@@ -7,6 +7,8 @@ __pycache__/
 .pytest_cache/
 .ruff_cache/
 .venv/
+.venv-notebooks/
+.ipynb_checkpoints/
 
 # Model and pipeline artefacts
 .cache/
