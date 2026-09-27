@@ -9,8 +9,8 @@
   "demo_embed_url": "",
   "metrics": {
     "score_a_dev": null,
-    "speed": "1.19–1.27× duration",
-    "speed_note": "Observed RTX 3050 Laptop run on all four 4K originals; 3× allowed. T4 not yet verified."
+    "speed": "1.24–1.69× duration",
+    "speed_note": "Across two offline passes of all four 4K originals on RTX 3050 Laptop; 3× allowed. T4 not verified."
   },
   "approach": {
     "learned": [
@@ -31,6 +31,7 @@
       "Scale-normalised motion makes one threshold usable from the near foreground to the far lanes.",
       "Ignoring boxes clipped by the image edge removed false stopped-vehicle, U-turn and collision events.",
       "Signal-aware queue handling suppresses red-light queues when the relevant signal state is readable; unknown phases remain a limitation.",
+      "On 46 selected tuning observations, lamp agreement changed from 11/46 with a fixed layout to 27/46 after registration and 45/46 with the hue-aware reader. This is not held-out accuracy.",
       "The same causal closest-approach logic runs in the submission, demo and exported risk charts."
     ],
     "failed": [
@@ -51,6 +52,18 @@
         "image": "data/reviews/C3896_214-222.jpg",
         "alt": "Sixteen cropped frames show a parked black SUV with pedestrians standing and walking beside it while other cars pass in the foreground.",
         "caption": "C3896 original · window 214–222 s · sampled at 2 fps. Frame labels are relative to the window, starting at zero. Cropping and sampling can miss brief or occluded contact. Click to inspect the full-size sheet."
+      },
+      {
+        "status": "Development spot check · not held out",
+        "title": "Align the camera view before reading the lamps",
+        "observation": "Small framing changes displaced the fixed lamp boxes; bright background pixels and dim daylight lamps also confused the old brightness reader. Across 23 selected frames with two visible heads, matches were 11/46 before registration, 27/46 with registration alone and 45/46 with the revised reader.",
+        "correction": "Part A registers the layout with SIFT/RANSAC and requires the expected hue at a lower brightness threshold. The final comparison changes brightness and hue together; it does not isolate their separate effects. The displayed C3896 sheet includes the remaining unknown reading at 0 s.",
+        "scope": "AI-assisted tuning review of red/green states only. The paired heads are correlated, and these samples informed the fix. Unknowns remain in the denominator. No amber, transition, event-boundary or hidden-test accuracy claim is made.",
+        "image": "data/reviews/C3896_signals.png",
+        "image_width": 1320,
+        "image_height": 600,
+        "alt": "Two rows of enlarged signal crops at six C3896 timestamps, with reviewed states and baseline/current reader outputs. The pedestrian head at zero seconds remains unknown to the current reader despite a visible red lamp.",
+        "caption": "C3896 original · 0, 60, 120, 180, 240 and 300 s. Six of the 23 selected frames are shown here; all four contact sheets, raw observations and an executed evidence-audit notebook are in the repository. Click for full size."
       }
     ],
     "next": [

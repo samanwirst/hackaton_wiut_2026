@@ -17,7 +17,6 @@ This server supports MP4 range requests, which are needed for clicks on the even
 
 ```bash
 pip install -r requirements.txt            # Python 3.11–3.13 (tested: 3.11); or use Docker
-bash weights/download.sh                   # once, with internet: fetches missing weights, checks SHA-256
 python run_submission.py --videos /data/test --out predictions.json
 ```
 
@@ -32,9 +31,11 @@ recorded environment; the pinned SciPy version requires Python ≥3.11. Pinning 
 versions does not alter the completed runs. Transitive packages and platform details are
 recorded separately where relevant; this is not a claim of cross-hardware bitwise equality.
 
-The model weights are three public Ultralytics YOLO11 files (≈ 64 MB in total, far below the 5 GB
-limit) in [`weights/`](weights). `weights/download.sh` downloads any that are missing from the
-Ultralytics release page and verifies all checksums; after that the run is fully offline.
+All three public Ultralytics YOLO11 weights are already included in [`weights/`](weights)
+(62.6 MiB total, far below 5 GB), so the two commands above need no weight-download step.
+Optional integrity/repair command: `bash weights/download.sh` verifies all checksums and
+downloads missing files from the Ultralytics release page. Run any repair before offline
+evaluation; inference itself never downloads weights.
 
 Check the output format before submitting:
 
@@ -133,7 +134,7 @@ prohibitions, solid-line annotations or prohibited turn movements.
    (`mps` on Apple silicon, `cpu` elsewhere). Floating-point differences across devices can change
    threshold decisions and tracker associations; exact reproduction is checked on the same machine.
    The current `predictions_samples.json` is the validated GPU run on all four original 4K
-   samples: 165 events and 33,075 per-frame risk scores. `reports/submission_run.json` records
+   samples: 163 events and 33,075 per-frame risk scores. `reports/submission_run.json` records
    input/source/configuration hashes and package versions. The website's EDA, annotated videos,
    event segments and risk charts use the same original inputs and output.
    Immediately after any new run, record its inputs and source hashes:
@@ -147,20 +148,27 @@ prohibitions, solid-line annotations or prohibited turn movements.
    For a separate preview experiment use `--videos data/previews --profile cpu --source-kind preview`
    and a separately generated preview prediction file. Do not mix preview assets with the original-run submission.
 
-Tests: `pytest -q` (89 tests with the development/demo dependencies installed, covering
+Tests: `pytest -q` (102 tests with the development/demo dependencies installed, covering
 trajectory rules, robustness cases, the official class definitions, signal phases,
-post-processing, offline weights, prefix-causal Part B, demo output/cache cleanup,
+post-processing, offline weights, prefix-causal Part B, demo input limits and output/cache cleanup,
 website risk-curve/input-metadata consistency with the submitted output, camera-registration
 rejection/determinism, and dim-lamp/reflection pixel regressions).
-The three demo lifecycle tests are skipped in inference-only environments without Gradio/Plotly.
+The 16 demo tests are skipped in inference-only environments without Gradio/Plotly.
 CI also validates `predictions_samples.json`
 and all committed weight checksums.
 
 Browser verification: start `python tools/serve_website.py`, then in a second terminal run
 `python tools/verify_website.py` (development dependencies and Chromium required). It checks
 all four original playbacks, event/timeline/risk seeking, HTTP range requests and every EDA
-image on desktop and mobile, and saves screenshots under `.cache/browser-qa/`.
+image on desktop and mobile, including delayed video-selection responses, and saves screenshots
+under `.cache/browser-qa/`.
 Use `--base-url https://your-site/` to repeat it against the eventual public deployment.
+
+The executed [evidence audit](notebooks/evidence_audit.ipynb) independently recomputes
+run counts, runtime ratios, exact repeat equality and the scoped lamp-reader comparison.
+See [notebook setup](notebooks/README.md) for the optional, separate authoring environment.
+The [signal review](reports/scene_review/README.md) distinguishes tuning agreement from
+held-out accuracy; no official event F1 is claimed without independent labels.
 
 Run `python tools/check_submission.py` for a package audit, or add `--strict --online` before
 creating the final tag to require all four sample visualisations, complete team profiles,
@@ -178,10 +186,10 @@ The publication steps and public-upload checklist are in
 benchmark mode is off. The pipeline has no sampling or learned randomness at inference, frame
 subsampling is fixed per device profile (never adapted to wall-clock time), and tracking is
 deterministic. All four original samples have been repeated offline on the same host: every
-event and all 33,075 risk timestamp/value pairs match exactly. The reference used one batch;
-the repeat used one fresh process per video, with per-video checkpoints. The harness's timing
+event and all 33,075 risk timestamp/value pairs match exactly. Both current-model passes
+used one fresh process per video, serially. The harness's timing
 logs naturally differ, so complete JSON file hashes are not expected to match.
-Evidence and execution limits are in [`reports/original_gpu/`](reports/original_gpu).
+Evidence and execution limits are in [`reports/original_gpu/calibrated/`](reports/original_gpu/calibrated/).
 
 ## Runtime
 
@@ -190,39 +198,30 @@ Part B (target 8.34 fps). CPU: YOLO11n at 640 px for both parts (target 6.25 fps
 Stride is `round(source_fps / target_fps)`: for 29.97 fps samples it is 2/4 on GPU and 5/5
 on CPU; at 25 fps it is 2/3 and 4/4. It never adapts to wall-clock time.
 
-The initial full CPU run on the 1080p previews took 249.6 s for C3902 (317.8 s of video) and
-109.4 s for C3905 (127.6 s), below their respective 953.5 s and 382.9 s limits. Hardware,
-input checksums and the preserved run are documented in [`reports/preview_cpu/`](reports/preview_cpu).
-The current run's timings are in `predictions_samples.json` under `log`.
-These CPU-preview measurements do not prove the runtime of original 4K files on a T4;
-that evaluation-profile benchmark remains outstanding.
+The current registered-layout / hue-aware revision passed two complete offline original-video
+passes on an **RTX 3050 Laptop (4 GB VRAM)**. Timings include Part A and Part B:
 
-A fresh Python environment installed from the root CUDA requirements also completed the full
-C3905 preview offline on an RTX 3050 Laptop (4 GB), using the default GPU profile: 77.8 s and
-79.4 s in two fresh processes against a 382.9 s budget, with exactly matching events/risk.
-See [`reports/gpu_preview/`](reports/gpu_preview) for commands, source/input
-provenance and the limits of this local check; it is not a T4/original-footage benchmark.
+| Original | First pass | Repeat | Allowed | Event segments |
+|---|---:|---:|---:|---:|
+| C3896 | 452.1 s | 574.4 s | 1021.0 s | 41 |
+| C3897 | 436.4 s | 434.5 s | 953.5 s | 54 |
+| C3902 | 449.7 s | 516.6 s | 953.5 s | 48 |
+| C3905 | 158.0 s | 203.0 s | 382.9 s | 20 |
 
-The first original 4K input, C3905, has now also passed two offline runs on the same GPU/profile:
-186.3 s and 170.5 s (Part A + Part B) against a 382.9 s budget, with exactly matching events
-and one risk score for all 3,825 frames.
-Its results and source/input hashes are separate in [`reports/original_gpu/`](reports/original_gpu).
-Before the latest accident-evidence correction, the complete original set passed the same
-offline GPU harness: C3896 440.2 s,
-C3897 415.7 s, C3902 422.3 s and C3905 159.0 s, or 1.25–1.33× input duration. All four logs
-are error-free, and `reports/original_gpu/predictions-all.json` passes the official validator
-with one risk score per frame. The matching input/source manifest is `run-all.json` in that
-directory. This historical baseline remains separate from the current root output.
-The correction and its reviewed evidence are recorded in
-[`reports/accident_review/`](reports/accident_review). The updated rule has now passed a fresh
-full-set offline run: **403.7 / 386.5 / 380.7 / 161.5 s**, or **1.19–1.27× input duration**,
-with 165 events and 33,075 per-frame risk scores. `predictions-reviewed.json` and
-`run-reviewed.json` in the original-GPU report directory hold the validated output/provenance.
-All risk curves and non-accident events match the baseline exactly; accident segments match the
-scoped rule comparison. Neither this check nor the event counts establish detection accuracy.
-The reviewed output is now `predictions_samples.json`, with a matching root run manifest,
-four H.264 annotated videos, four result timelines/risk curves and all 20 original EDA images.
-T4-class verification remains outstanding.
+Runtime was **1.24–1.41× duration on the first pass** and **1.37–1.69× on the repeat**,
+below the 3× budget in every run. These are observed desktop-host measurements, not an
+isolated benchmark or a T4 result. The documented host sleep during the repeat is excluded
+by the harness's monotonic timer; see [complete evidence](reports/original_gpu/calibrated/).
+
+`predictions_samples.json` and `reports/submission_run.json` are the first pass, with matching
+four H.264 annotated videos, timelines/risk curves and 20 original EDA images. There are
+163 segments and 33,075 per-frame risk scores; these counts and repeat equality do not
+establish detection accuracy. **T4-class verification remains outstanding.**
+
+Earlier [CPU previews](reports/preview_cpu/), [GPU previews](reports/gpu_preview/) and
+[original-run baselines](reports/original_gpu/) are preserved separately. The
+[accident review](reports/accident_review/) and [signal review](reports/scene_review/)
+explain the model changes and their limited visual evidence.
 
 ## Data and models
 
@@ -261,6 +260,7 @@ released under AGPL-3.0 as well (see [`LICENSE`](LICENSE)).
 │   └── *.py                    downloads, EDA, exports and package checks
 ├── tests/                       automated tests
 ├── reports/                     run provenance and preserved results
+├── notebooks/                   executed, reproducible evidence audit
 ├── docs/
 │   └── references/             organiser PDFs/archives (local, ignored by Git)
 ├── demo/                        self-contained Hugging Face / Gradio app

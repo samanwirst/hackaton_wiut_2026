@@ -1,18 +1,18 @@
 # Original 4K samples: offline GPU verification
 
-The latest validated full run is **`predictions-reviewed.json`**, with source/input provenance
-in **`run-reviewed.json`**. It includes the accident-evidence correction described in
-[`reports/accident_review/`](../accident_review). Older runs are preserved as the pre-correction
-baseline; their source hashes identify the old rule.
+The current model's complete first/repeat runs are in **[`calibrated/`](calibrated/)**:
+163 events and 33,075 risk outputs, exactly equal between the two passes. This includes
+the accident-evidence correction, scene registration and the hue-aware lamp reader.
+The root predictions and run manifest equal `calibrated/first/`, and matching EDA/media
+have been promoted together. See the [executed evidence audit](../../notebooks/evidence_audit.ipynb).
 
 All four original videos supplied by the user were checked on 2026-09-27 (Asia/Samarkand),
 after two independent checks of `C3905.MP4`. This is original footage, **not** the 1080p Drive previews.
-The root `predictions_samples.json` now equals the reviewed full original run, and
-`reports/submission_run.json` equals its manifest. Matching original EDA, annotated media,
-events and risk curves have been validated and promoted to `website/` together. Older preview
-artefacts were backed up locally before replacement; the baseline results below are preserved.
+All sections below preserve **earlier model revisions**, identified by their own hashes.
+Their output counts/timings and recorded source hashes must not be read as current-model
+evidence. Original footage is unchanged; older output/media sets were retained before replacement.
 
-## Current-rule complete-set run
+## Historical accident-rule correction: complete-set run
 
 The unchanged organiser harness ran offline in a fresh process with all developer-cache and
 device/profile overrides unset. The command was the one below with `--videos data/samples/`
@@ -38,8 +38,8 @@ This checks the intended change, not whole-dataset accuracy or a second identica
 full-set determinism run. C3905's complete event/risk output also equals its earlier repeats.
 
 The manifest was recorded immediately afterwards in the same CUDA environment. Its input
-checksums match the baseline, and all recorded source/configuration hashes match the current
-worktree. Prediction SHA-256:
+checksums match the baseline, and all recorded source/configuration hashes matched that
+revision's worktree. Prediction SHA-256:
 `0dc5d20efae4991999e142486820a500ad3c798a9927afa4593643f40f41404d`.
 
 ## Input and execution
@@ -124,7 +124,7 @@ The output contains 14 `accident` candidates across C3896/C3897/C3902. These are
 predictions, **not visually confirmed collisions** or an accuracy measurement; inspect their
 overlays and temporal boundaries before making quality claims.
 
-## Completed identical-source repeat
+## Historical accident-rule correction: identical-source repeat
 
 On 2026-09-27 all four originals were repeated offline with the unchanged official harness,
 one fresh process per video, serialized to limit memory use. Each completed output was saved,

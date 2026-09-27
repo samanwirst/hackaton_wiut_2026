@@ -1,8 +1,8 @@
 {
-  "recorded_at": "2026-09-26T20:37:25.094246+00:00",
+  "recorded_at": "2026-09-27T08:02:46.566635+00:00",
   "input_kind": "original",
   "profile": "gpu",
-  "predictions_sha256": "0dc5d20efae4991999e142486820a500ad3c798a9927afa4593643f40f41404d",
+  "predictions_sha256": "a7bb8601415f5b8b89cf4e9cf866f88eb7d6d292d6cfed79850dc40060b3d777",
   "inputs": {
     "C3896.MP4": {
       "sha256": "e9f3a2c159d69331428b84babd046ad9610c4ce26530db8f576ea7642a58ecff",
@@ -55,7 +55,8 @@
   "config_sha256": {
     "configs/pipeline.yaml": "7552957c21f002aad83b31d233d0c35e6b8d88859a68854979f9005c6413b797",
     "configs/scene_model_tashkent.npz": "fafb2ed8e8bf99451057535b36bc8215826eb6e36845b7c75f359bcbe6d6124d",
-    "configs/scene_tashkent.json": "a79d9ffcc5ce1e8f4315b2f5d3f75d8d4e29f7aac83a94d4e7a6f7cb369c7a02"
+    "configs/scene_reference_tashkent.png": "a2fbbcdbfe80da5c3ecd627f3f7626db37cec0cc97394c0c389abab81badf067",
+    "configs/scene_tashkent.json": "a5af60e404f9e29b52f87e47e6f25e130caa019ba73d1d63e2430a177f2ba99f"
   },
   "source_sha256": {
     "solution.py": "7fee4e18baead727ff2b4869ce021a1b6b5e519ff2ca66a105a29417b7ef6045",
@@ -72,12 +73,13 @@
     "src/trafficwatch/events/vehicles.py": "b83cfa94745c4712e97f6e3d65b43b2c64b95834dacdac4c92074ac140736f39",
     "src/trafficwatch/geometry.py": "c14a6be87326535b2b78ea8b74ac1aebe94c25efe48a8a16a73ad3728d831046",
     "src/trafficwatch/perception.py": "280680e30a548ae9cce55a83f1e34773d51e77b10d3c97fc098c4f26a1e12b65",
-    "src/trafficwatch/pipeline.py": "df3e456b82daaba66263b9cdf88cf2b9bccdc93919942525e3224cf6a772b5c6",
+    "src/trafficwatch/pipeline.py": "98b48187b1907a99d76436cf91189bc623bc65c99ccef4df995a8a4860f4624f",
+    "src/trafficwatch/registration.py": "d0df4e56e24c55847a252cdd012393ef78789808f1aae040af81042a0a84342f",
     "src/trafficwatch/risk.py": "fa2e0058e663adca57b240d290b04b3eff2cbfbf6b9717952531c42cb8fde235",
     "src/trafficwatch/runtime.py": "bd775983568f4fa43f58fec21a021261f3e2dde79a2e4ccf5435534f7a71a080",
-    "src/trafficwatch/scene.py": "f24bfc867a2968e78fcfe368e258f26284a93f58b5c01a925653ac9120528d2b",
+    "src/trafficwatch/scene.py": "ddcfc88102b4f0413857eb395fd0a23a75609f6c997ee52cb89d6afe168c42a6",
     "src/trafficwatch/segments.py": "d0a3ce8bb2ad0ffee7b46d947af93d8895f9f1fa83fca9ee2127a69014df7935",
-    "src/trafficwatch/signal.py": "0570113dea2f1218ad87916bfd7fd1790785ed42a3cec1a6cffae28ebb43e490",
+    "src/trafficwatch/signal.py": "3c4c83e7b8f154ea48212dad374af57eeaaafa8bb624a663a241b886f7edecc9",
     "src/trafficwatch/tracking.py": "e9e6aa1823e3babb09a163edeb20b1a3210d4f9f4a7fc78005f28e9bce04da3d",
     "src/trafficwatch/tracks.py": "abbd26c6dfc717493239da86408b43e68a6d36d302e047080e173c0ddaf7f52e",
     "src/trafficwatch/video.py": "d7c3b60cf0fec89cf496e0a9a70935e2a98c67897fa808b710683aee7f65a710",

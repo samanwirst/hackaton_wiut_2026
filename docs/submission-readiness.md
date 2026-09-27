@@ -1,239 +1,129 @@
 # Submission readiness
 
-The submission is **not ready for a final tag or handoff**. This checklist follows the
-organisers' task, not just the checks currently implemented in the repository.
+**Prepared locally; not ready for final public handoff.** The repository remains private,
+`main` is unchanged, and no final tag, public website/demo or portal submission is authorised.
+This checklist follows the organisers' task; passing tests is not proof of detection accuracy.
 
-**Calibration verification in progress:** Part A now registers the hand-drawn layout to a
-representative frame and requires colour-consistent pixels in each lamp box. The first complete
-offline pass is recorded in `reports/original_gpu/calibrated/`: 163 events, 33,075 risk scores,
-zero format errors or warnings, and 1.24–1.42× duration on the local RTX 3050 Laptop. Source and
-configuration remain frozen through export. The full repeat now also passes: all 163 events
-and 33,075 risk timestamp/value pairs match exactly (`calibrated/equality.json`). The host slept
-from 13:13 to 14:53 during C3897, then the same process resumed and passed. New matching
-annotated videos and EDA are being generated. The root
-predictions, run manifest and website media below still describe the previous revision until
-the new set is validated and promoted together; their provenance is not current during this work.
-The updated local suite has 89 passing tests (rechecked after dependency pinning), and Ruff
-passes. A fresh demo package is assembled but has not yet passed a current-version browser
-upload. Do not tag or publish this intermediate state.
+Official participant-portal deadline: **27 September 2026, 23:59 Asia/Tashkent (UTC+5)**.
+The captain's three-hour working window is separate from that deadline.
+Registered team: **Zero Context**; project: **TrafficWatch**.
 
-**Previous validated model revision:** the accident-evidence correction passed a fresh complete offline
-GPU run. `reports/original_gpu/predictions-reviewed.json` and `run-reviewed.json` are validated:
-all four originals, 165 events and 33,075 risk scores, with that revision's source/input hashes.
-The reviewed output and manifest are now promoted to `predictions_samples.json` and
-`reports/submission_run.json`, together with matching original EDA and all four annotated
-website results. The previous preview assets were backed up first. Publication, team profiles
-and the remaining verification gates below still prevent final handoff.
-See `reports/accident_review/` for scoped visual evidence.
+## Current evidence
 
-## Previous revision: requirements and evidence
+The registered-layout / hue-aware model revision has completed two offline passes of all
+four original 4K videos, one fresh official-harness process per video in each pass.
+Every one of **163 event segments and 33,075 per-frame risk timestamp/value pairs matches
+exactly**. The unchanged official validator reports zero errors and zero warnings.
 
-The detailed table and audit counts in this section are historical evidence for the preceding
-accident-rule revision. They must not be read as passes for the new registration/signal revision.
-Its first-pass evidence and outstanding repeat/media/demo work are stated above. Publication,
-team completeness and target-hardware checks remain outstanding for either revision.
+- First-pass Part A + B: **452.1 / 436.4 / 449.7 / 158.0 seconds**, or 1.24–1.41× duration.
+- Repeat: **574.4 / 434.5 / 516.6 / 203.0 seconds**, or 1.37–1.69×.
+- All runs respect their 3× budgets on the RTX 3050 Laptop; **T4 remains unverified**.
+- `predictions_samples.json` and `reports/submission_run.json` equal the calibrated first
+  pass; website media, EDA, event timelines and risk charts now match that same run.
+- The complete old asset/output set is recoverable from
+  `.cache/before-calibrated-promotion.xwkmxG/`; original videos were not changed.
+- A further standard-command run of the entire folder in one process is in progress.
+  It is not counted as complete evidence yet.
+- The local suite has 102 passing tests after dependency pinning and upload-guard coverage;
+  Ruff passes. The 32 warnings are two future Gradio deprecations repeated across 16 demo tests.
+  The post-promotion package audit reports **79 passes / 3 warnings / 0 failures**.
+- Current-version desktop/mobile site checks pass for all playback/seek paths, 20 EDA images,
+  report images and team content; no page errors or horizontal overflow were found.
+  The delayed-selection regression also passes. Current-version upload-demo verification
+  is queued; public URL and public upload checks remain deliberately pending.
 
-| Requirement | Current evidence | Remaining verification or work |
+See [full run evidence](../reports/original_gpu/calibrated/),
+[scoped signal review](../reports/scene_review/) and the
+[executed audit notebook](../notebooks/evidence_audit.ipynb).
+Historical runs remain in [original GPU reports](../reports/original_gpu/),
+[preview reports](../reports/preview_cpu/) and [development history](development-history.md).
+
+## Requirement-by-requirement checklist
+
+| Requirement | Evidence | Remaining work or limitation |
 |---|---|---|
-| Root interface and official class IDs | `solution.py`; package audit checks the 14 IDs | Hidden-set quality is not established by exposing the interface |
-| Unchanged organiser harness and evaluator | Both SHA-256 values match the starter archive | Preserve these files unchanged |
-| Valid Part A segments | Official validator accepts `predictions_samples.json`; segment/rule tests pass | Obtain labels and check actual event identity and temporal boundaries |
-| Causal Part B, one score per frame | Prefix-invariance and no-video-opening tests; the complete original run has 33,075 scores with verified per-frame timestamps | Accident probability calibration has not been measured on labelled pre-crash windows |
-| Shipped open model weights, at most 5 GB | All three YOLO11 checksums pass; 62.6 MiB total | Keep the weight files in the public submission |
-| No hosted inference or runtime downloads | Local-weight checks, CPU smoke runs, and all four original GPU runs inside a network namespace | Preserve offline behaviour and shipped weights in the final package |
-| Two-command clean installation and run | Root requirements installed in a fresh Python environment; the unchanged harness processed all four originals on CUDA without errors (`reports/original_gpu/`) | A fresh operating system/container and the target hardware remain unverified |
-| Runtime at most 3× video duration | Current-rule run passes all four originals on RTX 3050 Laptop: 403.7 / 386.5 / 380.7 / 161.5 s (1.19–1.27× duration) | T4-class hardware (16 GB VRAM, 8 CPU cores, 32 GB RAM) remains unverified |
-| Same-machine determinism | All four current-rule originals repeated offline in separate fresh processes: every event and all 33,075 risk timestamp/value pairs match the original batch exactly (`reports/original_gpu/equality-reviewed-repeat.json`) | Preserve source/configuration; repeat after model changes; wall-clock log fields naturally differ |
-| Predictions for all supplied samples | Root output covers all four originals: 165 events, official validation with no errors/warnings, current provenance and matching website assets; baseline preserved separately | Preserve the verified set when preparing the public tag |
-| Sample-result reproducibility | Root manifest binds predictions to inputs, source/configuration and package versions; the complete-set repeat is saved with individual per-video checkpoints and aggregate provenance | Revalidate and regenerate outputs after any inference changes |
-| README: installation, approach, data licences and seeds | Sections and commands are present in `README.md` | Confirm all team contributions; retain limitations alongside measured results |
-| Team: three members, roles, contributions and links | One profile is present; LinkedIn and portfolio fields are empty | Confirm names and contributions; supply all three profiles and previous-project links |
-| Approach diagram and technical report | Diagram shows independent Part A/Part B paths sharing fixed scene configuration; report distinguishes learned/rule-based components and includes the original parked-car/pedestrian contact sheet with sampling limits | Final review against the actual submitted model |
-| EDA of every sample | All four original GPU EDA entries and 20 verified JPEGs are packaged; metadata/profile match the run manifest | Verify rendering again after public deployment |
-| Annotated playback, timelines and risk curves for every sample | Four complete H.264 videos pass decoding and metadata checks; all events/risk curves match the root output; desktop/mobile browser checks cover each video's playback and timeline/table/risk seeking | Repeat at the public URL; model labels remain unconfirmed |
-| Live upload demo with limits, progress and visualised results | Updated app passes a real browser upload: annotated playback, chart, table and HTTP 200 JSON download; a refreshed current-rule Space also passes the offline direct-call check; cleanup tests pass and earlier over-length checks reject long clips | Publish the refreshed demo package and repeat an actual upload at its public URL |
-| Public repository, website, weights and predictions | Source and Pages workflow are present | Configured public URLs return HTTP 404; publication has not been verified |
-| Public final tag or commit hash | No final tag has been created | Publish only after the remaining gates pass, then record the immutable commit/tag |
-| Website remains available through judging | Not established | Confirm hosting ownership and availability arrangements with the team |
+| Root interface and 14 official class IDs | `solution.py`; package audit | Interface coverage does not imply class accuracy |
+| Unchanged organiser harness/evaluator | Both starter SHA-256 values match | Keep unchanged |
+| Valid Part A segments | Official format, bounds and rule tests pass | Independent event identity/boundary labels are missing |
+| Causal Part B, one score per frame | Prefix-causality/no-video-opening tests; 33,075 verified frame timestamps | No empirical risk calibration or measured anticipation score |
+| Local open weights ≤ 5 GB | Three YOLO11 hashes pass; 62.6 MiB | Preserve weights/licences in final package |
+| Offline inference without downloads | All eight original-video runs used loopback-only network namespaces | Preserve local-weight behaviour |
+| Two-command installation/run | Fresh Python 3.11 CUDA environment used for original runs | Fresh OS/container and target T4 still unverified |
+| Runtime ≤ 3× input duration | All eight completed current-model runs pass locally | Same-host observations, not an isolated T4 benchmark |
+| Same-machine determinism | Exact event/risk equality across all four originals | Reverify after any source/config/weight change |
+| All sample predictions and provenance | Current root output bound to source/config/input hashes and package versions | Keep output and manifest together |
+| Team names, roles, contributions and links | Three official names; captain-confirmed equal core credit for Samandar/Doniyorbek and polish/debugging for Shohruxxo’ja | Remaining profile links and previous projects are deferred by the user |
+| Approach diagram and technical report | Learned/rule-based paths, failure cases and scoped visual evidence | Final review against the released revision |
+| EDA for every sample | Four original GPU entries and 20 JPEGs; metadata/profile checks pass | Repeat rendering checks at eventual public URL |
+| Annotated playback, timelines and risk | Four full-decode H.264 files; all events/curves match root output; current desktop/mobile browser checks pass | Verify again at the eventual public deployment |
+| Live upload demo | Self-contained current-source package prepared; lifecycle tests pass | Refresh current-version offline/browser upload, then publish only when authorised |
+| Public repo, website, weights, predictions | Links and Pages workflow prepared | Publication intentionally deferred; private authenticated access is not public availability |
+| Final tag or full commit hash | Reviewable feature branch; original history preserved | Final immutable reference only after release gates pass |
+| Availability through judging | Deployment runbook present | Confirm demo host/account and availability arrangements |
 
-The current local package audit reports **77 passes, 3 warnings and no failures**. The original
-output, source manifest, EDA and website results now agree. Remaining local audit warnings concern
-team profiles, the missing public demo URL and the unchecked public links. The last public-link
-check reports **77 passes, 7 warnings and no failures**: the configured repository, website,
-weight and prediction URLs still return HTTP 404, and the demo URL is missing. Readiness warnings
-deliberately make `--strict` fail. A green non-strict audit
-does not establish submission completeness, detection accuracy or T4 runtime.
+Warnings deliberately make `python tools/check_submission.py --strict` fail. The current
+three warnings concern incomplete profile fields, an absent live-demo URL and unchecked
+public links. A non-strict green audit is not submission completeness.
 
-Website checks now compare the downsampled risk values, timestamps, full-curve peak and input
-source kind with the submitted run, in addition to comparing event segments. EDA resolution,
-frame count, rounded FPS/duration and processing profile must also match the input manifest.
-Twenty-one focused tests cover these metadata checks and matching/changed/missing/unsorted
-risk curves. The full suite has 72 tests
-with the demo dependencies installed.
+## What the model evidence does and does not support
 
-## Known model limitations
+**Share the measured engineering evidence with caveats.** The executed notebook checks
+expected video/frame keys, uniqueness, bounds, finite scores, runtime denominators,
+input/source identities, repeat equality and all 46 selected lamp observations.
+Its 11/46 → 27/46 → 45/46 lamp comparison is a tuning review, not held-out accuracy.
+Unknown readings remain in the denominator; the final step changes brightness and hue
+together. Two heads in one frame are correlated. No amber/transition timing is validated.
 
-Dev labels, ablations and empirical calibration are quality improvements encouraged by the
-task, not additional mandatory submission artefacts. Their absence must not be mistaken for
-evidence of accuracy, but it is separate from the missing publication/team deliverables.
+- `near_miss`, `fire_smoke` and generic static-obstacle detection remain disabled.
+- No verified prohibited U-turn zones, prohibited turns or solid-line annotations are supplied.
+- Nine accident candidates remain unconfirmed, including C3902 at 1.47–3.47 s.
+  See [accident review](../reports/accident_review/); proximity alone is not proof of contact.
+- Event counts changing from 165 to 163 do not establish better precision, recall or F1.
+- No complete independently labelled event dev set or empirical probability calibration exists.
+- Small camera shifts are addressed in Part A; continuous motion/new viewpoints remain limitations.
+- The host slept from 13:13 to 14:53 during the repeat. The same process resumed successfully;
+  the harness's monotonic timer excludes suspended time on this host. Civil elapsed time differs.
 
-- `near_miss` and `fire_smoke` are disabled. Generic static-obstacle detection is disabled.
-- There are no verified prohibited U-turn zones, prohibited turns or solid-line annotations.
-- An accident candidate at the start of C3902 has no visually confirmed collision.
-- The baseline original GPU run contains 14 accident candidates. Scoped review identified a
-  parked-car/pedestrian false positive and prompted general rule corrections. The new full run
-  contains nine accident segments, exactly matching the cached-rule comparison; these remaining
-  candidates must not be presented as confirmed collisions without further review.
-- No complete manually labelled dev set is included. Event counts and valid JSON are not
-  accuracy measurements, and heuristic risk scores are not empirically calibrated probabilities.
+Dev labels, ablations and calibration are encouraged quality work, not extra mandatory
+artefacts. Their absence limits accuracy claims separately from incomplete publication/team items.
 
-## Demo lifecycle verification
+## Packaging and local verification notes
 
-The demo now renders inside a temporary workspace, copies successful outputs into the output
-components' managed caches, and removes the workspace on success or error. Cleanup is checked
-hourly with a six-hour age: the pinned Gradio 5.50 implementation uses a modulo-24-hour age
-comparison, so the previous 86400-second threshold never expired during normal operation.
+All original videos are already on the second SSD in ignored `data/samples/`; their byte sizes,
+4K resolution, 30000/1001 fps, frame counts and distinct SHA-256 identities are recorded.
+Incomplete downloads and earlier preview inputs were preserved, not deleted.
 
-Three lifecycle tests cover successful output handoff, scheduled expiry, and cleanup after
-rendering/cache-copy errors; they pass as part of the full suite. CI installs
-the pinned demo dependencies so these tests are not skipped there. Ruff also passes.
+All four website videos use H.264/yuv420p, 960×636 (including timeline), 14.985 fps,
+fast-start indexing and full decoding. Their frame counts are 5,100 / 4,763 / 4,763 / 1,913;
+durations stay within one sampled-frame period and each file is below 100 MB.
+The exporter used a two-frame read-ahead queue to limit rendering memory; submitted inference
+and sampled frame content were unchanged. A C3897 export-order guard was corrected by sorting
+complete event tuples, not by changing or dropping predictions.
 
-A freshly assembled self-contained Space package processed the real six-second sample clip
-with networking disabled and returned all outputs in 12 seconds on CPU, while the GPU batch
-was running. Its managed MP4 and JSON also passed the Gradio components' post-processing.
-Rendered playback contains 36 sampled frames at 5.994 fps (6.006 seconds), not the input's
-180 frames; the demo intentionally renders at its perception stride. This is a local direct-call
-check, not a public upload test.
+The demo's temporary rendering workspace is removed after successful cache handoff or failure.
+Managed outputs expire on a six-hour TTL, checked hourly. Three lifecycle tests cover success,
+scheduled expiry and error cleanup; 13 further tests cover invalid inputs, size/duration limits,
+the duration tolerance and uppercase MP4 extensions. Earlier-version real browser/offline checks remain historical
+evidence; they are not substituted for the current-version or public checks.
 
-The updated repository app was also started on a separate loopback port and tested through
-Chromium: a real MP4 upload returned both playable six-second videos, the rendered Plotly
-timeline/risk chart, the event table and a downloadable `events.json` (HTTP 200; one event,
-36 demo risk samples), with no page JavaScript errors. Plot readiness was awaited separately
-from video readiness. The temporary verification server and browser were closed afterwards.
-Public hosting remains unverified. Previously generated `space/` folders must be refreshed from
-the current source before deployment; the latest checked package is an ignored local artefact.
+CI uses pinned action commits and read-only repository permissions. Historical remote CI
+passed on the feature branch; the newly promoted revision will be pushed and checked separately.
+No inference cache, original/preview inputs, virtual environment or private registration
+contacts are intended for Git. The optional notebook environment is not a runtime dependency.
 
-After the accident-rule correction, a new self-contained Space package was assembled and all
-copied source/configuration files were hash-checked against the current worktree. With networking
-disabled it processed the same six-second input in 9 seconds on CPU, returned one event and
-36 risk samples, and passed output-component post-processing. This refresh was a direct-call
-check; it does not replace the final public browser-upload check.
+## External prerequisites and final release gates
 
-The report's new visual error-review card also passes desktop/light and mobile/dark browser
-checks (1440 px and 390 px): the full-size evidence image loads, no horizontal overflow occurs,
-and no page JavaScript errors were observed. The case explicitly separates sampled review from
-exhaustive labels or measured accuracy.
+1. Add the deferred GitHub/LinkedIn/portfolio/previous-project details without inventing them.
+   The user has confirmed names and contributions; these are already in README/site.
+2. Supply three T-shirt sizes in portal order: Samandar, Shohruxxo’ja, Doniyorbek.
+3. Confirm a demo host/account and operational availability. Do not purchase hosting or
+   substitute a different execution platform without approval.
+4. Wait for explicit publication confirmation before making the repository public, merging
+   to `main`, enabling Pages, publishing the demo or creating a final release tag.
+5. After authorised publication, run strict online/package checks, desktop/mobile website
+   checks and a real public demo upload. Record the exact public commit/tag and URLs.
+6. Final portal submission is a separate action; no form has been submitted.
 
-## Original input availability
-
-The user completed all four original downloads on 2026-09-27. They were moved from
-`/mnt/ssd2/Downloads/` to `data/samples/` on the same second SSD, without making duplicate
-copies. The browser's incomplete files were not moved. All four sizes match the previously
-checked organiser Drive metadata, and video probing reports 3840×2160 at 30000/1001 fps.
-C3896 has 10,200 frames, C3897 and C3902 each have 9,525, and C3905 has 3,825.
-C3897 and C3902 have different SHA-256 checksums despite equal byte sizes and frame counts.
-Existing partial downloads and official previews have been preserved.
-
-The baseline complete-set harness output is preserved as
-`reports/original_gpu/predictions-all.json` with its original manifest. The current-rule run is
-`predictions-reviewed.json` / `run-reviewed.json`, with verified logs, budgets, frame coverage
-and source/input provenance. All risk curves and non-accident events exactly match the baseline;
-only the expected accident-rule results change. Original-set EDA and annotated media were
-validated in staging, then promoted together with root predictions and provenance. The old
-preview set is recoverable from `.cache/before-original-promotion.vJ7Y5V/` on the second SSD.
-
-All four annotated videos are H.264/yuv420p at 960×636 (540 px image plus the timeline band),
-14.985 fps, with the `moov` index before media data for browser seeking. They have 5,100 / 4,763 /
-4,763 / 1,913 sampled frames and preserve the input durations to within one sampled-frame period.
-Each passes full decoding and is below 100 MB; the original 4K inputs remain outside Git.
-
-The first export process ended with SIGTERM during C3902; its 70-second partial output was
-preserved separately and never promoted. The two completed outputs passed full decoding and
-were retained. C3902/C3905 were resumed offline from existing GPU perception caches, using
-the CPU Python environment and a render-only two-frame read-ahead queue to reduce memory.
-No model, event, risk, sampling-stride or frame-content changes were made for this recovery.
-An overlapping repeat harness was deliberately terminated without producing a result when RAM
-became constrained; it is not counted as a failed model run or as determinism evidence. Heavy
-rendering and the repeat harness are subsequently scheduled sequentially.
-The subsequent serialized repeat was interrupted across a host restart: its process and tool
-session no longer exist, and neither final prediction JSON nor provenance was written. The
-first three per-video progress messages are not counted as complete determinism evidence.
-The validated first-run output and promoted assets remain unchanged. A subsequent checkpointed
-repeat completed all four originals with exact event/risk equality; its individual outputs,
-manifests and aggregate are now preserved in `reports/original_gpu/`. The reference processed
-all videos in one process; the completed repeat deliberately used one fresh process per video.
-
-The promoted site passed Chromium checks at 1440 px/light and 390 px/dark for all four
-originals: the correct video/duration and event count appear; clicking event-table rows,
-pressing Enter on timeline bars and clicking the risk curve all seek to the expected time.
-Each MP4 returns HTTP 206 for range requests. All four EDA selectors show original metadata
-and their image sets; the hero shows 18.4 minutes, 165 events and the 4K-original caption.
-No page JavaScript errors or horizontal overflow were observed. Screenshots of desktop/mobile
-results and EDA were inspected; the browser was closed after verification.
-
-A delayed-response browser check found that an older C3897 request could replace C3902 after
-the visitor had selected it. The results view now ignores superseded draws. The regression
-scenario passes at 1440 px and 390 px: the selector, C3902 media, 48 event rows and 48 timeline
-bars remain aligned; selecting the cached C3897 result afterwards also works. No page errors
-or horizontal overflow occurred. This is a website-only fix and leaves inference unchanged.
-
-## External prerequisites
-
-The [publication runbook](deployment.md) covers repository access, Pages, a freshly assembled
-demo package, actual public uploads and the final handoff. Preparing it does not publish either
-service. Remote CI is now independently verified: [run 36299069627](https://github.com/samanwirst/hackaton_wiut_2026/actions/runs/36299069627)
-passed on commit `e02faf2` with 72 passing tests, Ruff, official prediction validation, all
-weight checksums and the package audit (77 passes / 3 warnings / 0 failures). The earlier
-CI failure and test-only correction remain visible in [development history](development-history.md).
-
-Both GitHub workflows now pin verified action release commits; CI has read-only repository
-permissions and keys its pip cache from the actual CPU/shared/demo dependency files.
-`actionlint` 1.7.12 reports no workflow errors. Space metadata explicitly selects Python 3.11
-with Gradio 5.50.0. A fresh release package has 32 files, each hash-identical to its current
-source; this assembly check did not rerun inference while the full GPU repeat was active.
-The Git-visible publication set contains no original/preview inputs, virtual environments or
-caches, and none of its files reaches 100 MiB. These are local checks, not remote deployments.
-
-1. All three registered names and the captain designation have now been read from the official
-   portal and added to the README/site. The captain also confirmed contributions: Doniyorbek
-   and Samandar share equal core development credit. Doniyorbek built the foundation;
-   Samandar substantially re-engineered it from a basic to a professional-grade codebase.
-   Shohruxxo’ja handled polish/debugging. Add GitHub, LinkedIn, portfolios and previous projects when
-   supplied. The user deferred these remaining details
-   until the final stage; continue independent work without inventing them. The portal also
-   requests three T-shirt sizes and confirms the deadline as 27 September, 23:59 Tashkent time.
-2. GitHub CLI access is now confirmed as `samanwirst`, with ADMIN permission on
-   `samanwirst/hackaton_wiut_2026`; the remote remains unchanged. The repository is currently
-   private, so authenticated access is not proof of public availability. The user requested
-   a separate development branch with reviewable commits; preserve `main` and its existing
-   history while preparing that branch. The user explicitly requested that publication be the
-   final step: keep the repository private, do not merge to `main`, and do not publish the
-   website or demo before a later confirmation. Continue preparation and private-branch
-   verification in the meantime. Do not send tokens in chat.
-3. Confirm access to an eligible public demo host. No Hugging Face owner or Space URL has
-   been supplied. Current [HF documentation](https://huggingface.co/docs/hub/spaces-overview)
-   requires a paid plan for ordinary Gradio Space creation, apart from a limited ZeroGPU
-   exception; this CPU package has not been verified on ZeroGPU. Hosting costs and availability
-   through judging require an explicit decision, not an automatic purchase.
-4. Provide access to the evaluation-class machine for the target-hardware benchmark.
-
-The separate clean-container check also needs Docker storage capacity. A local build was
-stopped during the base-image pull after checking that `/var/lib/docker` is on the system
-partition with only about 7 GiB free, whereas the project is on a different partition.
-No existing images were pruned and no daemon/storage configuration was changed. The native
-clean-Python-environment GPU checks are complete; the Docker build is **not** verified.
-
-## Final checks
-
-From the repository root, using the environment appropriate to the machine:
-
-```bash
-pytest -q
-ruff check .
-python evaluate.py --pred predictions_samples.json --validate-only
-python tools/check_submission.py --strict --online
-```
-
-Also inspect every annotated sample, repeat the official harness on the same machine with
-network access disabled, compare its event/risk outputs, and perform a real upload through the
-published demo. These are separate checks; none is replaced by the static package audit.
+The [publication runbook](deployment.md) lists the portal fields, deployment steps and final
+public-upload checklist. Preparing files and pushing to the private feature branch is not
+public release or acceptance by the organisers.

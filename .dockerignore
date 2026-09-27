@@ -1,6 +1,8 @@
 .git
 .github
 .venv
+.venv-notebooks
+.ipynb_checkpoints
 __pycache__
 *.py[cod]
 .pytest_cache
@@ -8,6 +10,7 @@ __pycache__
 .cache
 data
 reports
+notebooks
 runs
 space
 website
@@ -18,4 +21,5 @@ tools
 predictions*.json
 requirements/dev.txt
 requirements/cpu.txt
+requirements/notebooks.txt
 .DS_Store

@@ -35,6 +35,41 @@ def check_seek(page, target):
     return page.locator('#resBody video').evaluate('(v) => { v.pause(); return v.currentTime; }')
 
 
+def check_delayed_selection(page):
+    """A slower earlier response must not replace the visitor's newer selection."""
+    page.add_init_script("""(() => {
+        const original = window.fetch.bind(window);
+        window.fetch = async (...args) => {
+            const response = await original(...args);
+            if (String(args[0]).endsWith('C3897.json')) {
+                await new Promise(resolve => { window.releaseSlowResult = resolve; });
+                const read = response.json.bind(response);
+                response.json = async () => {
+                    const result = await read();
+                    window.slowResultRead = true;
+                    return result;
+                };
+            }
+            return response;
+        };
+    })();""")
+    page.reload(wait_until='networkidle')
+    choices = {item['video']: str(i) for i, item in enumerate(index)}
+    page.select_option('#resVideo', choices['C3897.MP4'])
+    page.wait_for_function("typeof window.releaseSlowResult === 'function'")
+    page.select_option('#resVideo', choices['C3902.MP4'])
+    page.wait_for_function("document.querySelector('#resBody video')?.getAttribute('src').includes('C3902')")
+    page.evaluate('window.releaseSlowResult()')
+    page.wait_for_function('window.slowResultRead === true')
+    assert page.locator('#resVideo').input_value() == choices['C3902.MP4']
+    assert 'C3902' in page.locator('#resBody video').get_attribute('src')
+    assert page.locator('#resBody tr.clickable').count() == len(results['C3902.MP4']['events'])
+    assert page.locator('#resBody .tl-bar').count() == len(results['C3902.MP4']['events'])
+    page.select_option('#resVideo', choices['C3897.MP4'])
+    page.wait_for_function("document.querySelector('#resBody video')?.getAttribute('src').includes('C3897')")
+    assert page.locator('#resBody tr.clickable').count() == len(results['C3897.MP4']['events'])
+
+
 with sync_playwright() as p:
     browser = p.chromium.launch(
         executable_path=args.browser,
@@ -124,12 +159,19 @@ with sync_playwright() as p:
             page.locator('#resBody .player').scroll_into_view_if_needed()
             page.screenshot(path=str(args.out / f'results-{width}.png'))
             page.locator('#reportCases').scroll_into_view_if_needed()
-            page.wait_for_function('document.querySelector("#reportCases img").naturalWidth > 0')
+            assert page.locator('#reportCases article').count() == len(site['report']['case_studies'])
+            for case in page.locator('#reportCases article').all():
+                case.scroll_into_view_if_needed()
+                frame = case.locator('img')
+                page.wait_for_function('(i) => i.complete && i.naturalWidth > 0',
+                                       arg=frame.element_handle(), timeout=30000)
+            page.locator('#reportCases article').last.screenshot(path=str(args.out / f'signal-review-{width}.png'))
             page.locator('#team').scroll_into_view_if_needed()
             page.locator('#team').screenshot(path=str(args.out / f'team-{width}.png'))
+            check_delayed_selection(page)
             assert not errors, errors
             assert page.evaluate('document.documentElement.scrollWidth <= window.innerWidth')
             page.close()
     finally:
         browser.close()
-print('PASS: all four originals, desktop/mobile, EDA and playback, table/keyboard/risk seeks, HTTP ranges, no JS errors/overflow.')
+print('PASS: all four originals, desktop/mobile, EDA and playback, table/keyboard/risk seeks, HTTP ranges, delayed-selection regression, no JS errors/overflow.')

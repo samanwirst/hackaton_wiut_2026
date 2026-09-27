@@ -35,7 +35,24 @@ civil time across that sleep interval.
 
 ## Promotion status
 
-Root predictions and website media still belong to the previous revision. This
-directory deliberately preserves the new first-pass evidence separately until the
-matching media and repeat are verified. No public release or final submission is
-authorised by this checkpoint.
+The first export guard stopped at C3897 because it compared raw list order: the
+postprocessor sorts by `(start, label)`, whereas the unchanged official harness
+sorts `[start, end, label]`. All 54 complete event tuples were identical, including
+boundaries and multiplicity. Canonical sorting resolved the comparison without
+changing inference, thresholds or predictions. C3896's completed export was kept;
+export resumed from C3897. This is an export-check correction, not a model rerun.
+
+The first pass is now promoted to root predictions and the run manifest, together
+with matching original EDA and all four annotated videos. Complete tuple/risk
+comparison, input/profile metadata, 20 images, H.264/yuv420p encoding, durations,
+fast-start indexes and full video decoding passed before promotion. The old complete
+set is preserved locally at `.cache/before-calibrated-promotion.xwkmxG/`.
+
+The [executed notebook](../../../notebooks/evidence_audit.ipynb) independently checks
+coverage, hashes, repeats, counts and runtime denominators. First-pass runtime is
+1.24–1.41× clip duration; repeat runtime is 1.37–1.69×. The separate
+[lamp review](../../scene_review/) covers selected tuning frames, not held-out accuracy.
+
+An additional default official-command check (the whole folder in one fresh process)
+is running separately; it is not yet counted as a pass here. No public release or
+final submission is authorised by this checkpoint.

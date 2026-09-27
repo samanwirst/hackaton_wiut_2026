@@ -414,7 +414,7 @@ function renderReport(site) {
     el("div", {}, el("p", { class: "section-kicker", text: c.status }), el("h3", { text: c.title }),
       el("p", { text: c.observation }), el("p", { text: c.correction }), el("p", { class: "muted", text: c.scope })),
     el("figure", {}, el("a", { href: c.image, target: "_blank", rel: "noopener", "aria-label": `Open full-size evidence: ${c.title}` },
-      el("img", { src: c.image, alt: c.alt, loading: "lazy", width: "2240", height: "1760" })),
+      el("img", { src: c.image, alt: c.alt, loading: "lazy", width: String(c.image_width || 2240), height: String(c.image_height || 1760) })),
       el("figcaption", { class: "muted", text: c.caption })))));
 }
 
