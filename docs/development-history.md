@@ -98,6 +98,8 @@ These are new commits after the initial nine-stage checkpoint, not rewritten his
 | 15 · Inspectable analytical evidence | [8d86392](https://github.com/samanwirst/hackaton_wiut_2026/commit/8d86392daf7dd4873b40fbe1dc1118942f2910b0) | Four signal contact sheets, all 46 tuning observations and an executed notebook; clearly no held-out accuracy claim |
 | 16 · Upload boundary tests | [346dc66](https://github.com/samanwirst/hackaton_wiut_2026/commit/346dc666976f19642aa39ab965ab06eb7fe18b3a) | Invalid files, size/duration rejection, accepted boundary/tolerance and uppercase MP4; complete suite reaches 102 passing tests |
 | 17 · Coherent current results | [d0583f7](https://github.com/samanwirst/hackaton_wiut_2026/commit/d0583f7e8d8770f444d535829eb3c052144c250d) | Promote root output/provenance with matching media/EDA; browser-check desktop/mobile and delayed-selection behaviour; retain old evidence separately |
+| 18 · Default submission command | [c2e7e7f](https://github.com/samanwirst/hackaton_wiut_2026/commit/c2e7e7f) | Preserve a complete one-process offline folder run and exact equality to independent runs; extend the executed notebook |
+| 19 · Real prepared-demo uploads | [84df206](https://github.com/samanwirst/hackaton_wiut_2026/commit/84df206) | Verify two-minute desktop/mobile uploads, empty-event output, progress, playable results, chart/table/download and visible length rejection; preserve package hashes and screenshots |
 
 The current package audit has 79 passes, 3 readiness warnings and no failures. The
 website's runtime tile spans both completed passes (1.24–1.69× duration), rather than
