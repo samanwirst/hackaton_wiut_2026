@@ -1,6 +1,11 @@
 # Opt-in only after permission and private upload verification.
 # The gateway joins the existing proxy network; the model container does not.
 services:
+  demo:
+    environment:
+      # Only our gateway and a host-loopback SSH tunnel can reach this service.
+      # Trust its HTTPS forwarding header so downloaded file URLs stay HTTPS.
+      FORWARDED_ALLOW_IPS: "*"
   gateway:
     image: nginx:stable-alpine@sha256:0985e772fb9f729e6fa0980da05fca5d9c468e870eed43071545afa9d2e27d94
     restart: unless-stopped

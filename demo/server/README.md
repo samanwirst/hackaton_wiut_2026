@@ -33,6 +33,9 @@ Defaults deliberately **do not publish a demo**:
 - `traefik.enable=false`; no changes to existing proxy routes, ports 80/443 or certificates.
 - Hard limits: 0.75 CPU, 1.5 GiB memory including swap, 256 processes; low relative CPU shares.
 - Unprivileged UID, read-only image, no added capabilities or host/Docker-socket mounts.
+- The app is launched by absolute path with `/tmp` as its working directory: Ultralytics
+  creates a `runs/` directory even with output saving disabled. Model/config paths remain
+  relative to their source tree, so this changes storage location, not inference settings.
 - A dedicated cache volume holds temporary uploads/results; the app's six-hour TTL applies.
   It is not a disk quota: check free disk space before public release and while operating.
 - Logs rotate at two 5 MB files. Model downloads and analytics are disabled.
@@ -49,3 +52,28 @@ docker compose -f /opt/trafficwatch-demo/compose.yaml stop demo
 
 Never run a global Docker prune, restart Docker, or run Compose against another project's
 configuration. Public HTTPS routing is a separate, explicitly approved release step.
+
+## Approved HTTPS release
+
+`compose.public.yaml` adds a small, read-only Nginx gateway on the pre-existing `apps`
+proxy network. It does not attach the model to that network, mount proxy credentials,
+change existing routers or restart Traefik. The deployment assumes the inspected host's
+`websecure` entry point and `letsencrypt` resolver; verify those names on another host.
+The hostname is mandatory and must already resolve to the chosen server.
+The public override enables forwarded-header trust only behind this isolated gateway,
+which sets the external HTTPS scheme. See the official
+[FastAPI proxy guidance](https://fastapi.tiangolo.com/advanced/behind-a-proxy/).
+
+```bash
+export TRAFFICWATCH_DEMO_HOST=<approved-hostname>
+docker compose -f /opt/trafficwatch-demo/compose.yaml \
+  -f /opt/trafficwatch-demo/compose.public.yaml config -q
+docker compose -f /opt/trafficwatch-demo/compose.yaml \
+  -f /opt/trafficwatch-demo/compose.public.yaml up -d --no-build
+```
+
+Copy `nginx.conf` and the public Compose file into the dedicated directory before this step.
+Test HTTPS certificate validation and an actual public upload, including the page embedded
+in the public website. An uploaded two-minute clip must complete with visible progress,
+annotated playback and JSON download; a 124-second clip must be rejected clearly.
+Only then put the verified HTTPS address in both `demo_url` and `demo_embed_url`.

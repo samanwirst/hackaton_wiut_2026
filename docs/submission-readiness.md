@@ -55,7 +55,7 @@ Historical runs remain in [original GPU reports](../reports/original_gpu/),
 | Runtime ≤ 3× input duration | All twelve completed current-model video runs pass locally | Same-host observations, not an isolated T4 benchmark |
 | Same-machine determinism | Exact event/risk equality across all four originals | Reverify after any source/config/weight change |
 | All sample predictions and provenance | Current root output bound to source/config/input hashes and package versions | Keep output and manifest together |
-| Team names, roles, contributions and links | Three official names; captain-confirmed equal core credit for Samandar/Doniyorbek and polish/debugging for Shohruxxo’ja | Remaining profile links and previous projects are deferred by the user |
+| Team names, roles, contributions and links | Three official names and GitHub accounts, two captain-supplied LinkedIn links; equal core credit for Samandar/Doniyorbek and polish/debugging for Shohruxxo’ja | Doniyorbek has no LinkedIn; portfolios and previous projects remain incomplete |
 | Approach diagram and technical report | Learned/rule-based paths, failure cases and scoped visual evidence | Final review against the released revision |
 | EDA for every sample | Four original GPU entries and 20 JPEGs; metadata/profile checks pass | Repeat rendering checks at eventual public URL |
 | Annotated playback, timelines and risk | Four full-decode H.264 files; all events/curves match root output; current desktop/mobile browser checks pass | Verify again at the eventual public deployment |
@@ -130,8 +130,9 @@ contacts are intended for Git. The optional notebook environment is not a runtim
 
 ## External prerequisites and final release gates
 
-1. Add the deferred GitHub/LinkedIn/portfolio/previous-project details without inventing them.
-   The user has confirmed names and contributions; these are already in README/site.
+1. Add portfolio/previous-project details without inventing them. The captain supplied all three
+   GitHub accounts and two LinkedIn links and confirmed that Doniyorbek has no LinkedIn.
+   These links, names and contributions are already in README/site.
 2. Supply three T-shirt sizes in portal order: Samandar, Shohruxxo’ja, Doniyorbek.
 3. The captain subsequently provided an existing server for the demo, explicitly requiring
    that its existing sites remain unaffected. A separate private, resource-limited
