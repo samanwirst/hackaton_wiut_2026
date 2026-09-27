@@ -4,6 +4,10 @@ Keep the confirmed repository owner: `samanwirst/hackaton_wiut_2026`.
 This is a preparation checklist, not evidence that any service has been deployed.
 See [submission readiness](submission-readiness.md) for the measured results and open gates.
 
+Registered team: **Zero Context** (project: TrafficWatch). The captain's participant portal,
+checked on 27 September 2026, gives the deadline as **27 September, 23:59 Tashkent time
+(UTC+5)**.
+
 **Publication is deliberately deferred by the owner.** Keep the repository private, preserve
 `main`, and prepare/verify changes on `feat/trafficwatch-submission`. Do not enable the public
 website, publish the demo or change repository visibility until the owner confirms the final
@@ -31,7 +35,9 @@ Review the files before committing: include current source/configuration, all th
 root predictions and their manifest, reports, and the complete `website/` assets. Leave raw
 videos, `.cache/`, virtual environments, partial downloads and generated `space/` packages out
 of Git. Use the existing original-run outputs; do not replace them with a CPU/preview run.
-Team profiles remain deferred until the user supplies them; do not invent details.
+Use names and registration details verified in the participant portal. Roles, contributions,
+portfolio links and previous projects still need confirmation if the portal does not provide
+them; do not invent details or copy private contact information into the public site.
 
 ## 2. Publish the static website
 
@@ -100,7 +106,9 @@ Publish the updated website and test both the embedded and standalone app while 
 ## 4. Public acceptance checks and final handoff
 
 - All four sample videos play and seek from the event table, timeline and risk chart on desktop
-  and mobile. Their event counts are 42 / 55 / 48 / 20; EDA shows all four original 4K inputs.
+  and mobile. Their event counts and risk curves match `predictions_samples.json` exactly;
+  EDA shows all four original 4K inputs. Run `python tools/verify_website.py --base-url <url>`
+  against the selected deployment and inspect its screenshots.
 - A real MP4 upload to the public demo shows progress, annotated playback, timeline/risk chart,
   an event table and a working JSON download. Also check rejection of a clip over 120 seconds;
   the advertised upload limit is 500 MB. No private login should be required.
@@ -123,3 +131,28 @@ does not measure accuracy, benchmark T4 hardware or replace a real public upload
 published Space revision and GitHub commit after successful checks. Create the final immutable
 tag/commit handoff only after the remaining requirements are satisfied; submit that repository
 reference together with the website URL and keep both services available through judging.
+
+## 5. Participant-portal handoff
+
+The captain's [submission form](https://hackathon.wiut.uz/team/submit/) was inspected read-only
+on 27 September. It is still **not submitted**. It requests:
+
+| Field | Prepared value / remaining action |
+|---|---|
+| Repository | `https://github.com/samanwirst/hackaton_wiut_2026` — make public only after approval |
+| Tag or commit hash | The final tested tag or full 40-character commit hash; not an intermediate checkpoint |
+| Team website | Confirm the deployed website, including its working public live demo, before copying the URL |
+| T-shirt sizes | Captain Samandar, then Shohruxxo’ja, then Doniyorbek; sizes still need the team's input |
+| Message to reviewers | Optional; draft below |
+
+Draft reviewer message (revise against the final verified package before sending):
+
+> Zero Context presents TrafficWatch: an offline open-weights detector/tracker with explainable
+> traffic-event rules and an independent causal accident-risk estimator. The repository includes
+> weights, sample predictions and reproducibility evidence. The website documents the approach,
+> EDA, original-sample visualisations and known limitations; event counts are not accuracy scores.
+
+Submitting confirms originality/compliance and sends an e-mail receipt to every team member.
+Do not click **Submit** during preparation. Obtain the owner's separate final confirmation,
+submit before **27 September 2026, 23:59 Tashkent time**, and verify the resulting portal status
+and submitted references rather than assuming a click succeeded.

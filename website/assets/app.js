@@ -420,6 +420,7 @@ function renderReport(site) {
 
 function renderTeam(site) {
   const team = site?.team || [];
+  $("#teamName").textContent = site?.team_name || "Team";
   $("#teamBody").replaceChildren(...team.map(p => el("div", { class: "card member" }, el("h3", { text: p.name }), el("div", { class: "role", text: p.role }),
     el("p", { text: p.contributions }), p.projects ? el("p", { text: `Proud of: ${p.projects}` }) : null,
     el("div", { class: "mlinks" }, ...[["GitHub", p.github], ["LinkedIn", p.linkedin], ["Portfolio", p.portfolio]]

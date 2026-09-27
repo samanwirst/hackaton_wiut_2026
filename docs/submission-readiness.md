@@ -194,9 +194,14 @@ source; this assembly check did not rerun inference while the full GPU repeat wa
 The Git-visible publication set contains no original/preview inputs, virtual environments or
 caches, and none of its files reaches 100 MiB. These are local checks, not remote deployments.
 
-1. Add the three team members and their roles, contributions, GitHub, LinkedIn, portfolios
-   and previous projects when supplied. The user explicitly deferred these details until the
-   final stage; continue independent work without inventing profiles or requesting them again.
+1. All three registered names and the captain designation have now been read from the official
+   portal and added to the README/site. The captain also confirmed contributions: Doniyorbek
+   and Samandar share equal core development credit. Doniyorbek built the foundation;
+   Samandar substantially re-engineered it from a basic to a professional-grade codebase.
+   Shohruxxo’ja handled polish/debugging. Add GitHub, LinkedIn, portfolios and previous projects when
+   supplied. The user deferred these remaining details
+   until the final stage; continue independent work without inventing them. The portal also
+   requests three T-shirt sizes and confirms the deadline as 27 September, 23:59 Tashkent time.
 2. GitHub CLI access is now confirmed as `samanwirst`, with ADMIN permission on
    `samanwirst/hackaton_wiut_2026`; the remote remains unchanged. The repository is currently
    private, so authenticated access is not proof of public availability. The user requested

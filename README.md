@@ -156,6 +156,12 @@ The three demo lifecycle tests are skipped in inference-only environments withou
 CI also validates `predictions_samples.json`
 and all committed weight checksums.
 
+Browser verification: start `python tools/serve_website.py`, then in a second terminal run
+`python tools/verify_website.py` (development dependencies and Chromium required). It checks
+all four original playbacks, event/timeline/risk seeking, HTTP range requests and every EDA
+image on desktop and mobile, and saves screenshots under `.cache/browser-qa/`.
+Use `--base-url https://your-site/` to repeat it against the eventual public deployment.
+
 Run `python tools/check_submission.py` for a package audit, or add `--strict --online` before
 creating the final tag to require all four sample visualisations, complete team profiles,
 matching run provenance and reachable public URLs. Runtime on T4, visual correctness and an
@@ -272,12 +278,23 @@ Run commands from the repository root. `requirements.txt`, the organiser scripts
 
 ## Team
 
+Registered team: **Zero Context**, WIUT, Computer Vision track. The captain's official
+participant portal confirms this name and a submission deadline of **27 September 2026,
+23:59 Asia/Tashkent (UTC+5)**. TrafficWatch is the project name; existing experiment
+outputs use the project identifier `trafficwatch` in their non-scoring `team` metadata.
+
 | Member | Role | Contributions | Links |
 |---|---|---|---|
-| Samandar Muhammadiev | Computer Vision & Platform | detection, tracking, event rules, causal risk, tooling, demo and website | [GitHub](https://github.com/samanwirst) |
+| Mukhammadiev Samandar Shavkatovich | Captain · Core development & engineering | Equal core contributor: substantially refactored and re-engineered the basic implementation into a professional-grade codebase | [GitHub](https://github.com/samanwirst) |
+| Muxiddinov Shohruxxo’ja Usmonxo’ja o’g’li | Polish & debugging | Polished the project and debugged implementation issues | Links pending |
+| Doniyorbek Raximov Mehriddinovich | Core development & foundation | Equal core contributor: created the project foundation and initial baseline implementation | Links pending |
 
-The remaining team-member names, roles and portfolio links must be filled from the team's confirmed
-submission details before publishing; they are intentionally not invented here.
+All three names and the captain designation are verified against the official participant portal;
+the captain confirmed this contribution breakdown. Samandar and Doniyorbek share equal core
+development credit; refactoring and engineering are substantial development work, not a
+supporting role. The remaining profile/portfolio links and
+previous projects still need to be supplied before publication. Private registration contact
+details are intentionally excluded.
 
 Code, website and report were written with the help of AI assistants, which the rules allow; no
 hosted model is called at inference.

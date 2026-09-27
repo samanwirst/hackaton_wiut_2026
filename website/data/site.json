@@ -1,4 +1,5 @@
 {
+  "team_name": "Zero Context",
   "lede": "A detector, a tracker and fourteen explainable rules turn a fixed CCTV view into labelled events; a causal risk model watches for conflicts frame by frame.",
   "repo_url": "https://github.com/samanwirst/hackaton_wiut_2026",
   "website_url": "https://samanwirst.github.io/hackaton_wiut_2026/",
@@ -61,11 +62,29 @@
   },
   "team": [
     {
-      "name": "Samandar Muhammadiev",
-      "role": "Computer Vision & Platform",
-      "contributions": "Detection, tracking, event rules, causal risk model, reproducibility tooling, demo and website.",
+      "name": "Mukhammadiev Samandar Shavkatovich",
+      "role": "Captain · Core development & engineering",
+      "contributions": "Equal core contributor alongside Doniyorbek. Substantially refactored and re-engineered the basic implementation into a professional-grade codebase.",
       "projects": "TrafficWatch — an offline, explainable traffic-safety pipeline from inference to operator-facing visualisation.",
       "github": "https://github.com/samanwirst",
+      "linkedin": "",
+      "portfolio": ""
+    },
+    {
+      "name": "Muxiddinov Shohruxxo’ja Usmonxo’ja o’g’li",
+      "role": "Polish & debugging",
+      "contributions": "Polished the project and debugged implementation issues.",
+      "projects": "",
+      "github": "",
+      "linkedin": "",
+      "portfolio": ""
+    },
+    {
+      "name": "Doniyorbek Raximov Mehriddinovich",
+      "role": "Core development & foundation",
+      "contributions": "Equal core contributor alongside Samandar. Created the project foundation and initial baseline implementation.",
+      "projects": "",
+      "github": "",
       "linkedin": "",
       "portfolio": ""
     }
