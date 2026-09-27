@@ -162,8 +162,11 @@ The publication steps and public-upload checklist are in
 `seed: 0` in the config seeds Python, NumPy and PyTorch; cuDNN runs in deterministic mode and
 benchmark mode is off. The pipeline has no sampling or learned randomness at inference, frame
 subsampling is fixed per device profile (never adapted to wall-clock time), and tracking is
-deterministic, so two runs on the same machine give the same `predictions.json` (floating-point
-noise aside).
+deterministic. All four original samples have been repeated offline on the same host: every
+event and all 33,075 risk timestamp/value pairs match exactly. The reference used one batch;
+the repeat used one fresh process per video, with per-video checkpoints. The harness's timing
+logs naturally differ, so complete JSON file hashes are not expected to match.
+Evidence and execution limits are in [`reports/original_gpu/`](reports/original_gpu).
 
 ## Runtime
 

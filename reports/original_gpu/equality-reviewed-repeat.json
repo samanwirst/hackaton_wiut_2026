@@ -1,0 +1,83 @@
+{
+  "recorded_at": "2026-09-27T07:10:28.766737+00:00",
+  "source_commit": "af6211df7c109f090b07d5ba96770db9503a194b",
+  "execution_mode": "One fresh official-harness process per original, serialized; aggregate assembled from those outputs.",
+  "network_interfaces": [
+    "lo"
+  ],
+  "reference_predictions_sha256": "0dc5d20efae4991999e142486820a500ad3c798a9927afa4593643f40f41404d",
+  "repeat_predictions_sha256": "05369d3f116837aedb37b0379cafad810770010b4287e14567ff87243de4b020",
+  "canonical_videos_sha256": "9a2bf3f7f4985c180632552bc8ddfa93da11b34d1f4ad1407ee7cc30e1bd01ff",
+  "exact_all_events_and_risk": true,
+  "videos": {
+    "C3896.MP4": {
+      "exact_event_risk_match": true,
+      "events": 42,
+      "risk_samples": 10200,
+      "canonical_video_sha256": "106a1a4cb7130016bf77104b53788b006c4792edd413672f9a3cf217c5b835b7",
+      "log": {
+        "duration": 340.34,
+        "budget_sec": 1021.0,
+        "errors": [],
+        "part_a_sec": 460.4,
+        "part_b_sec": 184.6,
+        "total_sec": 645.0
+      },
+      "prediction_sha256": "11e6faed6e07acbd4685c972131143f3b9fb588d2aff8947d07d20fbc8d37367",
+      "manifest_sha256": "95e90388685b447565f08010efe4310c09887c0c901ce5bbb2f5c8d21a3024b6"
+    },
+    "C3897.MP4": {
+      "exact_event_risk_match": true,
+      "events": 55,
+      "risk_samples": 9525,
+      "canonical_video_sha256": "9645faa0627051b97ca4597b532a0a77ac466d5a54fb6fe2b6b0b180d0e32243",
+      "log": {
+        "duration": 317.82,
+        "budget_sec": 953.5,
+        "errors": [],
+        "part_a_sec": 238.2,
+        "part_b_sec": 214.5,
+        "total_sec": 452.7
+      },
+      "prediction_sha256": "d3a42374e1d584b189bb86430093cf7ee8e99b059532697609e2fcf5ef19147e",
+      "manifest_sha256": "e41bdbff1e6d84955d0aef60376979f55547f5e01e4a396b4713a0b8da253ac9"
+    },
+    "C3902.MP4": {
+      "exact_event_risk_match": true,
+      "events": 48,
+      "risk_samples": 9525,
+      "canonical_video_sha256": "2297518ea682b0549702222f258ee584ffdb7cc33f20656e3fc968ace53b0fae",
+      "log": {
+        "duration": 317.82,
+        "budget_sec": 953.5,
+        "errors": [],
+        "part_a_sec": 222.4,
+        "part_b_sec": 213.4,
+        "total_sec": 435.8
+      },
+      "prediction_sha256": "48ab0b34d67c14895e4d370508862671b503401f5f0940ac13ced109c1992e7c",
+      "manifest_sha256": "7505b43d8d5a53133884a0bbc2b596bd0de13c6bfc7b9f9c55034aabd5e63194"
+    },
+    "C3905.MP4": {
+      "exact_event_risk_match": true,
+      "events": 20,
+      "risk_samples": 3825,
+      "canonical_video_sha256": "53197829807820085666d3e72568d4db3e1e7d8cb67379a9b049965c3338fd26",
+      "log": {
+        "duration": 127.63,
+        "budget_sec": 382.9,
+        "errors": [],
+        "part_a_sec": 81.5,
+        "part_b_sec": 76.8,
+        "total_sec": 158.3
+      },
+      "prediction_sha256": "d50cd65cfc859e5cccf117aad71ff59afa916b1368762a8988ed185c8c1e2e94",
+      "manifest_sha256": "5c3ea7444e1dd5030faada17890670b9580d43bd312760e95f08176c3a498f47"
+    }
+  },
+  "limitations": [
+    "Reference processed all four videos in one process; repeat used four independent processes.",
+    "Wall-clock log fields differ and are not compared for equality.",
+    "Same-host evidence only; no cross-hardware determinism, T4 runtime or accuracy claim."
+  ]
+}

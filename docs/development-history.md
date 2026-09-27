@@ -43,8 +43,8 @@ remain ordinary diffs. This follows
 
 These were local checks at the nine-stage checkpoint; the remote CI result is recorded below.
 They do not establish public hosting or hidden-set accuracy. The complete repeat was interrupted
-by a host restart before its final output was written, so full-set determinism remains an open
-verification gate.
+by a host restart before its final output was written, so full-set determinism was still an open
+verification gate at that checkpoint.
 
 ## Post-push verification
 
@@ -73,12 +73,21 @@ for later verification results.
 
 This follow-up is a new commit rather than a rewrite of the nine-stage checkpoint. It makes
 the scenario test portable; it does not claim that angular-bin boundary decisions are
-identical across machines. The required same-machine full-original repeat remains separate.
+identical across machines. The required same-machine full-original repeat is separate.
+
+## Full-original reproducibility follow-up
+
+A checkpointed offline repeat subsequently completed all four originals with one fresh
+official-harness process per video. Every event and all 33,075 risk timestamp/value pairs
+are exactly equal to the reviewed original batch. Individual outputs, input/source manifests,
+the aggregate and equality hashes are preserved in [the original-GPU report](../reports/original_gpu/README.md).
+All four runs stayed below their time budgets on the local GPU. This confirms same-host
+reproducibility for that model revision, not accuracy, T4 runtime or a later revision.
 
 ## Work still outside this checkpoint
 
 Public repository/website/demo availability, a real upload to the public demo, the final
-three-person team details, the complete identical-source repeat and target-hardware/clean-host
+three-person team details, labelled accuracy and target-hardware/clean-host
 verification remain tracked in [submission readiness](submission-readiness.md).
 The user deferred team details until the final stage. Do not replace missing information with
 invented profiles or convert candidate-review notes into a claimed accuracy score.

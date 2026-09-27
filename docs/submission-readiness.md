@@ -24,9 +24,9 @@ See `reports/accident_review/` for scoped visual evidence.
 | No hosted inference or runtime downloads | Local-weight checks, CPU smoke runs, and all four original GPU runs inside a network namespace | Preserve offline behaviour and shipped weights in the final package |
 | Two-command clean installation and run | Root requirements installed in a fresh Python environment; the unchanged harness processed all four originals on CUDA without errors (`reports/original_gpu/`) | A fresh operating system/container and the target hardware remain unverified |
 | Runtime at most 3× video duration | Current-rule run passes all four originals on RTX 3050 Laptop: 403.7 / 386.5 / 380.7 / 161.5 s (1.19–1.27× duration) | T4-class hardware (16 GB VRAM, 8 CPU cores, 32 GB RAM) remains unverified |
-| Same-machine determinism | Unit tests and repeated CPU smoke runs agree; two offline GPU runs on both the full C3905 preview and original 4K input have exactly equal event/risk outputs | Extend repeated-run verification to the remaining originals; wall-clock log fields naturally differ |
+| Same-machine determinism | All four current-rule originals repeated offline in separate fresh processes: every event and all 33,075 risk timestamp/value pairs match the original batch exactly (`reports/original_gpu/equality-reviewed-repeat.json`) | Preserve source/configuration; repeat after model changes; wall-clock log fields naturally differ |
 | Predictions for all supplied samples | Root output covers all four originals: 165 events, official validation with no errors/warnings, current provenance and matching website assets; baseline preserved separately | Preserve the verified set when preparing the public tag |
-| Sample-result reproducibility | Root manifest binds the original/GPU predictions to input, source and configuration hashes and package versions | Complete the identical-source full-set repeat; preserve source/configuration during verification |
+| Sample-result reproducibility | Root manifest binds predictions to inputs, source/configuration and package versions; the complete-set repeat is saved with individual per-video checkpoints and aggregate provenance | Revalidate and regenerate outputs after any inference changes |
 | README: installation, approach, data licences and seeds | Sections and commands are present in `README.md` | Confirm all team contributions; retain limitations alongside measured results |
 | Team: three members, roles, contributions and links | One profile is present; LinkedIn and portfolio fields are empty | Confirm names and contributions; supply all three profiles and previous-project links |
 | Approach diagram and technical report | Diagram shows independent Part A/Part B paths sharing fixed scene configuration; report distinguishes learned/rule-based components and includes the original parked-car/pedestrian contact sheet with sampling limits | Final review against the actual submitted model |
@@ -139,8 +139,10 @@ rendering and the repeat harness are subsequently scheduled sequentially.
 The subsequent serialized repeat was interrupted across a host restart: its process and tool
 session no longer exist, and neither final prediction JSON nor provenance was written. The
 first three per-video progress messages are not counted as complete determinism evidence.
-The validated first-run output and promoted assets remain unchanged; a complete repeat is
-still required.
+The validated first-run output and promoted assets remain unchanged. A subsequent checkpointed
+repeat completed all four originals with exact event/risk equality; its individual outputs,
+manifests and aggregate are now preserved in `reports/original_gpu/`. The reference processed
+all videos in one process; the completed repeat deliberately used one fresh process per video.
 
 The promoted site passed Chromium checks at 1440 px/light and 390 px/dark for all four
 originals: the correct video/duration and event count appear; clicking event-table rows,

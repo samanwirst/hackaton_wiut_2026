@@ -124,13 +124,36 @@ The output contains 14 `accident` candidates across C3896/C3897/C3902. These are
 predictions, **not visually confirmed collisions** or an accuracy measurement; inspect their
 overlays and temporal boundaries before making quality claims.
 
+## Completed identical-source repeat
+
+On 2026-09-27 all four originals were repeated offline with the unchanged official harness,
+one fresh process per video, serialized to limit memory use. Each completed output was saved,
+officially validated and bound to its input/source/configuration hashes before starting the
+next video. The individual outputs and manifests are in `repeat-reviewed/`.
+
+Every event segment and all **33,075 risk timestamp/value pairs match exactly** against
+`predictions-reviewed.json`. `predictions-reviewed-repeat.json` is an aggregate of those four
+independent harness outputs, **not** a second single-process batch. Its provenance is
+`run-reviewed-repeat.json`; `equality-reviewed-repeat.json` records exact comparisons and hashes.
+Wall-clock log fields differ, as expected. No source/configuration or weight changes were made.
+
+| Input | Repeat Part A | Repeat Part B | Combined | Allowed |
+|---|---:|---:|---:|---:|
+| C3896 | 460.4 s | 184.6 s | 645.0 s | 1021.0 s |
+| C3897 | 238.2 s | 214.5 s | 452.7 s | 953.5 s |
+| C3902 | 222.4 s | 213.4 s | 435.8 s | 953.5 s |
+| C3905 | 81.5 s | 76.8 s | 158.3 s | 382.9 s |
+
+These are non-isolated local wall-clock measurements with other desktop/development activity,
+not a T4 benchmark. Exact repeatability does not establish that the predicted events are correct.
+
 ## Remaining scope
 
 These completed runs are not a T4 benchmark, a clean-container test or a measurement against
-human ground truth. An identical-source full-set repeat, public hosting and confirmed team
-profiles are still required before final handoff. A repeat overlapping rendering was deliberately
+human ground truth. Public hosting and confirmed team profiles are still required before final
+handoff; the owner has explicitly deferred publication. A repeat overlapping rendering was deliberately
 stopped without a result when local RAM became constrained; it is not counted as evidence.
 The subsequent serialized repeat logged successful processing of C3896, C3897 and C3902,
 but its process/session disappeared across a host restart before the final JSON was saved.
-Those progress messages are not an event/risk equality check. No complete repeat artefact
-was produced; this gate remains open and the validated first run is preserved unchanged.
+Those progress messages were not an event/risk equality check. That attempt produced no
+complete artefact; the checkpointed repeat above subsequently completed this verification.
