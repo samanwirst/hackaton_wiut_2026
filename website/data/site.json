@@ -1,24 +1,72 @@
 {
   "lede": "A detector, a tracker and fourteen explainable rules turn a fixed CCTV view into labelled events; a causal risk model watches for conflicts frame by frame.",
-  "repo_url": "",
-  "weights_url": "",
-  "predictions_url": "",
+  "repo_url": "https://github.com/samanwirst/hackaton_wiut_2026",
+  "website_url": "https://samanwirst.github.io/hackaton_wiut_2026/",
+  "weights_url": "https://github.com/samanwirst/hackaton_wiut_2026/tree/main/weights",
+  "predictions_url": "https://github.com/samanwirst/hackaton_wiut_2026/blob/main/predictions_samples.json",
   "demo_url": "",
   "demo_embed_url": "",
   "metrics": {
     "score_a_dev": null,
-    "speed": null,
-    "speed_note": null
+    "speed": "1.19–1.27× duration",
+    "speed_note": "Observed RTX 3050 Laptop run on all four 4K originals; 3× allowed. T4 not yet verified."
   },
-  "approach": null,
+  "approach": {
+    "learned": [
+      "YOLO11 detectors pretrained on COCO: m for Part A and s for Part B on the evaluation GPU; n for CPU fallback and the demo.",
+      "A drivable-area mask learned only from where tracked vehicles move in the organiser-provided samples.",
+      "A per-cell direction field learned from sample trajectories; no hidden-test footage or hosted inference APIs are used."
+    ],
+    "rules": [
+      "ByteTrack associations become smoothed trajectories with scale-normalised speed and explicit frame-edge handling.",
+      "One explainable rule per event class combines trajectories with the drawn stop line, crossings, lane directions and signal phases.",
+      "Temporal post-processing merges fragments, removes short blips, clips boundaries and guarantees no same-class overlap.",
+      "Part B is strictly causal: closest approach, braking and wrong-way evidence are fused and mapped to [0, 1]. The sigmoid parameters are heuristic; empirical calibration is still needed."
+    ]
+  },
   "report": {
-    "worked": ["TODO: fill in after tuning on the dev labels."],
-    "failed": ["TODO: honest failure cases with timestamps."],
-    "next": ["TODO: what we would do with more time."]
+    "worked": [
+      "Scale-normalised motion makes one threshold usable from the near foreground to the far lanes.",
+      "Ignoring boxes clipped by the image edge removed false stopped-vehicle, U-turn and collision events.",
+      "Signal-aware queue handling suppresses red-light queues when the relevant signal state is readable; unknown phases remain a limitation.",
+      "The same causal closest-approach logic runs in the submission, demo and exported risk charts."
+    ],
+    "failed": [
+      "The original GPU run still contains nine unconfirmed accident candidates, including C3902 at 1.47–3.47 s. Valid output and event counts do not establish detection accuracy.",
+      "Near-miss was disabled: all 15 initial firings on synthetic clips and C3905 were false positives, mainly ordinary lane passing.",
+      "The colour-only fire/smoke heuristic is not reliable enough for hidden footage and remains disabled.",
+      "Generic static-obstacle background differencing is vulnerable to shadows and parked objects, so it remains disabled until labelled.",
+      "Unreadable or indirectly inferred traffic-signal phases can leave ordinary queues classified as stopped vehicles or congestion; these require visual review.",
+      "A fixed-camera ruleset transfers poorly to a new viewpoint unless its scene geometry and direction field are configured."
+    ],
+    "case_studies": [
+      {
+        "status": "Error review · original footage",
+        "title": "A pedestrian beside a parked car is not a crash",
+        "observation": "The baseline GPU run proposed an accident in C3896 at 216.02–217.62 s. In this reviewed pair, the black SUV remains parked while pedestrians walk or stand beside it: a false positive from proximity and pedestrian deceleration.",
+        "correction": "The revised rule requires prior vehicle movement in a person–vehicle pair, a complete half-second settling window and observed proximity after settling. Seven regression tests cover these checks, including positive collision examples. The rule remains a heuristic, not visual proof of contact.",
+        "scope": "AI-assisted review of one pair, not an exhaustive annotation or an accuracy score. The other C3896 candidate at 274.74–276.01 s remains unconfirmed; dense traffic stopping is not enough to verify an impact.",
+        "image": "data/reviews/C3896_214-222.jpg",
+        "alt": "Sixteen cropped frames show a parked black SUV with pedestrians standing and walking beside it while other cars pass in the foreground.",
+        "caption": "C3896 original · window 214–222 s · sampled at 2 fps. Frame labels are relative to the window, starting at zero. Cropping and sampling can miss brief or occluded contact. Click to inspect the full-size sheet."
+      }
+    ],
+    "next": [
+      "Finish human labels for all samples and tune boundaries directly against F1 at tIoU 0.3, 0.5 and 0.7.",
+      "Train a compact accident/near-miss clip classifier on public crash datasets and use rules only to propose candidates.",
+      "Calibrate Part B on labelled pre-crash windows so the 0.5 alarm threshold has an empirical meaning.",
+      "Add operator metrics by lane and time of day, plus active-learning review for low-confidence events."
+    ]
   },
   "team": [
-    {"name": "TODO Member 1", "role": "TODO role", "contributions": "TODO: what this member built.", "projects": "TODO", "github": "", "linkedin": "", "portfolio": ""},
-    {"name": "TODO Member 2", "role": "TODO role", "contributions": "TODO: what this member built.", "projects": "TODO", "github": "", "linkedin": "", "portfolio": ""},
-    {"name": "TODO Member 3", "role": "TODO role", "contributions": "TODO: what this member built.", "projects": "TODO", "github": "", "linkedin": "", "portfolio": ""}
+    {
+      "name": "Samandar Muhammadiev",
+      "role": "Computer Vision & Platform",
+      "contributions": "Detection, tracking, event rules, causal risk model, reproducibility tooling, demo and website.",
+      "projects": "TrafficWatch — an offline, explainable traffic-safety pipeline from inference to operator-facing visualisation.",
+      "github": "https://github.com/samanwirst",
+      "linkedin": "",
+      "portfolio": ""
+    }
   ]
 }

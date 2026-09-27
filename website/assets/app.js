@@ -8,14 +8,14 @@ const RULES = [
   ["stopped_vehicle", "Vehicle still for ≥ 10 s on the carriageway while traffic in its direction flows past it, so a signal queue does not count; a vehicle that stopped behind a stop line on red and leaves with the queue at green never counts. Stationary fragments of one vehicle are joined across track ids."],
   ["congestion", "Per direction of travel: at least 4 vehicles, median speed crawling and most of them stopped, for ≥ 30 s. A queue waiting at a red signal is not congestion."],
   ["wrong_way", "A heading the learned direction field has (almost) never seen at that place while the opposite heading is common, for ≥ 1.5 s; or against a drawn lane direction."],
-  ["illegal_u_turn", "Heading turns ≥ 150° within 20 s outside zones where U-turns are allowed."],
+  ["illegal_u_turn", "Heading turns ≥ 150° within 20 s in an explicitly marked prohibited zone. No illegality is inferred when that geometry is unknown."],
   ["illegal_turn", "A turn into a prohibited entry → exit movement, or a turn not allowed from the entry lane."],
   ["solid_line_crossing", "Both approximate wheel points change side of a solid marking."],
   ["red_light", "The front of the vehicle crosses the stop line while its signal has been red for ≥ 0.3 s; ends when it leaves the junction."],
   ["stop_line", "The vehicle stops past the stop line on red without entering the junction; ends when the signal turns green."],
-  ["jaywalking", "A pedestrian (not a rider) walking on the carriageway outside a crossing for ≥ 1 s, or stepping onto a crossing against its red pedestrian signal."],
-  ["failure_to_yield", "A vehicle drives through a crossing while a pedestrian is on it near its path."],
-  ["accident", "Two road users make contact after a fast approach, then at least one loses ≥ 60 % of its speed and they come to rest."],
+  ["jaywalking", "A pedestrian (not a rider) walking on the carriageway outside a crossing for ≥ 1 s. The official class does not include walking on a marked crossing against a red signal."],
+  ["failure_to_yield", "A vehicle drives through a crossing while a pedestrian is on it or stepping onto it near its path. The official definition has no exemption for a red pedestrian signal."],
+  ["accident", "A pair enters image-space contact range after a fast approach and sharp speed loss, with a full half-second settling window and joint evidence of remaining close. A pedestrian walking up to a stationary vehicle is insufficient; this is a collision candidate, not visual confirmation."],
   ["near_miss", "Closest-approach analysis predicts contact within 2 s, one road user brakes sharply or swerves, and they never touch. Off by default until it is validated."],
   ["road_obstacle", "An animal on the carriageway, or a static foreign object that differs from the long-term background where no tracked road user is."],
   ["fire_smoke", "Flickering, saturated flame-coloured regions (enabled only after validation)."],
@@ -198,8 +198,8 @@ function tile(label, value, note) {
 
 function renderPipeline() {
   const host = $("#pipeline");
-  const W = 1080, H = 250;
-  const root = svg("svg", { viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": "Pipeline diagram" });
+  const W = 1080, H = 300;
+  const root = svg("svg", { viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": "Independent event-detection and causal risk pipelines sharing only preconfigured scene geometry" });
   const box = (x, y, w, h, title, sub, accent) => {
     root.append(svg("rect", { x, y, width: w, height: h, rx: 10, fill: accent ? css("--label-wash") : css("--surface-2"),
       stroke: accent ? css("--accent") : css("--axis"), "stroke-width": 1 }));
@@ -212,22 +212,26 @@ function renderPipeline() {
     const a = Math.atan2(y2 - y1, x2 - x1), s = 7;
     root.append(svg("path", { d: `M${x2},${y2}L${x2 - s * Math.cos(a - 0.45)},${y2 - s * Math.sin(a - 0.45)}L${x2 - s * Math.cos(a + 0.45)},${y2 - s * Math.sin(a + 0.45)}Z`, fill: css("--muted") }));
   };
-  const y1 = 22, h = 64, y2 = 160;
+  const y1 = 22, h = 64, y2 = 210;
   box(10, y1, 140, h, "Video (.mp4)", "every k-th frame");
   box(185, y1, 150, h, "YOLO11", "detector (learned)", true);
   box(370, y1, 150, h, "ByteTrack", "online tracking");
   box(555, y1, 160, h, "Trajectories", "smoothed kinematics");
-  box(750, y1, 150, h, "14 event rules", "explainable");
+  box(750, y1, 150, h, "14 event rules", "merge + clip segments");
   box(935, y1, 135, h, "Part A", "[start, end, label]");
-  box(370, y2, 150, h, "Scene layout", "drawn + learned", true);
+  box(555, 116, 345, 52, "Scene geometry + direction field", "configured before inference", true);
+  box(10, y2, 140, h, "Frames in order", "step(frame, t)");
+  box(185, y2, 150, h, "YOLO11", "separate light model", true);
+  box(370, y2, 150, h, "ByteTrack", "past-only histories");
   box(555, y2, 160, h, "Conflicts", "closest approach, braking");
-  box(750, y2, 150, h, "Risk fusion", "hold + calibration");
+  box(750, y2, 150, h, "Risk fusion", "hold + sigmoid");
   box(935, y2, 135, h, "Part B", "P(accident ≤ 5 s)");
   arrow(150, y1 + h / 2, 185, y1 + h / 2); arrow(335, y1 + h / 2, 370, y1 + h / 2); arrow(520, y1 + h / 2, 555, y1 + h / 2);
   arrow(715, y1 + h / 2, 750, y1 + h / 2); arrow(900, y1 + h / 2, 935, y1 + h / 2);
-  arrow(520, y2 + 10, 750, y1 + h + 2);
-  arrow(635, y1 + h, 635, y2); arrow(715, y2 + h / 2, 750, y2 + h / 2); arrow(900, y2 + h / 2, 935, y2 + h / 2);
-  host.replaceChildren(root, el("figcaption", { class: "muted", text: "Part B runs its own causal detector and tracker on the frames it has received; it never reads the video file." }));
+  arrow(825, 116, 825, y1 + h); arrow(635, 168, 635, y2);
+  arrow(150, y2 + h / 2, 185, y2 + h / 2); arrow(335, y2 + h / 2, 370, y2 + h / 2); arrow(520, y2 + h / 2, 555, y2 + h / 2);
+  arrow(715, y2 + h / 2, 750, y2 + h / 2); arrow(900, y2 + h / 2, 935, y2 + h / 2);
+  host.replaceChildren(root, el("figcaption", { class: "muted", text: "Part B has its own detector, tracker and past-only histories. It shares the fixed scene configuration, never reads the video file and never consumes Part A's full-video trajectories. The risk sigmoid is heuristic, not empirically calibrated." }));
 }
 
 function renderApproach(site) {
@@ -240,7 +244,18 @@ function renderApproach(site) {
     "Part B: constant-velocity closest approach, braking and wrong-way evidence, logistic calibration."];
   $("#learnedList").replaceChildren(...learned.map(t => el("li", { text: t })));
   $("#rulesList").replaceChildren(...rules.map(t => el("li", { text: t })));
-  $("#rulesTable tbody").replaceChildren(...RULES.map(([c, r]) => el("tr", {}, el("td", {}, el("code", { text: c })), el("td", { text: r }))));
+  const rows = RULES.map(([c, r]) => el("tr", { "data-search": `${c} ${r}`.toLowerCase() },
+    el("td", {}, el("code", { text: c })), el("td", { text: r })));
+  $("#rulesTable tbody").replaceChildren(...rows);
+  const search = $("#ruleSearch"), count = $("#ruleCount");
+  const filter = () => {
+    const query = search.value.trim().toLowerCase();
+    let visible = 0;
+    rows.forEach(row => { row.hidden = !row.dataset.search.includes(query); if (!row.hidden) visible++; });
+    count.textContent = `${visible} ${visible === 1 ? "rule" : "rules"}`;
+  };
+  search.addEventListener("input", filter);
+  filter();
   renderPipeline();
 }
 
@@ -251,17 +266,19 @@ function renderEda(eda) {
   const draw = () => {
     const v = eda.videos[+sel.value || 0];
     const b = v.brightness.mean;
-    const lighting = b == null ? "–" : b < 60 ? "night" : b < 100 ? "dusk / dim" : "daylight";
+    const lighting = b == null ? "–" : b < 60 ? "low" : b < 100 ? "medium" : "high";
     const total = Object.values(v.tracks_by_class || {}).reduce((a, c) => a + c, 0);
     const counts = el("div", { class: "card" }), speed = el("div", { class: "card" }), light = el("div", { class: "card" });
     body.replaceChildren(
+      ...(eda.source ? [el("p", { class: "provenance", text: eda.source })] : []),
       el("div", { class: "tiles" }, tile("Resolution", `${v.width}×${v.height}`), tile("Frame rate", `${fmt(v.fps, 1)} fps`),
-        tile("Duration", `${fmt(v.duration / 60, 1)} min`, `${v.n_frames} frames`), tile("Lighting", lighting, `mean luma ${b ?? "–"}`),
-        tile("Tracked road users", `${total}`, Object.entries(v.tracks_by_class || {}).map(([k, n]) => `${pretty(k)} ${n}`).join(" · "))),
+        tile("Duration", `${fmt(v.duration / 60, 1)} min`, `${v.n_frames} frames`), tile("Image brightness", lighting, `mean luma ${b ?? "–"} / 255`),
+        tile("Road-user tracks", `${total}`, Object.entries(v.tracks_by_class || {}).map(([k, n]) => `${pretty(k)} ${n}`).join(" · "))),
       el("div", { style: "height:16px" }), counts, el("div", { class: "grid2" }, speed, light), imagesCard(v), lightsCard(v));
     const secs = v.counts_per_second;
     const series = SERIES.filter(([k]) => secs[k] && secs[k].some(n => n > 0)).map(([k, c]) => ({ name: pretty(k), color: css(c), points: secs[k].map((n, i) => [i, n]) }));
-    counts.append(el("div", { class: "chart-head" }, el("h3", { text: "Road users in view, per second" }), legend(series)));
+    counts.append(el("div", { class: "chart-head" }, el("h3", { text: "Active tracks, per second" }), legend(series)),
+      el("p", { class: "muted", text: "Detector/tracker estimates, not manual counts. Track fragmentation can count the same road user more than once." }));
     const ch = el("div"); counts.append(ch);
     lineChart(ch, { series, xMax: v.duration, xLabel: "seconds" });
     counts.append(tableToggle(["second", ...series.map(s => s.name)], secs.vehicle.map((_, i) => [i, ...series.map(s => s.points[i]?.[1] ?? 0)])));
@@ -307,9 +324,13 @@ async function renderResults(index) {
   if (!index || !index.length) { sel.parentElement.hidden = true; return; }
   sel.replaceChildren(...index.map((v, i) => el("option", { value: i, text: `${v.video} · ${v.events} events` })));
   const cache = {};
+  let drawVersion = 0;
   const draw = async () => {
+    const version = ++drawVersion;
     const item = index[+sel.value || 0];
     const r = cache[item.file] || (cache[item.file] = await load(item.file));
+    // A slow response from an earlier selection must not replace the current one.
+    if (version !== drawVersion) return;
     if (!r) { body.replaceChildren(el("p", { class: "empty", text: "Could not load this result." })); return; }
     const video = el("video", { src: r.annotated, controls: "", preload: "metadata", playsinline: "" });
     const seek = t => { video.currentTime = Math.max(0, t - 0.5); video.play().catch(() => {}); };
@@ -318,7 +339,8 @@ async function renderResults(index) {
       el("div", { class: "legend" }, el("span", {}, el("span", { class: "box", style: `background:${css("--s1")}` }), "predicted"),
         r.labels ? el("span", {}, el("span", { class: "box", style: `border:1px solid ${css("--ink-2")}` }), "our dev label") : null)), tlHost);
     const riskCard = el("div", { class: "card" }, el("div", { class: "chart-head" }, el("h3", { text: "Part B: probability that an accident starts within 5 s" }),
-      el("span", { class: "muted", text: "dotted line: alarm threshold 0.5" })), riskHost);
+      el("span", { class: "muted", text: "dotted line: alarm threshold 0.5" })),
+      el("p", { class: "muted", text: "Heuristic risk estimate; probability calibration has not been measured against labelled pre-crash windows." }), riskHost);
     const rows = r.events.map(e => el("tr", { class: "clickable", onclick: () => seek(e[0]) },
       el("td", {}, el("code", { text: e[2] })), el("td", { class: "num", text: fmt(e[0], 2) }), el("td", { class: "num", text: fmt(e[1], 2) }),
       el("td", { class: "num", text: fmt(e[1] - e[0], 1) })));
@@ -327,10 +349,18 @@ async function renderResults(index) {
         el("thead", {}, el("tr", {}, ...["class", "start s", "end s", "length s"].map(h => el("th", { text: h })))), el("tbody", {}, ...rows)))
         : el("p", { class: "muted", text: "No events detected in this video." }));
     const player = el("div", { class: "card player" }, video);
-    // videos are kept out of the repository: without the file, say how to render it instead of a broken player
+    const classes = new Set(r.events.map(e => e[2]));
+    const peak = r.risk_peak || (r.risk || []).reduce((best, point) => point[1] > best[1] ? point : best, [0, 0]);
+    const dashboard = el("div", { class: "tiles result-tiles", "aria-label": "Video result summary" },
+      tile("Detected events", String(r.events.length), `${classes.size} active ${classes.size === 1 ? "class" : "classes"}`),
+      tile("Event rate", `${fmt(r.events.length / Math.max(r.duration, 1) * 3600, 0)}/h`, "operator dashboard view"),
+      tile("Peak 5 s risk", fmt(peak[1], 2), `at ${fmt(peak[0])} s`),
+      tile("Input footage", r.source_kind === "original" ? "Original" : "Preview",
+        r.prediction_source === "submission harness" ? "measured with the organiser's harness" : "preliminary rule evaluation"));
+    // Replace an unsupported or unavailable media element with a useful status message.
     video.addEventListener("error", () => player.replaceChildren(el("p", { class: "muted",
-      text: "The annotated video is not published here (videos stay out of the repository). Render it locally with tools/export_results.py." })));
-    body.replaceChildren(player, tlCard, riskCard, evCard, r.labels ? scoreCard(r) : null);
+      text: "This browser could not load the annotated MP4. The timeline, events and risk curve remain available below." })));
+    body.replaceChildren(dashboard, player, tlCard, riskCard, evCard, ...(r.labels ? [scoreCard(r)] : []));
     let move = () => {};
     const charts = () => {
       move = timeline(tlHost, { duration: r.duration, events: r.events, labels: r.labels, onPick: seek });
@@ -359,7 +389,18 @@ function scoreCard(r) {
 
 function renderDemo(site) {
   const card = $("#demoCard"), url = site?.demo_url, embed = site?.demo_embed_url || site?.demo_url;
-  if (!url) { card.replaceChildren(el("p", { class: "empty", text: "The demo link will be added when the Hugging Face Space is published." })); return; }
+  if (!url) {
+    card.replaceChildren(el("div", { class: "demo-local" },
+      el("div", {}, el("h3", { text: "Deployment-ready Gradio application" }),
+        el("p", { text: "The public Space URL is added at deployment. The same CPU pipeline can be launched locally from the repository now." }),
+        el("code", { text: "pip install -r demo/requirements.txt && python demo/app.py" })),
+      el("div", { class: "demo-features" },
+        el("span", { text: "MP4 up to 2 minutes / 500 MB" }),
+        el("span", { text: "Annotated playback" }),
+        el("span", { text: "Timeline + causal risk curve" }),
+        el("span", { text: "Downloadable events.json" }))));
+    return;
+  }
   card.replaceChildren(el("p", {}, el("a", { href: url, target: "_blank", rel: "noopener", text: "Open the demo in a new tab ↗" }),
     el("span", { class: "muted", text: " — the Space may need a minute to wake up if nobody used it recently." })),
     el("iframe", { src: embed, title: "TrafficWatch live demo", loading: "lazy", allow: "fullscreen" }));
@@ -367,8 +408,14 @@ function renderDemo(site) {
 
 function renderReport(site) {
   const r = site?.report || {};
-  const col = (title, items) => el("div", { class: "card" }, el("h3", { text: title }), el("ul", {}, ...(items || ["TODO"]).map(t => el("li", { text: t }))));
+  const col = (title, items) => el("div", { class: "card" }, el("h3", { text: title }), el("ul", {}, ...(items || ["Not reported."]).map(t => el("li", { text: t }))));
   $("#reportBody").replaceChildren(col("What worked", r.worked), col("What did not", r.failed), col("What we would do next", r.next));
+  $("#reportCases").replaceChildren(...(r.case_studies || []).map(c => el("article", { class: "card review-case" },
+    el("div", {}, el("p", { class: "section-kicker", text: c.status }), el("h3", { text: c.title }),
+      el("p", { text: c.observation }), el("p", { text: c.correction }), el("p", { class: "muted", text: c.scope })),
+    el("figure", {}, el("a", { href: c.image, target: "_blank", rel: "noopener", "aria-label": `Open full-size evidence: ${c.title}` },
+      el("img", { src: c.image, alt: c.alt, loading: "lazy", width: "2240", height: "1760" })),
+      el("figcaption", { class: "muted", text: c.caption })))));
 }
 
 function renderTeam(site) {
@@ -387,6 +434,11 @@ function renderLinks(site) {
 
 function renderHero(site, eda, index) {
   const tiles = [];
+  const heroInput = eda?.videos?.find(v => v.video === "C3905.MP4");
+  if (heroInput) {
+    const kind = eda.source_kind === "original" ? "original" : eda.source_kind === "preview" ? "preview" : "sample";
+    $("#heroSourceCaption").textContent = `Organiser-provided footage · ${heroInput.width} × ${heroInput.height} ${kind}`;
+  }
   if (site?.metrics?.score_a_dev != null) tiles.push(tile("Score A on our dev labels", fmt(site.metrics.score_a_dev, 3), "macro F1, IoU 0.3/0.5/0.7"));
   if (eda?.videos?.length) {
     const mins = eda.videos.reduce((a, v) => a + v.duration, 0) / 60;
