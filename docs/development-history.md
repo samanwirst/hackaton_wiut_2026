@@ -17,7 +17,7 @@ not a claim that every experiment was originally performed in that order.
 | 06 · Original-video results | [9f3bd38](https://github.com/samanwirst/hackaton_wiut_2026/commit/9f3bd38c1547d67d733bf2b2eeb7acda22db70ec) | Include the verified four-original run, weights, matching annotated videos and EDA; preserve earlier experiments separately | `predictions_samples.json`, `reports/`, `website/data/`, `website/media/` |
 | 07 · Interactive website | [e0818cf](https://github.com/samanwirst/hackaton_wiut_2026/commit/e0818cf510edbd20bff4fa317ec7676ebed41a9c) | Present the pipeline, responsive charts, seekable results and honest failures; protect against stale video-selection responses | `website/index.html`, `website/assets/`, `website/data/site.json` |
 | 08 · Continuous checks | [1d87d08](https://github.com/samanwirst/hackaton_wiut_2026/commit/1d87d08b88af306aa0f2c9abbb0635c9717ceb1b) | Validate tests, format, weights and provenance; pin deployment actions and scope permissions | `.github/workflows/` |
-| 09 · Handoff documentation | This documentation layer | Explain reproduction, measured evidence, publication steps and remaining gates; make generated artefacts easier to review | [README](../README.md), [readiness](submission-readiness.md), [deployment](deployment.md), `.gitattributes` |
+| 09 · Handoff documentation | [e37d00e](https://github.com/samanwirst/hackaton_wiut_2026/commit/e37d00eb6643e854719c7a700623b37ba4d29a08) | Explain reproduction, measured evidence, publication steps and remaining gates; make generated artefacts easier to review | [README](../README.md), [readiness](submission-readiness.md), [deployment](deployment.md), `.gitattributes` |
 
 Each implementation commit has a focused subject and a body explaining its purpose. No
 existing history is rewritten, no artificial dates are used, and `main` is not merged or
@@ -44,6 +44,28 @@ remain ordinary diffs. This follows
 These are local checks, not evidence that remote CI, public hosting or hidden-set accuracy
 has been verified. The complete repeat was interrupted by a host restart before its final
 output was written, so full-set determinism remains an open verification gate.
+
+## Post-push verification
+
+The [first GitHub CI run](https://github.com/samanwirst/hackaton_wiut_2026/actions/runs/36298715111)
+installed the dependencies and passed Ruff, but reported 71 passing tests and one failed
+synthetic learned-direction test. The failure was reproduced locally by selecting Nehalem,
+Sandybridge and Haswell OpenBLAS kernels; package versions were the same.
+
+The fixture used exactly horizontal tracks on an angular-bin boundary. Tiny signed vertical
+velocities from smoothing changed the normal-traffic heading bin from 0 to 11, so evidence in
+the bin opposite the rogue vehicle fell from about 0.4945 to 0.2473, just below the 0.25 rule
+threshold. The corrected fixture uses slightly sloped parallel lanes, retains the exact
+one-event/track-id/duration assertions, and adds a legal vehicle in the opposite lane. It does
+not change inference code, thresholds, model weights or the submitted sample outputs.
+The complete 72-test suite passes locally with automatic kernel selection and separately with
+each of Nehalem, Sandybridge and Haswell. Follow the current
+[branch checks](https://github.com/samanwirst/hackaton_wiut_2026/actions?query=branch%3Afeat%2Ftrafficwatch-submission)
+for the remote verification results.
+
+This follow-up is a new commit rather than a rewrite of the nine-stage checkpoint. It makes
+the scenario test portable; it does not claim that angular-bin boundary decisions are
+identical across machines. The required same-machine full-original repeat remains separate.
 
 ## Work still outside this checkpoint
 

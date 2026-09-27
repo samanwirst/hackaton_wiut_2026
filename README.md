@@ -8,7 +8,7 @@ next 5 seconds (Part B).
   `https://samanwirst.github.io/hackaton_wiut_2026/`
 - **Live demo source:** [`demo/`](demo) (Hugging Face Space package; public URL is added at deployment)
 - **Predictions on the sample videos:** [`predictions_samples.json`](predictions_samples.json)
-- **Development history:** [nine reviewable stages with commit links](docs/development-history.md)
+- **Development history:** [reviewable stages and verification follow-ups](docs/development-history.md)
 
 Local website preview: `python tools/serve_website.py`, then open `http://127.0.0.1:8765`.
 This server supports MP4 range requests, which are needed for clicks on the event timeline to seek.
