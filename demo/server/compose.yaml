@@ -10,8 +10,13 @@ services:
     # Docker 29 suppresses port publishing on an internal-only network.
     cpus: 0.75
     cpu_shares: 128
-    mem_limit: 1536m
-    memswap_limit: 1536m
+    mem_limit: 2048m
+    memswap_limit: 2048m
+    environment:
+      # Bound decoder threads and glibc arenas on the shared CPU-only host.
+      # Keep inference sources, weights and sampling unchanged.
+      OPENCV_FFMPEG_THREADS: "1"
+      MALLOC_ARENA_MAX: "2"
     pids_limit: 256
     read_only: true
     # Ultralytics creates a runs/ directory even with save=False.

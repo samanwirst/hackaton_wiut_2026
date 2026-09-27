@@ -33,7 +33,9 @@ Defaults deliberately **do not publish a demo**:
   authorised SSH local-port forward. Bind the local end only to `127.0.0.1`.
 - A dedicated internal network has no shared application/database network membership.
 - `traefik.enable=false`; no changes to existing proxy routes, ports 80/443 or certificates.
-- Hard limits: 0.75 CPU, 1.5 GiB memory including swap, 256 processes; low relative CPU shares.
+- Hard limits: 0.75 CPU, 2 GiB memory including swap, 256 processes; low relative CPU shares.
+  Repeated uploads exceeded the initial 1.5 GiB staging limit. Decoder threads are capped at
+  one and glibc arenas at two to bound native allocation overhead; inference code is unchanged.
 - Unprivileged UID, read-only image, no added capabilities or host/Docker-socket mounts.
 - The app is launched by absolute path with `/tmp` as its working directory: Ultralytics
   creates a `runs/` directory even with output saving disabled. Model/config paths remain
@@ -82,3 +84,9 @@ Test HTTPS certificate validation and an actual public upload, including the pag
 in the public website. An uploaded two-minute clip must complete with visible progress,
 annotated playback and JSON download; a 124-second clip must be rejected clearly.
 Only then put the verified HTTPS address in both `demo_url` and `demo_embed_url`.
+
+The decoder setting uses the documented
+[`OPENCV_FFMPEG_THREADS`](https://docs.opencv.org/4.x/d6/dea/tutorial_env_reference.html)
+environment variable. Test multiple sequential uploads, not just a cold-start request, and
+inspect Docker OOM/restart events as well as current health: a restarted process can be
+healthy while a previous request failed.
