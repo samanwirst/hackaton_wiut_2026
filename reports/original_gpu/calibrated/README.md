@@ -53,6 +53,29 @@ coverage, hashes, repeats, counts and runtime denominators. First-pass runtime i
 1.24–1.41× clip duration; repeat runtime is 1.37–1.69×. The separate
 [lamp review](../../scene_review/) covers selected tuning frames, not held-out accuracy.
 
-An additional default official-command check (the whole folder in one fresh process)
-is running separately; it is not yet counted as a pass here. No public release or
-final submission is authorised by this checkpoint.
+## Default whole-folder command
+
+An additional run in `batch/` processed all four originals in **one fresh process**:
+
+```bash
+python run_submission.py --videos data/samples --out predictions.json
+```
+
+It ran in a loopback-only network namespace, with no runtime cache, profile or
+device overrides and unchanged source/configuration/weights. The default non-scoring
+team metadata differs from the first pass; every event and risk timestamp/value matches
+exactly. `batch/comparison.json` binds both output hashes. Input hashes, Python,
+packages, profile and source/configuration provenance also match the first pass.
+
+| Original | Whole-folder Part A + B | Runtime / duration | Budget |
+|---|---:|---:|---:|
+| C3896 | 487.2 s | 1.43× | 1,021.0 s |
+| C3897 | 463.4 s | 1.46× | 953.5 s |
+| C3902 | 470.0 s | 1.48× | 953.5 s |
+| C3905 | 174.9 s | 1.37× | 382.9 s |
+
+The official validator again reports 163 events, zero errors and zero warnings.
+These are observed desktop-host timings: short static-browser/unit checks and Git
+packaging overlapped this pass, but no second inference/export job did. This is not
+an isolated benchmark or a T4 result. The executed notebook checks this batch too.
+No public release or final submission is authorised by this checkpoint.

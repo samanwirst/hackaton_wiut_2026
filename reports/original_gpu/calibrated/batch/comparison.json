@@ -1,0 +1,14 @@
+{
+  "mode": "Default official folder command, all four originals in one fresh process, offline.",
+  "network_interfaces": [
+    "lo"
+  ],
+  "exact_events_and_risk": true,
+  "reference_predictions_sha256": "a7bb8601415f5b8b89cf4e9cf866f88eb7d6d292d6cfed79850dc40060b3d777",
+  "batch_predictions_sha256": "4d831a24996ad4d7a512e62706714e04314ae4cae3a8202eaee870c316c145a1",
+  "limitations": [
+    "Same host, not a T4 benchmark.",
+    "No accuracy claim; no ground truth.",
+    "Non-scoring team metadata and wall-clock logs are not compared."
+  ]
+}

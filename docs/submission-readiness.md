@@ -22,8 +22,9 @@ exactly**. The unchanged official validator reports zero errors and zero warning
   pass; website media, EDA, event timelines and risk charts now match that same run.
 - The complete old asset/output set is recoverable from
   `.cache/before-calibrated-promotion.xwkmxG/`; original videos were not changed.
-- A further standard-command run of the entire folder in one process is in progress.
-  It is not counted as complete evidence yet.
+- A further standard-command run of the entire folder in one process also passed:
+  **487.2 / 463.4 / 470.0 / 174.9 seconds**, with exact event/risk equality and matching
+  provenance. All twelve current-model video runs satisfy their local runtime budgets.
 - The local suite has 102 passing tests after dependency pinning and upload-guard coverage;
   Ruff passes. The 32 warnings are two future Gradio deprecations repeated across 16 demo tests.
   The post-promotion package audit reports **79 passes / 3 warnings / 0 failures**.
@@ -47,9 +48,9 @@ Historical runs remain in [original GPU reports](../reports/original_gpu/),
 | Valid Part A segments | Official format, bounds and rule tests pass | Independent event identity/boundary labels are missing |
 | Causal Part B, one score per frame | Prefix-causality/no-video-opening tests; 33,075 verified frame timestamps | No empirical risk calibration or measured anticipation score |
 | Local open weights ≤ 5 GB | Three YOLO11 hashes pass; 62.6 MiB | Preserve weights/licences in final package |
-| Offline inference without downloads | All eight original-video runs used loopback-only network namespaces | Preserve local-weight behaviour |
+| Offline inference without downloads | All twelve current-model original-video runs used loopback-only network namespaces | Preserve local-weight behaviour |
 | Two-command installation/run | Fresh Python 3.11 CUDA environment used for original runs | Fresh OS/container and target T4 still unverified |
-| Runtime ≤ 3× input duration | All eight completed current-model runs pass locally | Same-host observations, not an isolated T4 benchmark |
+| Runtime ≤ 3× input duration | All twelve completed current-model video runs pass locally | Same-host observations, not an isolated T4 benchmark |
 | Same-machine determinism | Exact event/risk equality across all four originals | Reverify after any source/config/weight change |
 | All sample predictions and provenance | Current root output bound to source/config/input hashes and package versions | Keep output and manifest together |
 | Team names, roles, contributions and links | Three official names; captain-confirmed equal core credit for Samandar/Doniyorbek and polish/debugging for Shohruxxo’ja | Remaining profile links and previous projects are deferred by the user |
@@ -106,8 +107,11 @@ scheduled expiry and error cleanup; 13 further tests cover invalid inputs, size/
 the duration tolerance and uppercase MP4 extensions. Earlier-version real browser/offline checks remain historical
 evidence; they are not substituted for the current-version or public checks.
 
-CI uses pinned action commits and read-only repository permissions. Historical remote CI
-passed on the feature branch; the newly promoted revision will be pushed and checked separately.
+CI uses pinned action commits and read-only repository permissions. [Run 36314791805](https://github.com/samanwirst/hackaton_wiut_2026/actions/runs/36314791805)
+passed on promoted commit `d0583f7`: 102 tests, Ruff, official format, weight checksums,
+79 package checks and clean-kernel notebook execution. Later commits must be checked again.
+A clean export of that commit's 177 tracked files also passes the same package audit;
+this export is not a fresh OS/container or a separate GPU inference environment.
 No inference cache, original/preview inputs, virtual environment or private registration
 contacts are intended for Git. The optional notebook environment is not a runtime dependency.
 

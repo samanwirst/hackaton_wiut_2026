@@ -1,8 +1,8 @@
 # TrafficWatch — WIUT Hackathon 2026, Computer Vision track
 
-TrafficWatch watches a fixed road camera, reports every traffic event as a time segment with a
-class (Part A), and outputs, frame by frame, the probability that an accident starts within the
-next 5 seconds (Part B).
+TrafficWatch analyses a fixed road camera and returns candidate traffic events as labelled
+time segments (Part A), plus a causal accident-risk score for the next 5 seconds at every
+frame (Part B). The risk output follows the probability interface but is not empirically calibrated.
 
 - **Website source:** [`website/`](website) · deployment target:
   `https://samanwirst.github.io/hackaton_wiut_2026/`
@@ -189,6 +189,8 @@ deterministic. All four original samples have been repeated offline on the same 
 event and all 33,075 risk timestamp/value pairs match exactly. Both current-model passes
 used one fresh process per video, serially. The harness's timing
 logs naturally differ, so complete JSON file hashes are not expected to match.
+The additional default command with all four originals in a single fresh process also
+matches exactly, checking that cross-video process state does not change these results.
 Evidence and execution limits are in [`reports/original_gpu/calibrated/`](reports/original_gpu/calibrated/).
 
 ## Runtime
@@ -212,6 +214,8 @@ Runtime was **1.24–1.41× duration on the first pass** and **1.37–1.69× on 
 below the 3× budget in every run. These are observed desktop-host measurements, not an
 isolated benchmark or a T4 result. The documented host sleep during the repeat is excluded
 by the harness's monotonic timer; see [complete evidence](reports/original_gpu/calibrated/).
+The additional one-process whole-folder run took 487.2 / 463.4 / 470.0 / 174.9 seconds
+(1.37–1.48× duration), with the same event/risk output and unchanged inference sources.
 
 `predictions_samples.json` and `reports/submission_run.json` are the first pass, with matching
 four H.264 annotated videos, timelines/risk curves and 20 original EDA images. There are

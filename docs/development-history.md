@@ -84,10 +84,37 @@ the aggregate and equality hashes are preserved in [the original-GPU report](../
 All four runs stayed below their time budgets on the local GPU. This confirms same-host
 reproducibility for that model revision, not accuracy, T4 runtime or a later revision.
 
-## Work still outside this checkpoint
+## Registration, team and evidence follow-up
 
-Public repository/website/demo availability, a real upload to the public demo, the final
-three-person team details, labelled accuracy and target-hardware/clean-host
+These are new commits after the initial nine-stage checkpoint, not rewritten history:
+
+| Stage | Commit | Change and evidence |
+|---|---|---|
+| 10 · Camera alignment and dim lamps | [08d2336](https://github.com/samanwirst/hackaton_wiut_2026/commit/08d2336bd235c9f69f6c999825f401bd5328a243) | SIFT/RANSAC layout registration and hue-aware lamp reading; registration rejection/determinism and pixel regressions |
+| 11 · Unresolved candidate review | [b4cc157](https://github.com/samanwirst/hackaton_wiut_2026/commit/b4cc1573990432c461fac5dab6cbba96263a2364) | Preserve visual evidence and explicitly leave the nine remaining accident candidates unconfirmed |
+| 12 · Verified dependencies | [971cfca](https://github.com/samanwirst/hackaton_wiut_2026/commit/971cfcaea1178b6af4878a0a18927f6e998f7111) | Pin the numerical/tracking/demo versions used in actual checks |
+| 13 · Full-original first pass and repeat | [c75a192](https://github.com/samanwirst/hackaton_wiut_2026/commit/c75a192e5de91a06e992f115b74eb94ce169b690), [3e82098](https://github.com/samanwirst/hackaton_wiut_2026/commit/3e820989316fc6a55ddc7fdece4e70fa54f77ead) | Eight offline original-video runs; exact equality of 163 events and 33,075 per-frame risk outputs |
+| 14 · Confirmed Zero Context roster | [4084d03](https://github.com/samanwirst/hackaton_wiut_2026/commit/4084d034c91589ebafc688fe983d8e3cb66d8cdd) | Official participant names, captain-confirmed equal core contribution credit and repeatable website QA |
+| 15 · Inspectable analytical evidence | [8d86392](https://github.com/samanwirst/hackaton_wiut_2026/commit/8d86392daf7dd4873b40fbe1dc1118942f2910b0) | Four signal contact sheets, all 46 tuning observations and an executed notebook; clearly no held-out accuracy claim |
+| 16 · Upload boundary tests | [346dc66](https://github.com/samanwirst/hackaton_wiut_2026/commit/346dc666976f19642aa39ab965ab06eb7fe18b3a) | Invalid files, size/duration rejection, accepted boundary/tolerance and uppercase MP4; complete suite reaches 102 passing tests |
+| 17 · Coherent current results | [d0583f7](https://github.com/samanwirst/hackaton_wiut_2026/commit/d0583f7e8d8770f444d535829eb3c052144c250d) | Promote root output/provenance with matching media/EDA; browser-check desktop/mobile and delayed-selection behaviour; retain old evidence separately |
+
+The current package audit has 79 passes, 3 readiness warnings and no failures. The
+website's runtime tile spans both completed passes (1.24–1.69× duration), rather than
+showing only the faster one. The default whole-folder command subsequently matched all
+outputs exactly (1.37–1.48× duration), with unchanged input/source/configuration/package
+provenance; the executed notebook now checks this third pass too.
+
+Remote [CI run 36314791805](https://github.com/samanwirst/hackaton_wiut_2026/actions/runs/36314791805)
+passed on `d0583f7`: 102 tests, Ruff, official prediction format, all weight checksums,
+79 package checks and top-to-bottom notebook execution. A clean export of the 177 tracked
+files also passed the package audit. This is not a target-GPU benchmark or public deployment.
+Publication remains a separate final action.
+
+## Work still outside the current checkpoint
+
+Public repository/website/demo availability, a real upload to the public demo, remaining
+profile/previous-project links, labelled accuracy and target-hardware/clean-host
 verification remain tracked in [submission readiness](submission-readiness.md).
 The user deferred team details until the final stage. Do not replace missing information with
 invented profiles or convert candidate-review notes into a claimed accuracy score.
