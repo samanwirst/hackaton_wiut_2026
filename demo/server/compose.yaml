@@ -14,6 +14,10 @@ services:
     memswap_limit: 1536m
     pids_limit: 256
     read_only: true
+    # Ultralytics creates a runs/ directory even with save=False.
+    # Keep that runtime-only directory inside the writable cache, not /app.
+    working_dir: /tmp
+    command: ["python", "/app/app.py"]
     cap_drop: [ALL]
     security_opt: [no-new-privileges:true]
     volumes:
