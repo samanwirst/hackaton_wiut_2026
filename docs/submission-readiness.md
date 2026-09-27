@@ -4,22 +4,32 @@ The submission is **not ready for a final tag or handoff**. This checklist follo
 organisers' task, not just the checks currently implemented in the repository.
 
 **Calibration verification in progress:** Part A now registers the hand-drawn layout to a
-representative frame and requires colour-consistent pixels in each lamp box. Its source and
-configuration are frozen while two fresh offline runs process all four originals. The root
+representative frame and requires colour-consistent pixels in each lamp box. The first complete
+offline pass is recorded in `reports/original_gpu/calibrated/`: 163 events, 33,075 risk scores,
+zero format errors or warnings, and 1.24–1.42× duration on the local RTX 3050 Laptop. Source and
+configuration remain frozen for the repeat. C3896 repeated exactly; the host slept from 13:13
+to 14:53 local time during C3897, so full repeat equality is still unproven. The root
 predictions, run manifest and website media below still describe the previous revision until
 the new set is validated and promoted together; their provenance is not current during this work.
-The updated local suite has 89 passing tests. Do not tag or publish this intermediate state.
+The updated local suite has 89 passing tests (rechecked after dependency pinning), and Ruff
+passes. A fresh demo package is assembled but has not yet passed a current-version browser
+upload. Do not tag or publish this intermediate state.
 
 **Previous validated model revision:** the accident-evidence correction passed a fresh complete offline
 GPU run. `reports/original_gpu/predictions-reviewed.json` and `run-reviewed.json` are validated:
-all four originals, 165 events and 33,075 risk scores, with current source/input hashes.
+all four originals, 165 events and 33,075 risk scores, with that revision's source/input hashes.
 The reviewed output and manifest are now promoted to `predictions_samples.json` and
 `reports/submission_run.json`, together with matching original EDA and all four annotated
 website results. The previous preview assets were backed up first. Publication, team profiles
 and the remaining verification gates below still prevent final handoff.
 See `reports/accident_review/` for scoped visual evidence.
 
-## Requirements and evidence
+## Previous revision: requirements and evidence
+
+The detailed table and audit counts in this section are historical evidence for the preceding
+accident-rule revision. They must not be read as passes for the new registration/signal revision.
+Its first-pass evidence and outstanding repeat/media/demo work are stated above. Publication,
+team completeness and target-hardware checks remain outstanding for either revision.
 
 | Requirement | Current evidence | Remaining verification or work |
 |---|---|---|
