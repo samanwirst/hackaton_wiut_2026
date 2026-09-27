@@ -21,6 +21,11 @@ The public demo accepts MP4 clips up to 2 minutes and 500 MB. It reports progres
 risk estimation and rendering, then provides the annotated video, interactive timeline and
 downloadable `events.json`.
 
+These are model predictions, not verified labels. The CPU demo uses YOLO11n and
+sampled risk points; the GPU evaluation profile uses larger models and different
+sampling. Their outputs need not match. Risk scores are heuristic and have not
+been empirically calibrated; this research demo is not a safety guarantee.
+
 The HTTP upload limit is enforced with Gradio's `max_file_size`; cached uploads/results are
 eligible for removal after six hours, checked hourly (`delete_cache=(3600, 21600)`).
 Rendering workspaces are removed immediately on success or failure; successful outputs are

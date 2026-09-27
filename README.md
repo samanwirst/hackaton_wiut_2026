@@ -170,6 +170,11 @@ See [notebook setup](notebooks/README.md) for the optional, separate authoring e
 The [signal review](reports/scene_review/README.md) distinguishes tuning agreement from
 held-out accuracy; no official event F1 is claimed without independent labels.
 
+The [prepared-demo verification](reports/demo_verification/README.md) records actual two-minute
+uploads on desktop/mobile, offline processing, progress, playback, chart/table/download and
+over-length rejection. Run `python tools/verify_demo.py --video <test.mp4>` against a separately
+started local demo; public testing is deferred until hosting and publication are authorised.
+
 Run `python tools/check_submission.py` for a package audit, or add `--strict --online` before
 creating the final tag to require all four sample visualisations, complete team profiles,
 matching run provenance and reachable public URLs. Runtime on T4, visual correctness and an

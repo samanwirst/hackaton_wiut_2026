@@ -104,6 +104,9 @@ with gr.Blocks(title="TrafficWatch live demo", theme=gr.themes.Soft(), analytics
                delete_cache=(3600, CACHE_MAX_AGE_S)) as demo:
     gr.Markdown("## TrafficWatch · live demo\nUpload an MP4 clip from the road camera (up to **2 minutes / 500 MB**). "
                 "The whole clip is analysed on CPU and progress is shown while it runs.")
+    gr.Markdown("**Model predictions, not verified labels.** This CPU demo uses the lighter YOLO11n profile "
+                "and sampled risk points; its output can differ from the GPU sample results. "
+                "Risk scores are heuristic, not empirically calibrated probabilities or a safety guarantee.")
     with gr.Row():
         with gr.Column(scale=1):
             # format=None: the file is analysed as uploaded (format="mp4" made Gradio re-encode every

@@ -30,8 +30,9 @@ exactly**. The unchanged official validator reports zero errors and zero warning
   The post-promotion package audit reports **79 passes / 3 warnings / 0 failures**.
 - Current-version desktop/mobile site checks pass for all playback/seek paths, 20 EDA images,
   report images and team content; no page errors or horizontal overflow were found.
-  The delayed-selection regression also passes. Current-version upload-demo verification
-  is queued; public URL and public upload checks remain deliberately pending.
+  The delayed-selection regression also passes. The current prepared demo passed offline
+  direct calls and actual two-minute desktop/mobile uploads; public URL and public upload
+  checks remain deliberately pending.
 
 See [full run evidence](../reports/original_gpu/calibrated/),
 [scoped signal review](../reports/scene_review/) and the
@@ -57,7 +58,7 @@ Historical runs remain in [original GPU reports](../reports/original_gpu/),
 | Approach diagram and technical report | Learned/rule-based paths, failure cases and scoped visual evidence | Final review against the released revision |
 | EDA for every sample | Four original GPU entries and 20 JPEGs; metadata/profile checks pass | Repeat rendering checks at eventual public URL |
 | Annotated playback, timelines and risk | Four full-decode H.264 files; all events/curves match root output; current desktop/mobile browser checks pass | Verify again at the eventual public deployment |
-| Live upload demo | Self-contained current-source package prepared; lifecycle tests pass | Refresh current-version offline/browser upload, then publish only when authorised |
+| Live upload demo | Self-contained current-source package passed offline 6 s / 120 s clips, actual desktop/mobile uploads, progress, playback, chart/table/download and over-length rejection | Publish only when authorised, then verify a real public upload |
 | Public repo, website, weights, predictions | Links and Pages workflow prepared | Publication intentionally deferred; private authenticated access is not public availability |
 | Final tag or full commit hash | Reviewable feature branch; original history preserved | Final immutable reference only after release gates pass |
 | Availability through judging | Deployment runbook present | Confirm demo host/account and availability arrangements |
@@ -106,6 +107,14 @@ Managed outputs expire on a six-hour TTL, checked hourly. Three lifecycle tests 
 scheduled expiry and error cleanup; 13 further tests cover invalid inputs, size/duration limits,
 the duration tolerance and uppercase MP4 extensions. Earlier-version real browser/offline checks remain historical
 evidence; they are not substituted for the current-version or public checks.
+
+The current package's 34 files are hash-bound in [demo verification](../reports/demo_verification/).
+Its real two-minute 720p/30 fps input produced 17 candidates and 720 sampled risk points:
+about 47 s offline, 49 s in the desktop browser and 48 s in the mobile browser. Full video
+decoding, managed-cache handoff, visible progress, playback/seeking, Plotly, table and JSON
+download passed. A 124-second clip is rejected; the error toast was visually inspected after
+its fade-in. The UI states the lightweight profile difference and uncalibrated-risk limits.
+These checks are local, not evidence of public availability or model accuracy.
 
 CI uses pinned action commits and read-only repository permissions. [Run 36314791805](https://github.com/samanwirst/hackaton_wiut_2026/actions/runs/36314791805)
 passed on promoted commit `d0583f7`: 102 tests, Ruff, official format, weight checksums,

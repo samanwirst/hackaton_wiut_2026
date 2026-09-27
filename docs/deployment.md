@@ -59,7 +59,7 @@ The Actions references are pinned to release commits checked on 2026-09-27:
 [upload-pages-artifact 5.0.0](https://github.com/actions/upload-pages-artifact/releases/tag/v5.0.0),
 [deploy-pages 5.0.1](https://github.com/actions/deploy-pages/releases/tag/v5.0.1).
 CI has read-only repository permissions and does not retain checkout credentials. Its pip
-cache key includes the CPU, shared and demo requirements, using
+cache key includes the CPU, shared, demo and optional notebook requirements, using
 [`cache-dependency-path`](https://github.com/actions/setup-python#caching-packages-dependencies).
 
 ## 3. Prepare and publish the live demo
@@ -112,6 +112,12 @@ Publish the updated website and test both the embedded and standalone app while 
 - A real MP4 upload to the public demo shows progress, annotated playback, timeline/risk chart,
   an event table and a working JSON download. Also check rejection of a clip over 120 seconds;
   the advertised upload limit is 500 MB. No private login should be required.
+  After permission to test that public deployment, run
+  `python tools/verify_demo.py --base-url <direct-app-url> --video <test-clip.mp4>` and inspect
+  the saved screenshot and verification JSON. This command uploads the selected clip and
+  triggers inference; it is not a read-only availability probe.
+  Use `--width 390 --height 844` for mobile and optionally
+  `--reject-video <over-length.mp4>` to verify the visible error after a successful upload.
 - Repository, weights, predictions and demo links open while signed out. Check for page errors
   and missing assets; an HTTP 200 alone does not prove the upload workflow works.
 - Add the three confirmed profiles and contributions to both the README and website when
