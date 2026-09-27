@@ -66,8 +66,8 @@ all thresholds in [`configs/pipeline.yaml`](configs/pipeline.yaml).
 | Detection | YOLO11 on batches of frames; car/bus/truck duplicates merged | `detector.py` |
 | Tracking | ByteTrack (low-score second association), ids kept through 2 s occlusions | `tracking.py` |
 | Kinematics | per-track resampling, Savitzky–Golay smoothing, size-normalised speed | `tracks.py` |
-| Scene | hand-drawn layout + learned road mask and direction field | `scene.py`, `direction_field.py` |
-| Signals | state of each visible head from which lamp is lit, mode-filtered; heads that face away from the camera derived from visible ones by phase logic | `signal.py` |
+| Scene | Part A registers hand-drawn geometry to the clip with SIFT/RANSAC; the learned direction field remains independent | `scene.py`, `registration.py`, `direction_field.py` |
+| Signals | calibrated lamp position + expected hue, including dim daylight signals; mode-filtered; hidden heads inferred by phase logic | `signal.py` |
 | Events | one rule per class | `events/` |
 | Post-processing | merge fragments, drop short blips, clip, no same-class overlap | `segments.py` |
 | Part B | causal risk from tracks | `risk.py` |
@@ -115,7 +115,9 @@ prohibitions, solid-line annotations or prohibited turn movements.
 2. The camera's layout is [`configs/scene_tashkent.json`](configs/scene_tashkent.json): crossings, the
    stop line before the crossing, the two visible signal heads and the signals derived from them. It
    was drawn with [`tools/annotation/scene_editor.html`](tools/annotation/scene_editor.html) and is picked automatically
-   for 3840×2160 video — see [`docs/scene.md`](docs/scene.md).
+   for 3840×2160 video, then registered to a representative middle frame using the shipped
+   grayscale reference. Part A permits this random access; Part B does not use it — see
+   [`docs/scene.md`](docs/scene.md). No sample filenames or event answers enter inference.
 3. Learn the road mask and direction field: `python tools/learn_scene.py --videos data/samples/`
 4. Run the harness on the samples: `python run_submission.py --videos data/samples/ --out predictions_samples.json`
    On a machine with CUDA this uses the GPU profile, as on the evaluation machine. Without CUDA the
@@ -139,10 +141,11 @@ prohibitions, solid-line annotations or prohibited turn movements.
    For a separate preview experiment use `--videos data/previews --profile cpu --source-kind preview`
    and a separately generated preview prediction file. Do not mix preview assets with the original-run submission.
 
-Tests: `pytest -q` (72 tests with the development/demo dependencies installed, covering
+Tests: `pytest -q` (89 tests with the development/demo dependencies installed, covering
 trajectory rules, robustness cases, the official class definitions, signal phases,
 post-processing, offline weights, prefix-causal Part B, demo output/cache cleanup,
-and website risk-curve/input-metadata consistency with the submitted output).
+website risk-curve/input-metadata consistency with the submitted output, camera-registration
+rejection/determinism, and dim-lamp/reflection pixel regressions).
 The three demo lifecycle tests are skipped in inference-only environments without Gradio/Plotly.
 CI also validates `predictions_samples.json`
 and all committed weight checksums.

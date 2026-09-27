@@ -2,8 +2,8 @@
 
 For each configured light we measure, on every processed frame, either the share of bright,
 saturated red / amber / green pixels in the whole ROI (colour mode), or - when the lamp positions
-are given - which lamp is lit (lamp mode: the red lamp is the top one, whatever its hue; the
-headlights of cars passing behind the head cannot be taken for a signal). The sequence is cleaned
+are given - which lamp contains its expected hue. The lamp reader accepts dim daylight signals,
+but rejects white headlights and differently coloured objects behind an unlit lamp. The sequence is cleaned
 with a running mode filter so that single-frame flicker (compression, occlusion, a flashing green)
 is ignored.
 
@@ -44,7 +44,11 @@ def classify(scores: dict[str, float], min_frac: float = 0.01) -> str:
 
 
 def lamp_scores(frame: np.ndarray, lamps: dict) -> dict[str, float]:
-    """Share of lit (bright and saturated) pixels in each lamp's box, e.g. {"red": [x1, y1, x2, y2], ...}."""
+    """Share of saturated, colour-consistent pixels in each calibrated lamp box.
+
+    Absolute brightness alone misses dim daylight lamps and mistakes background reflections
+    for active lamps. Hue and position must agree; dark or achromatic regions stay unknown.
+    """
     h, w = frame.shape[:2]
     out = {}
     for colour, roi in lamps.items():
@@ -54,7 +58,17 @@ def lamp_scores(frame: np.ndarray, lamps: dict) -> dict[str, float]:
             out[colour] = 0.0
             continue
         hsv = cv2.cvtColor(frame[y1:y2, x1:x2], cv2.COLOR_BGR2HSV)
-        out[colour] = float(((hsv[..., 2] >= 150) & (hsv[..., 1] >= 80)).mean())
+        hue, sat, val = hsv[..., 0], hsv[..., 1], hsv[..., 2]
+        if colour == RED:
+            expected = (hue <= 15) | (hue >= 165)
+        elif colour == AMBER:
+            expected = (hue >= 8) & (hue <= 38)
+        elif colour == GREEN:
+            expected = (hue >= 40) & (hue <= 100)
+        else:
+            out[colour] = 0.0
+            continue
+        out[colour] = float(((val >= 70) & (sat >= 80) & expected).mean())
     return out
 
 

@@ -3,7 +3,14 @@
 The submission is **not ready for a final tag or handoff**. This checklist follows the
 organisers' task, not just the checks currently implemented in the repository.
 
-**Current model revision:** the accident-evidence correction has passed a fresh complete offline
+**Calibration verification in progress:** Part A now registers the hand-drawn layout to a
+representative frame and requires colour-consistent pixels in each lamp box. Its source and
+configuration are frozen while two fresh offline runs process all four originals. The root
+predictions, run manifest and website media below still describe the previous revision until
+the new set is validated and promoted together; their provenance is not current during this work.
+The updated local suite has 89 passing tests. Do not tag or publish this intermediate state.
+
+**Previous validated model revision:** the accident-evidence correction passed a fresh complete offline
 GPU run. `reports/original_gpu/predictions-reviewed.json` and `run-reviewed.json` are validated:
 all four originals, 165 events and 33,075 risk scores, with current source/input hashes.
 The reviewed output and manifest are now promoted to `predictions_samples.json` and

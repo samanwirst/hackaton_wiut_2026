@@ -1,0 +1,16 @@
+{
+  "scope": "AI-assisted visual review of 23 sampled frames / 46 visible lamp states. Not independently annotated, held out, or event ground truth.",
+  "lights": ["veh_island", "ped_diag"],
+  "videos": {
+    "C3896.MP4": [[0, "red"], [60, "green"], [120, "green"], [180, "green"], [240, "red"], [300, "red"]],
+    "C3897.MP4": [[0, "red"], [60, "red"], [120, "green"], [180, "green"], [240, "red"], [300, "red"]],
+    "C3902.MP4": [[0, "red"], [60, "green"], [120, "green"], [180, "red"], [240, "red"], [300, "green"]],
+    "C3905.MP4": [[0, "red"], [30, "red"], [60, "green"], [90, "red"], [120, "green"]]
+  },
+  "notes": [
+    "Both listed visible heads show the listed state at these sampled frames, verified from enlarged original crops.",
+    "The review covers red and green only; it does not validate amber, flashing states, phase timing, or event boundaries.",
+    "The same samples informed calibration changes: this is a development spot check, not an unbiased generalisation estimate.",
+    "These labels are used only by tools/review_signals.py, never by inference."
+  ]
+}

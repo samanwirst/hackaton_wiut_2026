@@ -1,6 +1,7 @@
 {
   "_comment": "Official camera (Tashkent junction seen from a building, 3840x2160). Drawn on C3905 frames; see docs/scene.md. Avenue: near carriageway flows from top-left towards the camera (approach A, stop line before the left crossing); far carriageway flows from the right to the top-left. Cross street leaves to the bottom-left over the diagonal crossing. The heads that govern approach A face away from the camera, so its signal follows the pedestrian signal of the diagonal crossing (same phase): green together, red 6 s after the pedestrian red (3 s flashing green + 3 s amber), measured on C3905 and confirmed by the vehicle signal on the island.",
   "frame_size": [3840, 2160],
+  "registration": {"reference": "configs/scene_reference_tashkent.png"},
   "road": [
     [[170, 140], [490, 194], [800, 244], [1200, 306], [1690, 405], [1800, 480], [1930, 600], [2250, 625], [2580, 645], [2744, 700], [2911, 745], [3200, 820], [3350, 900], [3500, 950], [3700, 990], [3840, 1010], [3840, 2160], [0, 2160], [0, 1760], [360, 1580], [540, 1480], [640, 1400], [660, 1300], [700, 1085], [330, 760], [230, 560], [60, 250]]
   ],

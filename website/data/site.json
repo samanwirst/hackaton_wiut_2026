@@ -19,6 +19,7 @@
     ],
     "rules": [
       "ByteTrack associations become smoothed trajectories with scale-normalised speed and explicit frame-edge handling.",
+      "Part A aligns hand-drawn geometry to a representative clip frame using SIFT/RANSAC. Calibrated lamps require their expected hue, including dim daylight signals; weak image matches do not inherit the camera layout.",
       "One explainable rule per event class combines trajectories with the drawn stop line, crossings, lane directions and signal phases.",
       "Temporal post-processing merges fragments, removes short blips, clips boundaries and guarantees no same-class overlap.",
       "Part B is strictly causal: closest approach, braking and wrong-way evidence are fused and mapped to [0, 1]. The sigmoid parameters are heuristic; empirical calibration is still needed."
@@ -37,7 +38,7 @@
       "The colour-only fire/smoke heuristic is not reliable enough for hidden footage and remains disabled.",
       "Generic static-obstacle background differencing is vulnerable to shadows and parked objects, so it remains disabled until labelled.",
       "Unreadable or indirectly inferred traffic-signal phases can leave ordinary queues classified as stopped vehicles or congestion; these require visual review.",
-      "A fixed-camera ruleset transfers poorly to a new viewpoint unless its scene geometry and direction field are configured."
+      "Small framing shifts are corrected in Part A, but continuous camera motion and severe occlusion are not handled. A new viewpoint needs its own scene geometry and learned direction field."
     ],
     "case_studies": [
       {

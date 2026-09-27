@@ -2,6 +2,8 @@
 predictions_samples.json linguist-generated
 reports/**/predictions*.json linguist-generated
 reports/**/run*.json linguist-generated
+reports/original_gpu/repeat-reviewed/*-predictions.json linguist-generated
+reports/original_gpu/repeat-reviewed/*-run.json linguist-generated
 reports/submission_run.json linguist-generated
 website/data/eda.json linguist-generated
 website/data/eda/*.jpg linguist-generated

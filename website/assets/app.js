@@ -199,7 +199,7 @@ function tile(label, value, note) {
 function renderPipeline() {
   const host = $("#pipeline");
   const W = 1080, H = 300;
-  const root = svg("svg", { viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": "Independent event-detection and causal risk pipelines sharing only preconfigured scene geometry" });
+  const root = svg("svg", { viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": "Independent event-detection and causal risk pipelines: registered geometry for Part A, fixed learned direction field for Part B" });
   const box = (x, y, w, h, title, sub, accent) => {
     root.append(svg("rect", { x, y, width: w, height: h, rx: 10, fill: accent ? css("--label-wash") : css("--surface-2"),
       stroke: accent ? css("--accent") : css("--axis"), "stroke-width": 1 }));
@@ -219,7 +219,7 @@ function renderPipeline() {
   box(555, y1, 160, h, "Trajectories", "smoothed kinematics");
   box(750, y1, 150, h, "14 event rules", "merge + clip segments");
   box(935, y1, 135, h, "Part A", "[start, end, label]");
-  box(555, 116, 345, 52, "Scene geometry + direction field", "configured before inference", true);
+  box(555, 116, 345, 52, "Scene geometry + direction field", "A: image alignment · B: fixed field", true);
   box(10, y2, 140, h, "Frames in order", "step(frame, t)");
   box(185, y2, 150, h, "YOLO11", "separate light model", true);
   box(370, y2, 150, h, "ByteTrack", "past-only histories");
@@ -231,7 +231,7 @@ function renderPipeline() {
   arrow(825, 116, 825, y1 + h); arrow(635, 168, 635, y2);
   arrow(150, y2 + h / 2, 185, y2 + h / 2); arrow(335, y2 + h / 2, 370, y2 + h / 2); arrow(520, y2 + h / 2, 555, y2 + h / 2);
   arrow(715, y2 + h / 2, 750, y2 + h / 2); arrow(900, y2 + h / 2, 935, y2 + h / 2);
-  host.replaceChildren(root, el("figcaption", { class: "muted", text: "Part B has its own detector, tracker and past-only histories. It shares the fixed scene configuration, never reads the video file and never consumes Part A's full-video trajectories. The risk sigmoid is heuristic, not empirically calibrated." }));
+  host.replaceChildren(root, el("figcaption", { class: "muted", text: "Part A registers hand-drawn geometry to the clip. Part B uses only the fixed learned direction field, its own detector, tracker and past-only histories. It never reads the video file or consumes Part A's registered scene or full-video trajectories. The risk sigmoid is heuristic, not empirically calibrated." }));
 }
 
 function renderApproach(site) {
