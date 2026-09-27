@@ -5,6 +5,10 @@ the organiser-provided samples; its structured notes are in
 [`candidate_reviews.json`](../../data/labels/candidate_reviews.json).
 They are **not exhaustive ground truth** and must not be used to report F1.
 
+A [later scoped review of the remaining candidates](followup.md) records queueing,
+perspective overlap and occlusion cases without promoting them to confirmed collisions
+or to exhaustive negative labels.
+
 ## Visual evidence
 
 - C3896, 216.02–217.62 s, tracks 1013/1163: the car remains parked while pedestrians
