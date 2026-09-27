@@ -1,0 +1,590 @@
+{
+  "scope": "AI-assisted visual review of 23 sampled frames / 46 visible lamp states. Not independently annotated, held out, or event ground truth.",
+  "notes": [
+    "Both listed visible heads show the listed state at these sampled frames, verified from enlarged original crops.",
+    "The review covers red and green only; it does not validate amber, flashing states, phase timing, or event boundaries.",
+    "The same samples informed calibration changes: this is a development spot check, not an unbiased generalisation estimate.",
+    "These labels are used only by tools/review_signals.py, never by inference."
+  ],
+  "counts": {
+    "fixed_layout_brightness": {
+      "matches_review": 11,
+      "unknown": 29,
+      "total": 46
+    },
+    "registered_brightness": {
+      "matches_review": 27,
+      "unknown": 18,
+      "total": 46
+    },
+    "registered_hue": {
+      "matches_review": 45,
+      "unknown": 1,
+      "total": 46
+    }
+  },
+  "registrations": {
+    "C3896.MP4": {
+      "status": "accepted",
+      "matches": 271,
+      "inliers": 203,
+      "inlier_ratio": 0.7490774907749077,
+      "median_error_px": 0.6533189408137626,
+      "span_fraction": [
+        0.8978822072347005,
+        0.9623220938223379
+      ],
+      "scale": 0.9866306014480741,
+      "rotation_deg": 1.0686124932076901,
+      "matrix": [
+        [
+          0.9864590054219043,
+          -0.018400389556090344,
+          34.225839895820386
+        ],
+        [
+          0.018400389556090344,
+          0.9864590054219043,
+          -43.0041527909039
+        ]
+      ]
+    },
+    "C3897.MP4": {
+      "status": "accepted",
+      "matches": 220,
+      "inliers": 165,
+      "inlier_ratio": 0.75,
+      "median_error_px": 0.6454470661338042,
+      "span_fraction": [
+        0.9607174555460612,
+        0.9702846950954861
+      ],
+      "scale": 0.9872417467833191,
+      "rotation_deg": 1.079036987998035,
+      "matrix": [
+        [
+          0.9870666782556948,
+          -0.01859137620101804,
+          34.59693714378067
+        ],
+        [
+          0.01859137620101804,
+          0.9870666782556948,
+          -44.10567742183913
+        ]
+      ]
+    },
+    "C3902.MP4": {
+      "status": "accepted",
+      "matches": 1386,
+      "inliers": 1220,
+      "inlier_ratio": 0.8802308802308803,
+      "median_error_px": 0.7027089330333866,
+      "span_fraction": [
+        0.9167818069458008,
+        0.9715599907769097
+      ],
+      "scale": 0.9986846161876413,
+      "rotation_deg": 0.24803083840536053,
+      "matrix": [
+        [
+          0.9986752586025728,
+          -0.0043232470367552695,
+          -87.8481797446928
+        ],
+        [
+          0.0043232470367552695,
+          0.9986752586025728,
+          30.167779864362
+        ]
+      ]
+    },
+    "C3905.MP4": {
+      "status": "accepted",
+      "matches": 1340,
+      "inliers": 1281,
+      "inlier_ratio": 0.9559701492537314,
+      "median_error_px": 0.22195925717814116,
+      "span_fraction": [
+        0.9939243952433269,
+        0.986356834129051
+      ],
+      "scale": 1.0002223518616484,
+      "rotation_deg": -0.00620620313617439,
+      "matrix": [
+        [
+          1.000222345993876,
+          0.00010834276342185464,
+          1.1198732590214147
+        ],
+        [
+          -0.00010834276342185464,
+          1.000222345993876,
+          -2.8956175054613933
+        ]
+      ]
+    }
+  },
+  "observations": [
+    {
+      "video": "C3896.MP4",
+      "frame": 0,
+      "time": 0.0,
+      "light": "veh_island",
+      "reviewed_state": "red",
+      "fixed_layout_brightness": "unknown",
+      "registered_brightness": "unknown",
+      "registered_hue": "red"
+    },
+    {
+      "video": "C3896.MP4",
+      "frame": 0,
+      "time": 0.0,
+      "light": "ped_diag",
+      "reviewed_state": "red",
+      "fixed_layout_brightness": "unknown",
+      "registered_brightness": "unknown",
+      "registered_hue": "unknown"
+    },
+    {
+      "video": "C3896.MP4",
+      "frame": 1798,
+      "time": 59.99326666666667,
+      "light": "veh_island",
+      "reviewed_state": "green",
+      "fixed_layout_brightness": "unknown",
+      "registered_brightness": "unknown",
+      "registered_hue": "green"
+    },
+    {
+      "video": "C3896.MP4",
+      "frame": 1798,
+      "time": 59.99326666666667,
+      "light": "ped_diag",
+      "reviewed_state": "green",
+      "fixed_layout_brightness": "unknown",
+      "registered_brightness": "unknown",
+      "registered_hue": "green"
+    },
+    {
+      "video": "C3896.MP4",
+      "frame": 3596,
+      "time": 119.98653333333334,
+      "light": "veh_island",
+      "reviewed_state": "green",
+      "fixed_layout_brightness": "unknown",
+      "registered_brightness": "unknown",
+      "registered_hue": "green"
+    },
+    {
+      "video": "C3896.MP4",
+      "frame": 3596,
+      "time": 119.98653333333334,
+      "light": "ped_diag",
+      "reviewed_state": "green",
+      "fixed_layout_brightness": "unknown",
+      "registered_brightness": "unknown",
+      "registered_hue": "green"
+    },
+    {
+      "video": "C3896.MP4",
+      "frame": 5395,
+      "time": 180.01316666666668,
+      "light": "veh_island",
+      "reviewed_state": "green",
+      "fixed_layout_brightness": "unknown",
+      "registered_brightness": "unknown",
+      "registered_hue": "green"
+    },
+    {
+      "video": "C3896.MP4",
+      "frame": 5395,
+      "time": 180.01316666666668,
+      "light": "ped_diag",
+      "reviewed_state": "green",
+      "fixed_layout_brightness": "unknown",
+      "registered_brightness": "unknown",
+      "registered_hue": "green"
+    },
+    {
+      "video": "C3896.MP4",
+      "frame": 7193,
+      "time": 240.00643333333335,
+      "light": "veh_island",
+      "reviewed_state": "red",
+      "fixed_layout_brightness": "unknown",
+      "registered_brightness": "unknown",
+      "registered_hue": "red"
+    },
+    {
+      "video": "C3896.MP4",
+      "frame": 7193,
+      "time": 240.00643333333335,
+      "light": "ped_diag",
+      "reviewed_state": "red",
+      "fixed_layout_brightness": "unknown",
+      "registered_brightness": "red",
+      "registered_hue": "red"
+    },
+    {
+      "video": "C3896.MP4",
+      "frame": 8991,
+      "time": 299.9997,
+      "light": "veh_island",
+      "reviewed_state": "red",
+      "fixed_layout_brightness": "unknown",
+      "registered_brightness": "unknown",
+      "registered_hue": "red"
+    },
+    {
+      "video": "C3896.MP4",
+      "frame": 8991,
+      "time": 299.9997,
+      "light": "ped_diag",
+      "reviewed_state": "red",
+      "fixed_layout_brightness": "unknown",
+      "registered_brightness": "red",
+      "registered_hue": "red"
+    },
+    {
+      "video": "C3897.MP4",
+      "frame": 0,
+      "time": 0.0,
+      "light": "veh_island",
+      "reviewed_state": "red",
+      "fixed_layout_brightness": "unknown",
+      "registered_brightness": "unknown",
+      "registered_hue": "red"
+    },
+    {
+      "video": "C3897.MP4",
+      "frame": 0,
+      "time": 0.0,
+      "light": "ped_diag",
+      "reviewed_state": "red",
+      "fixed_layout_brightness": "unknown",
+      "registered_brightness": "red",
+      "registered_hue": "red"
+    },
+    {
+      "video": "C3897.MP4",
+      "frame": 1798,
+      "time": 59.99326666666667,
+      "light": "veh_island",
+      "reviewed_state": "red",
+      "fixed_layout_brightness": "unknown",
+      "registered_brightness": "unknown",
+      "registered_hue": "red"
+    },
+    {
+      "video": "C3897.MP4",
+      "frame": 1798,
+      "time": 59.99326666666667,
+      "light": "ped_diag",
+      "reviewed_state": "red",
+      "fixed_layout_brightness": "unknown",
+      "registered_brightness": "red",
+      "registered_hue": "red"
+    },
+    {
+      "video": "C3897.MP4",
+      "frame": 3596,
+      "time": 119.98653333333334,
+      "light": "veh_island",
+      "reviewed_state": "green",
+      "fixed_layout_brightness": "unknown",
+      "registered_brightness": "unknown",
+      "registered_hue": "green"
+    },
+    {
+      "video": "C3897.MP4",
+      "frame": 3596,
+      "time": 119.98653333333334,
+      "light": "ped_diag",
+      "reviewed_state": "green",
+      "fixed_layout_brightness": "unknown",
+      "registered_brightness": "unknown",
+      "registered_hue": "green"
+    },
+    {
+      "video": "C3897.MP4",
+      "frame": 5395,
+      "time": 180.01316666666668,
+      "light": "veh_island",
+      "reviewed_state": "green",
+      "fixed_layout_brightness": "unknown",
+      "registered_brightness": "unknown",
+      "registered_hue": "green"
+    },
+    {
+      "video": "C3897.MP4",
+      "frame": 5395,
+      "time": 180.01316666666668,
+      "light": "ped_diag",
+      "reviewed_state": "green",
+      "fixed_layout_brightness": "unknown",
+      "registered_brightness": "unknown",
+      "registered_hue": "green"
+    },
+    {
+      "video": "C3897.MP4",
+      "frame": 7193,
+      "time": 240.00643333333335,
+      "light": "veh_island",
+      "reviewed_state": "red",
+      "fixed_layout_brightness": "unknown",
+      "registered_brightness": "unknown",
+      "registered_hue": "red"
+    },
+    {
+      "video": "C3897.MP4",
+      "frame": 7193,
+      "time": 240.00643333333335,
+      "light": "ped_diag",
+      "reviewed_state": "red",
+      "fixed_layout_brightness": "unknown",
+      "registered_brightness": "red",
+      "registered_hue": "red"
+    },
+    {
+      "video": "C3897.MP4",
+      "frame": 8991,
+      "time": 299.9997,
+      "light": "veh_island",
+      "reviewed_state": "red",
+      "fixed_layout_brightness": "unknown",
+      "registered_brightness": "unknown",
+      "registered_hue": "red"
+    },
+    {
+      "video": "C3897.MP4",
+      "frame": 8991,
+      "time": 299.9997,
+      "light": "ped_diag",
+      "reviewed_state": "red",
+      "fixed_layout_brightness": "unknown",
+      "registered_brightness": "red",
+      "registered_hue": "red"
+    },
+    {
+      "video": "C3902.MP4",
+      "frame": 0,
+      "time": 0.0,
+      "light": "veh_island",
+      "reviewed_state": "red",
+      "fixed_layout_brightness": "amber",
+      "registered_brightness": "red",
+      "registered_hue": "red"
+    },
+    {
+      "video": "C3902.MP4",
+      "frame": 0,
+      "time": 0.0,
+      "light": "ped_diag",
+      "reviewed_state": "red",
+      "fixed_layout_brightness": "unknown",
+      "registered_brightness": "red",
+      "registered_hue": "red"
+    },
+    {
+      "video": "C3902.MP4",
+      "frame": 1798,
+      "time": 59.99326666666667,
+      "light": "veh_island",
+      "reviewed_state": "green",
+      "fixed_layout_brightness": "red",
+      "registered_brightness": "green",
+      "registered_hue": "green"
+    },
+    {
+      "video": "C3902.MP4",
+      "frame": 1798,
+      "time": 59.99326666666667,
+      "light": "ped_diag",
+      "reviewed_state": "green",
+      "fixed_layout_brightness": "unknown",
+      "registered_brightness": "green",
+      "registered_hue": "green"
+    },
+    {
+      "video": "C3902.MP4",
+      "frame": 3596,
+      "time": 119.98653333333334,
+      "light": "veh_island",
+      "reviewed_state": "green",
+      "fixed_layout_brightness": "amber",
+      "registered_brightness": "green",
+      "registered_hue": "green"
+    },
+    {
+      "video": "C3902.MP4",
+      "frame": 3596,
+      "time": 119.98653333333334,
+      "light": "ped_diag",
+      "reviewed_state": "green",
+      "fixed_layout_brightness": "unknown",
+      "registered_brightness": "green",
+      "registered_hue": "green"
+    },
+    {
+      "video": "C3902.MP4",
+      "frame": 5395,
+      "time": 180.01316666666668,
+      "light": "veh_island",
+      "reviewed_state": "red",
+      "fixed_layout_brightness": "amber",
+      "registered_brightness": "red",
+      "registered_hue": "red"
+    },
+    {
+      "video": "C3902.MP4",
+      "frame": 5395,
+      "time": 180.01316666666668,
+      "light": "ped_diag",
+      "reviewed_state": "red",
+      "fixed_layout_brightness": "red",
+      "registered_brightness": "red",
+      "registered_hue": "red"
+    },
+    {
+      "video": "C3902.MP4",
+      "frame": 7193,
+      "time": 240.00643333333335,
+      "light": "veh_island",
+      "reviewed_state": "red",
+      "fixed_layout_brightness": "amber",
+      "registered_brightness": "green",
+      "registered_hue": "red"
+    },
+    {
+      "video": "C3902.MP4",
+      "frame": 7193,
+      "time": 240.00643333333335,
+      "light": "ped_diag",
+      "reviewed_state": "red",
+      "fixed_layout_brightness": "unknown",
+      "registered_brightness": "red",
+      "registered_hue": "red"
+    },
+    {
+      "video": "C3902.MP4",
+      "frame": 8991,
+      "time": 299.9997,
+      "light": "veh_island",
+      "reviewed_state": "green",
+      "fixed_layout_brightness": "amber",
+      "registered_brightness": "green",
+      "registered_hue": "green"
+    },
+    {
+      "video": "C3902.MP4",
+      "frame": 8991,
+      "time": 299.9997,
+      "light": "ped_diag",
+      "reviewed_state": "green",
+      "fixed_layout_brightness": "unknown",
+      "registered_brightness": "green",
+      "registered_hue": "green"
+    },
+    {
+      "video": "C3905.MP4",
+      "frame": 0,
+      "time": 0.0,
+      "light": "veh_island",
+      "reviewed_state": "red",
+      "fixed_layout_brightness": "red",
+      "registered_brightness": "red",
+      "registered_hue": "red"
+    },
+    {
+      "video": "C3905.MP4",
+      "frame": 0,
+      "time": 0.0,
+      "light": "ped_diag",
+      "reviewed_state": "red",
+      "fixed_layout_brightness": "red",
+      "registered_brightness": "red",
+      "registered_hue": "red"
+    },
+    {
+      "video": "C3905.MP4",
+      "frame": 899,
+      "time": 29.996633333333335,
+      "light": "veh_island",
+      "reviewed_state": "red",
+      "fixed_layout_brightness": "red",
+      "registered_brightness": "red",
+      "registered_hue": "red"
+    },
+    {
+      "video": "C3905.MP4",
+      "frame": 899,
+      "time": 29.996633333333335,
+      "light": "ped_diag",
+      "reviewed_state": "red",
+      "fixed_layout_brightness": "red",
+      "registered_brightness": "red",
+      "registered_hue": "red"
+    },
+    {
+      "video": "C3905.MP4",
+      "frame": 1798,
+      "time": 59.99326666666667,
+      "light": "veh_island",
+      "reviewed_state": "green",
+      "fixed_layout_brightness": "green",
+      "registered_brightness": "green",
+      "registered_hue": "green"
+    },
+    {
+      "video": "C3905.MP4",
+      "frame": 1798,
+      "time": 59.99326666666667,
+      "light": "ped_diag",
+      "reviewed_state": "green",
+      "fixed_layout_brightness": "green",
+      "registered_brightness": "green",
+      "registered_hue": "green"
+    },
+    {
+      "video": "C3905.MP4",
+      "frame": 2697,
+      "time": 89.9899,
+      "light": "veh_island",
+      "reviewed_state": "red",
+      "fixed_layout_brightness": "red",
+      "registered_brightness": "red",
+      "registered_hue": "red"
+    },
+    {
+      "video": "C3905.MP4",
+      "frame": 2697,
+      "time": 89.9899,
+      "light": "ped_diag",
+      "reviewed_state": "red",
+      "fixed_layout_brightness": "red",
+      "registered_brightness": "red",
+      "registered_hue": "red"
+    },
+    {
+      "video": "C3905.MP4",
+      "frame": 3596,
+      "time": 119.98653333333334,
+      "light": "veh_island",
+      "reviewed_state": "green",
+      "fixed_layout_brightness": "green",
+      "registered_brightness": "green",
+      "registered_hue": "green"
+    },
+    {
+      "video": "C3905.MP4",
+      "frame": 3596,
+      "time": 119.98653333333334,
+      "light": "ped_diag",
+      "reviewed_state": "green",
+      "fixed_layout_brightness": "green",
+      "registered_brightness": "green",
+      "registered_hue": "green"
+    }
+  ]
+}

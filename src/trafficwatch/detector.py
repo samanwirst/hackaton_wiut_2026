@@ -102,9 +102,14 @@ def merge_vehicle_duplicates(det: Detections, iou_thr: float) -> Detections:
 class Detector:
     def __init__(self, weights: str, device: str = "cpu", imgsz: int = 640, conf: float = 0.1,
                  iou: float = 0.6, half: bool = False, batch: int = 8, vehicle_merge_iou: float = 0.7):
+        weight_path = resolve(weights)
+        if not weight_path.is_file():
+            raise FileNotFoundError(
+                f"Missing local weights: {weight_path}. Run weights/download.sh before offline inference."
+            )
         from ultralytics import YOLO
 
-        self.model = YOLO(str(resolve(weights)))
+        self.model = YOLO(str(weight_path))
         self.device = device
         self.imgsz = imgsz
         self.conf = conf

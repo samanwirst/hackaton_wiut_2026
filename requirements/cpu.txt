@@ -1,0 +1,8 @@
+# CPU-only PyTorch wheels for local development and CI. PyTorch's official 2.6
+# install matrix uses this index with torchvision 0.21.
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch==2.6.0+cpu ; sys_platform == "linux" and platform_machine == "x86_64"
+torchvision==0.21.0+cpu ; sys_platform == "linux" and platform_machine == "x86_64"
+torch==2.6.0 ; sys_platform != "linux" or platform_machine != "x86_64"
+torchvision==0.21.0 ; sys_platform != "linux" or platform_machine != "x86_64"
+-r base.txt

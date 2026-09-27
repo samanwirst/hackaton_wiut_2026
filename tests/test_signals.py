@@ -55,12 +55,11 @@ def walker(tid: int, t_kerb: float) -> np.ndarray:
     return path_rows(tid, PERSON, [(0, 850, 280), (t_kerb, 850, 285), (t_kerb + 8, 850, 620)], size=(20, 50))
 
 
-def test_stepping_onto_the_crossing_on_red_is_jaywalking():
+def test_crossing_on_red_is_not_the_official_jaywalking_class():
     ped = timeline([(0, 30, RED), (30, 40, GREEN)])
     ctx = make_context([walker(1, 4.0)], 40, crossing_scene(), signals={"ped": ped})
     ev = RULES["jaywalking"](ctx)
-    assert len(ev) == 1 and ev[0].tracks == (1,) and ev[0].info.get("crossing_on_red") == 0
-    assert 3.5 < ev[0].start < 5.5
+    assert ev == []
 
 
 def test_crossing_on_green_or_just_before_green_is_not_jaywalking():
@@ -72,12 +71,13 @@ def test_crossing_on_green_or_just_before_green_is_not_jaywalking():
     assert RULES["jaywalking"](ctx) == []
 
 
-def test_no_failure_to_yield_to_a_pedestrian_crossing_on_red():
+def test_failure_to_yield_definition_has_no_pedestrian_signal_exemption():
     ped = timeline([(0, 30, RED), (30, 40, GREEN)])
     person = walker(1, 4.0)
     car = path_rows(2, CAR, [(6, 300, 470), (10, 1200, 470)])
     ctx = make_context([person, car], 40, crossing_scene(), signals={"ped": ped})
-    assert RULES["failure_to_yield"](ctx) == []
+    events = RULES["failure_to_yield"](ctx)
+    assert len(events) == 1 and events[0].tracks == (2, 1)
 
 
 # -- a queue at a red signal ---------------------------------------------------------------------

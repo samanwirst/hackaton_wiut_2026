@@ -1,0 +1,14 @@
+# Keep review focused on implementation; generated evidence stays committed and expandable.
+predictions_samples.json linguist-generated
+reports/**/predictions*.json linguist-generated
+reports/**/run*.json linguist-generated
+reports/original_gpu/repeat-reviewed/*-predictions.json linguist-generated
+reports/original_gpu/repeat-reviewed/*-run.json linguist-generated
+reports/submission_run.json linguist-generated
+website/data/eda.json linguist-generated
+website/data/eda/*.jpg linguist-generated
+website/data/results/*.json linguist-generated
+website/data/results_index.json linguist-generated
+website/media/*.mp4 linguist-generated
+reports/original_gpu/calibrated/**/*.json linguist-generated=true
+reports/scene_review/signal_review.json linguist-generated=true

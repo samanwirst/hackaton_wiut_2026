@@ -150,5 +150,7 @@ def render_video(video_path: str, perception: Perception, scene: Scene, events: 
         if progress and info.n_frames:
             progress(min(fidx / info.n_frames, 1.0))
     writer.stdin.close()
-    writer.wait()
+    returncode = writer.wait()
+    if returncode:
+        raise RuntimeError(f"ffmpeg could not render the annotated video (exit status {returncode}).")
     return out_path

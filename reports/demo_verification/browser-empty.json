@@ -1,0 +1,22 @@
+{
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "summary": "0 events in 6.0 s of video (1280\u00d7720 @ 30 fps), processed in 4 s on CPU.",
+  "events": 0,
+  "risk_samples": 36,
+  "video_durations": [
+    6,
+    6
+  ],
+  "progress_stages": [
+    "Detecting and tracking",
+    "Part B: accident risk",
+    "Rendering"
+  ],
+  "json_status": 200,
+  "seek_time": 4.5,
+  "page_errors": [],
+  "over_length_rejected_in_browser": true
+}

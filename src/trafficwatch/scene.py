@@ -37,6 +37,7 @@ class Scene:
     parking_mask: np.ndarray | None = None
     intersection_mask: np.ndarray | None = None
     uturn_ok_mask: np.ndarray | None = None
+    uturn_prohibited_mask: np.ndarray | None = None
     crosswalk_map: np.ndarray | None = None    # int16 label map, -1 = none
     crosswalk_ids: list[str] = field(default_factory=list)
     crosswalk_signals: list[str | None] = field(default_factory=list)   # pedestrian signal per crossing
@@ -77,6 +78,9 @@ class Scene:
 
     def uturn_allowed(self, pts: np.ndarray) -> np.ndarray:
         return self._in(self.uturn_ok_mask, pts)
+
+    def uturn_prohibited(self, pts: np.ndarray) -> np.ndarray:
+        return self._in(self.uturn_prohibited_mask, pts) & ~self.uturn_allowed(pts)
 
     def crosswalk_at(self, pts: np.ndarray) -> np.ndarray:
         return self._label(self.crosswalk_map, pts)
@@ -125,7 +129,7 @@ def _scale_coords(obj, sx: float, sy: float):
             return [obj[0] * sx, obj[1] * sy, obj[2] * sx, obj[3] * sy]
         return [_scale_coords(v, sx, sy) for v in obj]
     if isinstance(obj, dict):
-        return {k: (v if k in ("forward", "direction", "id", "light", "allowed_turns") else
+        return {k: (v if k in ("forward", "direction", "id", "light", "allowed_turns", "registration") else
                     _scale_coords(v, sx, sy)) for k, v in obj.items()}
     return obj
 
@@ -159,7 +163,7 @@ def pick_camera(scfg: dict, width: int, height: int) -> tuple[str, str]:
     return default
 
 
-def load_scene(cfg: dict, width: int, height: int) -> Scene:
+def load_scene(cfg: dict, width: int, height: int, frame: np.ndarray | None = None) -> Scene:
     scfg = cfg.get("scene", {})
     config_path, model_path = pick_camera(scfg, width, height)
     raw: dict = {}
@@ -170,6 +174,16 @@ def load_scene(cfg: dict, width: int, height: int) -> Scene:
         fw, fh = raw.get("frame_size", [width, height])
         if fw and fh and (fw, fh) != (width, height):
             raw = _scale_coords(raw, width / fw, height / fh)
+    if frame is not None and raw.get("registration", {}).get("reference"):
+        from .registration import estimate_registration, transform_layout
+
+        reference = resolve(raw["registration"]["reference"])
+        matrix, evidence = estimate_registration(reference, frame)
+        if matrix is None:
+            # A different camera or an unreadable reference view must not inherit these ROIs.
+            return Scene(width=width, height=height, raw={"_registration": evidence})
+        raw = transform_layout(raw, matrix)
+        raw["_registration"] = evidence
     scene = Scene(width=width, height=height, raw=raw)
 
     if raw.get("road"):
@@ -178,7 +192,8 @@ def load_scene(cfg: dict, width: int, height: int) -> Scene:
             scene.road_mask &= ~polygon_mask(raw["road_exclude"], width, height)
         scene.road_source = "config"
     for key, attr in (("ignore", "ignore_mask"), ("parking", "parking_mask"),
-                      ("intersection", "intersection_mask"), ("u_turn_allowed", "uturn_ok_mask")):
+                      ("intersection", "intersection_mask"), ("u_turn_allowed", "uturn_ok_mask"),
+                      ("u_turn_prohibited", "uturn_prohibited_mask")):
         if raw.get(key):
             setattr(scene, attr, polygon_mask(raw[key], width, height))
     scene.crosswalk_map, scene.crosswalk_ids = _label_map(raw.get("crosswalks", []), "polygon", width, height)
@@ -215,3 +230,35 @@ def load_scene(cfg: dict, width: int, height: int) -> Scene:
                 df = DirectionField(z["counts"], width, height)
             scene.flow_field = df
     return scene
+
+
+def load_video_scene(cfg: dict, video_path: str, width: int, height: int) -> Scene:
+    """Part A only: align hand-drawn geometry to a representative middle frame.
+
+    The midpoint avoids brief start-of-recording camera settling seen in the samples. Part A
+    explicitly permits random access. This is static image matching, never a filename rule.
+
+    Part B never calls this helper or opens a file. Its independent learned direction field
+    remains in its original pixel coordinates and is not changed by hand-layout registration.
+    """
+    config_path, _ = pick_camera(cfg.get("scene", {}), width, height)
+    path = resolve(config_path) if config_path else None
+    if path is None or not path.is_file():
+        return load_scene(cfg, width, height)
+    with path.open(encoding="utf-8") as stream:
+        registered = bool(json.load(stream).get("registration", {}).get("reference"))
+    if not registered:
+        return load_scene(cfg, width, height)
+    cap = cv2.VideoCapture(video_path)
+    try:
+        middle = max(0, int(cap.get(cv2.CAP_PROP_FRAME_COUNT)) // 2)
+        cap.set(cv2.CAP_PROP_POS_FRAMES, middle)
+        ok, frame = cap.read()
+        if not ok:
+            cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
+            ok, frame = cap.read()
+    finally:
+        cap.release()
+    if not ok:
+        raise RuntimeError(f"Cannot read a frame for scene registration: {video_path}")
+    return load_scene(cfg, width, height, frame=frame)

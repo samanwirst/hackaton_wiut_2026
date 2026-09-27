@@ -1,0 +1,90 @@
+{
+  "recorded_at": "2026-09-27T07:10:28.687168+00:00",
+  "input_kind": "original",
+  "profile": "gpu",
+  "predictions_sha256": "05369d3f116837aedb37b0379cafad810770010b4287e14567ff87243de4b020",
+  "inputs": {
+    "C3896.MP4": {
+      "sha256": "e9f3a2c159d69331428b84babd046ad9610c4ce26530db8f576ea7642a58ecff",
+      "bytes": 6241380481,
+      "width": 3840,
+      "height": 2160,
+      "fps": 29.97002997002997,
+      "n_frames": 10200,
+      "duration": 340.34000000000003
+    },
+    "C3897.MP4": {
+      "sha256": "4d5ae95f2f8b24293cbb2e33a8f0d752f0b48225bf7d01d9d1e39d25ce5475bd",
+      "bytes": 5838719827,
+      "width": 3840,
+      "height": 2160,
+      "fps": 29.97002997002997,
+      "n_frames": 9525,
+      "duration": 317.8175
+    },
+    "C3902.MP4": {
+      "sha256": "146f8b7d5ced37fdd2cad3129d99d83ad50502f79c96b933da6beacecdd2155d",
+      "bytes": 5838719827,
+      "width": 3840,
+      "height": 2160,
+      "fps": 29.97002997002997,
+      "n_frames": 9525,
+      "duration": 317.8175
+    },
+    "C3905.MP4": {
+      "sha256": "e99072464be42627d7cc83b5a7f6c5149352326e95503338ac289fbb6b537aad",
+      "bytes": 2348992759,
+      "width": 3840,
+      "height": 2160,
+      "fps": 29.97002997002997,
+      "n_frames": 3825,
+      "duration": 127.6275
+    }
+  },
+  "platform": "Linux-7.2.2-zen1-1-zen-x86_64-with-glibc2.44",
+  "python": "3.11.14",
+  "packages": {
+    "torch": "2.6.0+cu124",
+    "torchvision": "0.21.0+cu124",
+    "ultralytics": "8.3.253",
+    "opencv-python": "4.14.0.94",
+    "numpy": "2.2.6",
+    "scipy": "1.17.1",
+    "lap": "0.5.13"
+  },
+  "config_sha256": {
+    "configs/pipeline.yaml": "7552957c21f002aad83b31d233d0c35e6b8d88859a68854979f9005c6413b797",
+    "configs/scene_model_tashkent.npz": "fafb2ed8e8bf99451057535b36bc8215826eb6e36845b7c75f359bcbe6d6124d",
+    "configs/scene_tashkent.json": "a79d9ffcc5ce1e8f4315b2f5d3f75d8d4e29f7aac83a94d4e7a6f7cb369c7a02"
+  },
+  "source_sha256": {
+    "solution.py": "7fee4e18baead727ff2b4869ce021a1b6b5e519ff2ca66a105a29417b7ef6045",
+    "src/trafficwatch/__init__.py": "3811d5c7c15b9d93160b4c38411bb42643c168026e3ca137490eb27cebf2b732",
+    "src/trafficwatch/config.py": "93e0f1e534189e860c956c32c944976b95467643f9a7674a1a4f3b86a464a213",
+    "src/trafficwatch/detector.py": "7040411d12d05026620ee54e38cdf77bc3ff04e23168d67f60e394f5839969b5",
+    "src/trafficwatch/direction_field.py": "988dff272d0dc67e40b5f61cccab8971126f75815440f6c18e170b9c4d042b47",
+    "src/trafficwatch/events/__init__.py": "dc42a82f09ea15b32fd1a7e9fa0b8ac24c56fee36f3bf49a9aa20060e3044a56",
+    "src/trafficwatch/events/common.py": "837ab1201573701834607acb4035b77b3098aac05c8aeece85b1a0c2a3b887d7",
+    "src/trafficwatch/events/hazards.py": "8904ed570719ff001f0b6eb672c0fa480d38252c5dbba11fc9c8100c8655dfb2",
+    "src/trafficwatch/events/interactions.py": "b2715b0c5b3d3adcf0fc1d815b2f7e73afbdd793d1a4f518325ec481372c2df7",
+    "src/trafficwatch/events/pedestrians.py": "eb0738aa199e40b71bda1726350e411f57f18c216eadfff72df7fa0b7e87c870",
+    "src/trafficwatch/events/signals.py": "9395379ab0b183b6cd86c2f30ac38b763af9bdb145e4f075ff18f3167c039949",
+    "src/trafficwatch/events/vehicles.py": "b83cfa94745c4712e97f6e3d65b43b2c64b95834dacdac4c92074ac140736f39",
+    "src/trafficwatch/geometry.py": "c14a6be87326535b2b78ea8b74ac1aebe94c25efe48a8a16a73ad3728d831046",
+    "src/trafficwatch/perception.py": "280680e30a548ae9cce55a83f1e34773d51e77b10d3c97fc098c4f26a1e12b65",
+    "src/trafficwatch/pipeline.py": "df3e456b82daaba66263b9cdf88cf2b9bccdc93919942525e3224cf6a772b5c6",
+    "src/trafficwatch/risk.py": "fa2e0058e663adca57b240d290b04b3eff2cbfbf6b9717952531c42cb8fde235",
+    "src/trafficwatch/runtime.py": "bd775983568f4fa43f58fec21a021261f3e2dde79a2e4ccf5435534f7a71a080",
+    "src/trafficwatch/scene.py": "f24bfc867a2968e78fcfe368e258f26284a93f58b5c01a925653ac9120528d2b",
+    "src/trafficwatch/segments.py": "d0a3ce8bb2ad0ffee7b46d947af93d8895f9f1fa83fca9ee2127a69014df7935",
+    "src/trafficwatch/signal.py": "0570113dea2f1218ad87916bfd7fd1790785ed42a3cec1a6cffae28ebb43e490",
+    "src/trafficwatch/tracking.py": "e9e6aa1823e3babb09a163edeb20b1a3210d4f9f4a7fc78005f28e9bce04da3d",
+    "src/trafficwatch/tracks.py": "abbd26c6dfc717493239da86408b43e68a6d36d302e047080e173c0ddaf7f52e",
+    "src/trafficwatch/video.py": "d7c3b60cf0fec89cf496e0a9a70935e2a98c67897fa808b710683aee7f65a710",
+    "src/trafficwatch/viz.py": "71782314e448635bab4a5d4a586f1baf58a81aa609737eb96f114f079bed1f87"
+  },
+  "limitations": [
+    "Recorded after the run; source/config files must remain unchanged between inference and recording.",
+    "No ground-truth accuracy measurement or T4 benchmark is implied."
+  ]
+}

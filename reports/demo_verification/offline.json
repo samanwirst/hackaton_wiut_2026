@@ -1,0 +1,92 @@
+{
+  "network_interfaces": [
+    "lo"
+  ],
+  "package_files_checked": 31,
+  "runs": [
+    {
+      "clip": "clip-6s.mp4",
+      "input_sha256": "fa2aea12cb05b549d1a4544d0a8a3eb3d6baded3b7733a06e0982e0c5300db71",
+      "input_bytes": 339267,
+      "input_frames": 180,
+      "input_fps": 30.0,
+      "input_duration": 6.0,
+      "summary": "**0 events** in 6.0 s of video (1280\u00d7720 @ 30 fps), processed in 5 s on CPU.",
+      "events": 0,
+      "risk_samples": 36,
+      "rendered_frames": 36,
+      "rendered_duration": 6.0,
+      "total_check_seconds": 4.852895862000878
+    },
+    {
+      "clip": "clip-120s.mp4",
+      "input_sha256": "5138849e904180f0bdae486b5889a061262b7fa753f8a9cd854bd7e25e694764",
+      "input_bytes": 12815047,
+      "input_frames": 3600,
+      "input_fps": 30.0,
+      "input_duration": 120.0,
+      "summary": "**17 events** in 120.0 s of video (1280\u00d7720 @ 30 fps), processed in 47 s on CPU.",
+      "events": 17,
+      "risk_samples": 720,
+      "rendered_frames": 720,
+      "rendered_duration": 120.0,
+      "total_check_seconds": 47.13245665100112
+    }
+  ],
+  "over_length_rejected": true,
+  "scope": "Local prepared CPU demo, not a public deployment, accuracy result or GPU evaluation benchmark.",
+  "tested_date": "2026-09-27",
+  "input_derivation": {
+    "source": "organiser original C3905.MP4",
+    "source_sha256": "e99072464be42627d7cc83b5a7f6c5149352326e95503338ac289fbb6b537aad",
+    "start_seconds": 0,
+    "scale": [
+      1280,
+      720
+    ],
+    "output_fps": 30,
+    "codec": "libx264",
+    "crf": 25,
+    "length_seconds": [
+      6,
+      120,
+      124
+    ]
+  },
+  "package_sha256": {
+    "LICENSE": "0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abcb0",
+    "README.md": "b554f20b962a08bc57345cbe62fc035c0d855dc00e929796ec68acbdd7ad6ca6",
+    "app.py": "06452f73634970060ae011bc2ddff0c46dc779fcfe51ed85b769248c3ed3471b",
+    "configs/pipeline.yaml": "7552957c21f002aad83b31d233d0c35e6b8d88859a68854979f9005c6413b797",
+    "configs/scene_model_tashkent.npz": "fafb2ed8e8bf99451057535b36bc8215826eb6e36845b7c75f359bcbe6d6124d",
+    "configs/scene_reference_tashkent.png": "a2fbbcdbfe80da5c3ecd627f3f7626db37cec0cc97394c0c389abab81badf067",
+    "configs/scene_tashkent.json": "a5af60e404f9e29b52f87e47e6f25e130caa019ba73d1d63e2430a177f2ba99f",
+    "packages.txt": "cfadbc1b87f5aa6d688a2d97920127e67ae6f4fa3c2dce69108a9ef7a7a87659",
+    "requirements.txt": "ad39d77583000e2a43f96132948cfa7e9d9e55b60c5812378b2754e2568a319e",
+    "src/trafficwatch/__init__.py": "3811d5c7c15b9d93160b4c38411bb42643c168026e3ca137490eb27cebf2b732",
+    "src/trafficwatch/config.py": "93e0f1e534189e860c956c32c944976b95467643f9a7674a1a4f3b86a464a213",
+    "src/trafficwatch/detector.py": "7040411d12d05026620ee54e38cdf77bc3ff04e23168d67f60e394f5839969b5",
+    "src/trafficwatch/direction_field.py": "988dff272d0dc67e40b5f61cccab8971126f75815440f6c18e170b9c4d042b47",
+    "src/trafficwatch/events/__init__.py": "dc42a82f09ea15b32fd1a7e9fa0b8ac24c56fee36f3bf49a9aa20060e3044a56",
+    "src/trafficwatch/events/common.py": "837ab1201573701834607acb4035b77b3098aac05c8aeece85b1a0c2a3b887d7",
+    "src/trafficwatch/events/hazards.py": "8904ed570719ff001f0b6eb672c0fa480d38252c5dbba11fc9c8100c8655dfb2",
+    "src/trafficwatch/events/interactions.py": "b2715b0c5b3d3adcf0fc1d815b2f7e73afbdd793d1a4f518325ec481372c2df7",
+    "src/trafficwatch/events/pedestrians.py": "eb0738aa199e40b71bda1726350e411f57f18c216eadfff72df7fa0b7e87c870",
+    "src/trafficwatch/events/signals.py": "9395379ab0b183b6cd86c2f30ac38b763af9bdb145e4f075ff18f3167c039949",
+    "src/trafficwatch/events/vehicles.py": "b83cfa94745c4712e97f6e3d65b43b2c64b95834dacdac4c92074ac140736f39",
+    "src/trafficwatch/geometry.py": "c14a6be87326535b2b78ea8b74ac1aebe94c25efe48a8a16a73ad3728d831046",
+    "src/trafficwatch/perception.py": "280680e30a548ae9cce55a83f1e34773d51e77b10d3c97fc098c4f26a1e12b65",
+    "src/trafficwatch/pipeline.py": "98b48187b1907a99d76436cf91189bc623bc65c99ccef4df995a8a4860f4624f",
+    "src/trafficwatch/registration.py": "d0df4e56e24c55847a252cdd012393ef78789808f1aae040af81042a0a84342f",
+    "src/trafficwatch/risk.py": "fa2e0058e663adca57b240d290b04b3eff2cbfbf6b9717952531c42cb8fde235",
+    "src/trafficwatch/runtime.py": "bd775983568f4fa43f58fec21a021261f3e2dde79a2e4ccf5435534f7a71a080",
+    "src/trafficwatch/scene.py": "ddcfc88102b4f0413857eb395fd0a23a75609f6c997ee52cb89d6afe168c42a6",
+    "src/trafficwatch/segments.py": "d0a3ce8bb2ad0ffee7b46d947af93d8895f9f1fa83fca9ee2127a69014df7935",
+    "src/trafficwatch/signal.py": "3c4c83e7b8f154ea48212dad374af57eeaaafa8bb624a663a241b886f7edecc9",
+    "src/trafficwatch/tracking.py": "e9e6aa1823e3babb09a163edeb20b1a3210d4f9f4a7fc78005f28e9bce04da3d",
+    "src/trafficwatch/tracks.py": "abbd26c6dfc717493239da86408b43e68a6d36d302e047080e173c0ddaf7f52e",
+    "src/trafficwatch/video.py": "d7c3b60cf0fec89cf496e0a9a70935e2a98c67897fa808b710683aee7f65a710",
+    "src/trafficwatch/viz.py": "71782314e448635bab4a5d4a586f1baf58a81aa609737eb96f114f079bed1f87",
+    "weights/yolo11n.pt": "0ebbc80d4a7680d14987a577cd21342b65ecfd94632bd9a8da63ae6417644ee1"
+  }
+}

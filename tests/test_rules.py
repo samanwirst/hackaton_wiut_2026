@@ -60,14 +60,20 @@ def test_rider_is_not_a_pedestrian():
 
 # -- wrong_way ----------------------------------------------------------------------------------
 def test_wrong_way_against_learned_direction_field():
-    history = passing_cars(40, 0, 1.0, 400) + [path_rows(300 + i, CAR, [(i, W, 520), (i + 6, 0, 520)])
-                                               for i in range(40)]
+    # Keep headings inside angular bins, not on the 0/pi boundaries: tiny
+    # Savitzky-Golay rounding differences on horizontal paths otherwise change
+    # the learned bin and push opposite-direction evidence across its threshold.
+    upper = ((0, 330), (W, 450))
+    lower = ((0, 450), (W, 570))
+    history = [path_rows(100 + i, CAR, [(i, *upper[0]), (i + 6, *upper[1])]) for i in range(40)]
+    history += [path_rows(300 + i, CAR, [(i, *lower[1]), (i + 6, *lower[0])]) for i in range(40)]
     field_tracks = build_tracks(np.concatenate(history), FPS, 2)
     field = DirectionField.learn([field_tracks], W, H)
     scene = road_scene(flow_field=field)
-    rogue = path_rows(1, CAR, [(0, W, 400), (6, 0, 400)])      # upper lane, driving left
-    ok_car = path_rows(2, CAR, [(0, 0, 400), (6, W, 400)])     # upper lane, driving right
-    ev = RULES["wrong_way"](make_context([rogue, ok_car], 8, scene))
+    rogue = path_rows(1, CAR, [(0, *upper[1]), (6, *upper[0])])      # upper lane, driving left
+    ok_car = path_rows(2, CAR, [(0, *upper[0]), (6, *upper[1])])     # upper lane, driving right
+    lower_ok = path_rows(3, CAR, [(0, *lower[1]), (6, *lower[0])])   # lower lane, driving left
+    ev = RULES["wrong_way"](make_context([rogue, ok_car, lower_ok], 8, scene))
     assert len(ev) == 1 and ev[0].tracks == (1,)
     assert ev[0].end - ev[0].start > 3.0
 
@@ -128,8 +134,14 @@ def test_illegal_u_turn():
     keys = [(0, 100, 400), (4, 600, 400)]
     keys += [(4 + 4 * (k + 1) / 20, 600 + 80 * np.cos(a), 480 + 80 * np.sin(a)) for k, a in enumerate(ang)]
     keys += [(12, 100, 560)]
-    ev = RULES["illegal_u_turn"](make_context([path_rows(1, CAR, keys)], 14, road_scene()))
+    rows = [path_rows(1, CAR, keys)]
+    scene = road_scene()
+    assert RULES["illegal_u_turn"](make_context(rows, 14, scene)) == []
+    scene.uturn_prohibited_mask = np.ones((H, W), dtype=bool)
+    ev = RULES["illegal_u_turn"](make_context(rows, 14, scene))
     assert len(ev) == 1 and 3.0 < ev[0].start < 5.5 and 7.0 < ev[0].end < 9.5
+    scene.uturn_ok_mask = np.ones((H, W), dtype=bool)
+    assert RULES["illegal_u_turn"](make_context(rows, 14, scene)) == []
 
 
 # -- congestion ---------------------------------------------------------------------------------

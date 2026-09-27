@@ -1,5 +1,5 @@
 # Local task materials
-/references/
+/docs/references/
 
 # Python
 __pycache__/
@@ -7,11 +7,14 @@ __pycache__/
 .pytest_cache/
 .ruff_cache/
 .venv/
+.venv-notebooks/
+.ipynb_checkpoints/
 
 # Model and pipeline artefacts
 .cache/
 /space/
-/samples/
+/data/samples/
+/data/previews/
 /runs/
 /predictions.json
 *.pkl
@@ -23,6 +26,10 @@ __pycache__/
 *.MOV
 *.avi
 *.mkv
+
+# Browser-friendly annotated sample results are part of the public website.
+!website/media/
+!website/media/*.mp4
 
 # Editor and OS files
 .DS_Store

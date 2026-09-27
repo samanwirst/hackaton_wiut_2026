@@ -273,7 +273,7 @@ def illegal_u_turn(ctx: Context) -> list[Event]:
         if ((t >= a - 3.0) & (t < a)).sum() * ctx.dt < p["min_approach_s"]:
             continue
         mid = tr.gp[tr.index_at(0.5 * (a + b))]
-        if ctx.scene.uturn_allowed(mid[None])[0]:
+        if not ctx.scene.uturn_prohibited(mid[None])[0]:
             continue
         events.append(Event(a, b, "illegal_u_turn", tracks=(tr.tid,)))
     return events

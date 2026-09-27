@@ -1,0 +1,9 @@
+[C3896.MP4] 340.3s @ 29.97 fps, budget 1021s
+[C3896.MP4] 41 events, 10200 risk samples, 487.2s — OK
+[C3897.MP4] 317.8s @ 29.97 fps, budget 953s
+[C3897.MP4] 54 events, 9525 risk samples, 463.4s — OK
+[C3902.MP4] 317.8s @ 29.97 fps, budget 953s
+[C3902.MP4] 48 events, 9525 risk samples, 470.0s — OK
+[C3905.MP4] 127.6s @ 29.97 fps, budget 383s
+[C3905.MP4] 20 events, 3825 risk samples, 174.9s — OK
+wrote /mnt/ssd2/Projects/hackaton_wiut_2026/.cache/calibrated-batch.uEbFwU/predictions.json

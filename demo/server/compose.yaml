@@ -1,0 +1,42 @@
+# Private staging only. Never attach to existing app networks without approval.
+name: trafficwatch-demo
+services:
+  demo:
+    image: trafficwatch-demo:20260927
+    pull_policy: never
+    init: true
+    restart: unless-stopped
+    # No host port. Reach the container's private IP through an SSH tunnel.
+    # Docker 29 suppresses port publishing on an internal-only network.
+    cpus: 0.75
+    cpu_shares: 128
+    mem_limit: 1536m
+    memswap_limit: 1536m
+    pids_limit: 256
+    read_only: true
+    # Ultralytics creates a runs/ directory even with save=False.
+    # Keep that runtime-only directory inside the writable cache, not /app.
+    working_dir: /tmp
+    command: ["python", "/app/app.py"]
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    volumes:
+      - cache:/tmp
+    labels:
+      traefik.enable: "false"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:7860/config', timeout=5).read()"]
+      interval: 30s
+      timeout: 10s
+      start_period: 60s
+      retries: 3
+    logging:
+      driver: json-file
+      options:
+        max-size: "5m"
+        max-file: "2"
+networks:
+  default:
+    internal: true
+volumes:
+  cache:

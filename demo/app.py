@@ -12,7 +12,9 @@ import tempfile
 import time
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent
+HERE = Path(__file__).resolve().parent
+# In the repository the app lives in demo/; prepare_space.sh copies it next to src/.
+ROOT = HERE if (HERE / "src").is_dir() else HERE.parent
 sys.path.insert(0, str(ROOT / "src"))
 
 import gradio as gr  # noqa: E402
@@ -26,6 +28,11 @@ from trafficwatch.video import probe  # noqa: E402
 from trafficwatch.viz import render_video  # noqa: E402
 
 BLUE, INK_MUTED, GRID = "#2a78d6", "#898781", "#e1e0d9"
+MAX_DURATION_S = 120.0
+MAX_UPLOAD_BYTES = 500 * 1024 * 1024
+# Gradio 5.50's age check uses timedelta.seconds (modulo 24 hours), so an age
+# of 86400 never expires while the server runs. Check hourly with a six-hour TTL.
+CACHE_MAX_AGE_S = 6 * 60 * 60
 
 
 def timeline_figure(events: list[list], times, scores, duration: float) -> go.Figure:
@@ -52,31 +59,54 @@ def timeline_figure(events: list[list], times, scores, duration: float) -> go.Fi
 def run(video_path: str, progress=gr.Progress()):
     if not video_path:
         raise gr.Error("Upload an .mp4 first.")
+    path = Path(video_path)
+    if path.suffix.lower() != ".mp4":
+        raise gr.Error("Only .mp4 files are accepted.")
     t0 = time.perf_counter()
-    info = probe(video_path)
+    try:
+        if path.stat().st_size > MAX_UPLOAD_BYTES:
+            raise gr.Error("The public demo accepts files up to 500 MB.")
+        info = probe(video_path)
+    except OSError as exc:
+        raise gr.Error("The uploaded file is not a readable MP4 video.") from exc
+    if info.n_frames <= 0 or info.width <= 0 or info.height <= 0:
+        raise gr.Error("The uploaded video has no readable frames.")
+    if info.duration > MAX_DURATION_S + 0.1:
+        raise gr.Error(f"The public demo accepts clips up to {MAX_DURATION_S / 60:.0f} minutes.")
     cfg = load_config()
     progress(0.02, desc="Detecting and tracking road users")
     result = analyze(video_path, cfg, profile="demo", progress=lambda f: progress(0.02 + 0.55 * f, desc="Detecting and tracking"))
     progress(0.6, desc="Part B: accident risk")
     times, scores = risk_curve_from_perception(result.perception, cfg)
     progress(0.65, desc="Rendering annotated video")
-    out_mp4 = tempfile.NamedTemporaryFile(suffix="_annotated.mp4", delete=False).name
-    render_video(video_path, result.perception, result.scene, result.events, result.raw_events, out_mp4,
-                 risk=(times, scores), max_width=854, progress=lambda f: progress(0.65 + 0.33 * f, desc="Rendering"))
+    # Gradio copies returned files into its cache; unmanaged temporary originals
+    # would otherwise accumulate forever. Clean the workspace even if rendering
+    # fails, and register successful outputs before removing their originals.
+    with tempfile.TemporaryDirectory(prefix="trafficwatch-render-") as work_dir:
+        out_mp4 = Path(work_dir) / "annotated.mp4"
+        render_video(video_path, result.perception, result.scene, result.events, result.raw_events, str(out_mp4),
+                     risk=(times, scores), max_width=854, progress=lambda f: progress(0.65 + 0.33 * f, desc="Rendering"))
+        out_json = Path(work_dir) / "events.json"
+        with out_json.open("w") as f:
+            json.dump({"events": result.events, "risk": [[round(float(t), 2), round(float(s), 3)] for t, s in zip(times, scores)]}, f)
+        cached_mp4 = out_video.move_resource_to_block_cache(out_mp4)
+        cached_json = download.move_resource_to_block_cache(out_json)
     duration = result.perception.info.duration
-    out_json = tempfile.NamedTemporaryFile(suffix="_events.json", delete=False).name
-    with open(out_json, "w") as f:
-        json.dump({"events": result.events, "risk": [[round(float(t), 2), round(float(s), 3)] for t, s in zip(times, scores)]}, f)
     table = [[s, e, label, round(e - s, 2)] for s, e, label in result.events]
     elapsed = time.perf_counter() - t0
     summary = (f"**{len(result.events)} events** in {duration:.1f} s of video "
                f"({info.width}×{info.height} @ {info.fps:.0f} fps), processed in {elapsed:.0f} s on CPU.")
-    return summary, out_mp4, timeline_figure(result.events, times, scores, duration), table, out_json
+    progress(1.0, desc="Ready")
+    return summary, cached_mp4, timeline_figure(result.events, times, scores, duration), table, cached_json
 
 
-with gr.Blocks(title="TrafficWatch live demo", theme=gr.themes.Soft()) as demo:
-    gr.Markdown("## TrafficWatch · live demo\nUpload a video from the road camera (.mp4 of any length and size; "
-                "the whole video is analysed). Processing runs on a CPU; a long 4K video takes several minutes.")
+with gr.Blocks(title="TrafficWatch live demo", theme=gr.themes.Soft(), analytics_enabled=False,
+               delete_cache=(3600, CACHE_MAX_AGE_S)) as demo:
+    gr.Markdown("## TrafficWatch · live demo\nUpload an MP4 clip from the road camera (up to **2 minutes / 500 MB**). "
+                "The whole clip is analysed on CPU and progress is shown while it runs.")
+    gr.Markdown("**Model predictions, not verified labels.** This CPU demo uses the lighter YOLO11n profile "
+                "and sampled risk points; its output can differ from the GPU sample results. "
+                "Risk scores are heuristic, not empirically calibrated probabilities or a safety guarantee.")
     with gr.Row():
         with gr.Column(scale=1):
             # format=None: the file is analysed as uploaded (format="mp4" made Gradio re-encode every
@@ -92,4 +122,5 @@ with gr.Blocks(title="TrafficWatch live demo", theme=gr.themes.Soft()) as demo:
     btn.click(run, inputs=inp, outputs=[summary, out_video, plot, table, download], concurrency_limit=1)
 
 if __name__ == "__main__":
-    demo.queue(max_size=8).launch(server_name="0.0.0.0", server_port=int(os.environ.get("PORT", 7860)))
+    demo.queue(max_size=8).launch(server_name="0.0.0.0", server_port=int(os.environ.get("PORT", 7860)),
+                                max_file_size=MAX_UPLOAD_BYTES)

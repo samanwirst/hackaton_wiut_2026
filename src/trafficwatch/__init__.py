@@ -3,6 +3,7 @@ import os
 
 # Evaluation runs without internet: stop Ultralytics from probing the network or printing banners.
 os.environ.setdefault("YOLO_OFFLINE", "true")
+os.environ.setdefault("YOLO_AUTOINSTALL", "false")
 os.environ.setdefault("YOLO_VERBOSE", "false")
 
 CLASSES = [

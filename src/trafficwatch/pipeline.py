@@ -16,7 +16,7 @@ from .config import load_config
 from .events import RULES, Context, Event
 from .perception import Perception, run_perception
 from .runtime import set_determinism
-from .scene import Scene, load_scene
+from .scene import Scene, load_video_scene
 from .segments import postprocess
 from .video import probe
 
@@ -30,7 +30,7 @@ class Result:
     timings: dict = field(default_factory=dict)
 
 
-PERCEPTION_VERSION = 3      # bump when what a Perception / Track holds changes (invalidates caches)
+PERCEPTION_VERSION = 4      # includes registered, hue-aware lamp states; invalidates older caches
 
 
 def _cache_path(video_path: str, profile: str | None, scene: Scene | None = None) -> Path | None:
@@ -70,7 +70,7 @@ def analyze(video_path: str, cfg: dict | None = None, profile: str | None = None
     cfg = cfg or load_config()
     set_determinism(int(cfg.get("seed", 0)))
     info = probe(video_path)
-    scene = load_scene(cfg, info.width, info.height)
+    scene = load_video_scene(cfg, video_path, info.width, info.height)
     perception = perceive(video_path, cfg, scene, profile, progress)
     ctx = Context(perception, scene, cfg)
     raw: list[Event] = []

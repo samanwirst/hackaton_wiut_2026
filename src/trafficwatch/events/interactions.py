@@ -40,7 +40,12 @@ def _settle_time(tr: Track, t_from: float, settle_nspeed: float, hold_s: float =
     """First time after ``t_from`` the object stays slow for ``hold_s``; else when it leaves."""
     after = np.flatnonzero((tr.t >= t_from) & (tr.nspeed < settle_nspeed) & tr.reliable)
     for k in after:
-        hold = tr.slice(tr.t[k], tr.t[k] + hold_s)
+        # A truncated track tail is not a full stop window. Include the first
+        # sample at/after the window end, rather than silently accepting less time.
+        end = int(np.searchsorted(tr.t, tr.t[k] + hold_s))
+        if end >= len(tr.t):
+            continue
+        hold = slice(k, end + 1)
         if (tr.nspeed[hold] < settle_nspeed).all() and tr.reliable[hold].all():
             return float(tr.t[k]), True
     return tr.t1, False
@@ -61,10 +66,9 @@ def _impact(tr: Track, tc: float, p: dict) -> tuple[float, float]:
 
 
 def _rest_together(pr: dict, t_rest: float, p: dict) -> bool:
-    """After coming to rest the two stay in contact range (a pass-by moves on; if one track ends
-    - merged into the other or hidden by it - there is nothing left to contradict a crash)."""
+    """Require joint evidence of remaining close; a vanished track is not proof of contact."""
     m = (pr["t"] >= t_rest) & (pr["t"] <= t_rest + p["rest_together_s"]) & pr["ok"]
-    return not m.any() or bool((pr["dn"][m] < p["rest_scale"]).all())
+    return bool(m.any()) and bool((pr["dn"][m] < p["rest_scale"]).all())
 
 
 def accident(ctx: Context) -> list[Event]:
@@ -85,10 +89,17 @@ def accident(ctx: Context) -> list[Event]:
             closing = float(np.max(-np.gradient(pr["dn"][pre], pr["t"][pre])))
             if closing < p["min_closing_nspeed"]:
                 continue
+            impacts = [_impact(tr, tc, p) for tr in (A, B)]
+            if any(tr.category == "person" for tr in (A, B)) and not any(
+                tr.is_vehicle and speed > p["settle_nspeed"]
+                for tr, (speed, _) in zip((A, B), impacts)
+            ):
+                # Walking up to a parked vehicle and stopping/being occluded is
+                # common at the kerb. Pedestrian-only motion is not crash evidence.
+                continue
             # the striker: moving fast enough at contact and stopped short by it
             strikers = []
-            for tr in (A, B):
-                v_pre, drop = _impact(tr, tc, p)
+            for tr, (v_pre, drop) in zip((A, B), impacts):
                 if v_pre >= p["min_impact_nspeed"] and drop >= p["min_speed_drop"]:
                     t_rest, ok = _settle_time(tr, tc, p["settle_nspeed"])
                     if ok and t_rest - tc <= p["max_settle_s"] and _rest_together(pr, t_rest, p):

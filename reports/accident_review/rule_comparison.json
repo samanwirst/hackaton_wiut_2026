@@ -1,0 +1,157 @@
+{
+  "kind": "cached_perception_rule_comparison",
+  "not_a_harness_run": true,
+  "baseline_predictions_sha256": "4c1b4eac12615298640f0077696f3bd8f16c95b3ec7610a7b4d3c4ec55018509",
+  "revised_rule_sha256": "b2715b0c5b3d3adcf0fc1d815b2f7e73afbdd793d1a4f518325ec481372c2df7",
+  "videos": {
+    "C3896.MP4": {
+      "before_accidents": [
+        [
+          137.0,
+          138.27,
+          "accident"
+        ],
+        [
+          191.66,
+          192.66,
+          "accident"
+        ],
+        [
+          216.02,
+          217.62,
+          "accident"
+        ],
+        [
+          227.56,
+          229.1,
+          "accident"
+        ],
+        [
+          274.74,
+          276.01,
+          "accident"
+        ],
+        [
+          327.33,
+          328.33,
+          "accident"
+        ]
+      ],
+      "after_accidents": [
+        [
+          227.56,
+          229.1,
+          "accident"
+        ],
+        [
+          274.74,
+          276.01,
+          "accident"
+        ]
+      ],
+      "other_classes_unchanged": true,
+      "before_total": 46,
+      "after_total": 42
+    },
+    "C3897.MP4": {
+      "before_accidents": [
+        [
+          55.79,
+          56.79,
+          "accident"
+        ],
+        [
+          60.46,
+          61.46,
+          "accident"
+        ],
+        [
+          222.09,
+          227.23,
+          "accident"
+        ],
+        [
+          254.05,
+          255.05,
+          "accident"
+        ]
+      ],
+      "after_accidents": [
+        [
+          55.79,
+          56.79,
+          "accident"
+        ],
+        [
+          60.46,
+          61.46,
+          "accident"
+        ],
+        [
+          222.09,
+          227.23,
+          "accident"
+        ]
+      ],
+      "other_classes_unchanged": true,
+      "before_total": 56,
+      "after_total": 55
+    },
+    "C3902.MP4": {
+      "before_accidents": [
+        [
+          1.2,
+          3.47,
+          "accident"
+        ],
+        [
+          32.43,
+          33.43,
+          "accident"
+        ],
+        [
+          76.41,
+          79.01,
+          "accident"
+        ],
+        [
+          165.3,
+          168.84,
+          "accident"
+        ]
+      ],
+      "after_accidents": [
+        [
+          1.47,
+          3.47,
+          "accident"
+        ],
+        [
+          32.43,
+          33.43,
+          "accident"
+        ],
+        [
+          76.41,
+          79.01,
+          "accident"
+        ],
+        [
+          165.3,
+          168.84,
+          "accident"
+        ]
+      ],
+      "other_classes_unchanged": true,
+      "before_total": 48,
+      "after_total": 48
+    },
+    "C3905.MP4": {
+      "before_accidents": [],
+      "after_accidents": [],
+      "other_classes_unchanged": true,
+      "before_total": 20,
+      "after_total": 20
+    }
+  }
+}
