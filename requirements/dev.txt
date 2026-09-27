@@ -2,6 +2,6 @@
 -r cpu.txt
 pytest>=8
 ruff>=0.8
-gradio>=5,<6
-plotly>=5.20
+gradio==5.50.0
+plotly==7.1.0
 playwright>=1.40

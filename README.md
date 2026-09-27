@@ -16,7 +16,7 @@ This server supports MP4 range requests, which are needed for clicks on the even
 ## Quick start (what the organisers run)
 
 ```bash
-pip install -r requirements.txt            # Python 3.10–3.13; or: docker build -t team .
+pip install -r requirements.txt            # Python 3.11–3.13 (tested: 3.11); or use Docker
 bash weights/download.sh                   # once, with internet: fetches missing weights, checks SHA-256
 python run_submission.py --videos /data/test --out predictions.json
 ```
@@ -25,6 +25,12 @@ python run_submission.py --videos /data/test --out predictions.json
 used by the evaluation profile. For a smaller CPU-only local environment, use
 `pip install -r requirements/cpu.txt`; the public demo has its own self-contained CPU
 requirements in `demo/requirements.txt`.
+
+The numerical/tracking runtime is pinned to the versions actually used in verification:
+OpenCV 4.14.0.94, NumPy 2.2.6, SciPy 1.17.1 and LAP 0.5.13. Use Python 3.11 for the
+recorded environment; the pinned SciPy version requires Python ≥3.11. Pinning these installed
+versions does not alter the completed runs. Transitive packages and platform details are
+recorded separately where relevant; this is not a claim of cross-hardware bitwise equality.
 
 The model weights are three public Ultralytics YOLO11 files (≈ 64 MB in total, far below the 5 GB
 limit) in [`weights/`](weights). `weights/download.sh` downloads any that are missing from the
