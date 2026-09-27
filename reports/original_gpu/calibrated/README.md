@@ -18,13 +18,22 @@ The official validator reports 163 events, zero errors and zero warnings. All
 counts and the observed RTX 3050 Laptop timings do not measure accuracy or prove
 performance on the organisers' T4 hardware.
 
-## Repeat and promotion status
+## Complete repeat
 
-The repeat completed C3896 with exact event/risk equality. The host then suspended
-from 13:13:05 to 14:53:18 Asia/Tashkent on 27 September 2026 while processing
-C3897, as recorded by `systemd-suspend.service`. The process resumed; this is not
-evidence that the full repeat has passed. Do not report complete repeat equality
-until the remaining originals and provenance checks finish successfully.
+The second complete pass is preserved in `repeat/`. `equality.json` confirms exact
+equality of all 163 event segments and all 33,075 risk timestamp/value pairs, with
+unchanged source, configuration, inputs and package versions. Repeat wall-clock
+times measured by the official harness were 574.4 / 434.5 / 516.6 / 203.0 seconds;
+each remained below its video's budget. Log timings are deliberately not compared
+for equality. Neither pass used a runtime inference cache.
+
+The host suspended from 13:13:05 to 14:53:18 Asia/Tashkent on 27 September 2026
+during C3897 (`systemd-suspend.service`). The same process resumed and completed
+successfully without restarting. The harness uses `time.perf_counter()`, which
+does not count suspended time on this host; its measured runtime is not elapsed
+civil time across that sleep interval.
+
+## Promotion status
 
 Root predictions and website media still belong to the previous revision. This
 directory deliberately preserves the new first-pass evidence separately until the

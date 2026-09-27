@@ -7,8 +7,10 @@ organisers' task, not just the checks currently implemented in the repository.
 representative frame and requires colour-consistent pixels in each lamp box. The first complete
 offline pass is recorded in `reports/original_gpu/calibrated/`: 163 events, 33,075 risk scores,
 zero format errors or warnings, and 1.24–1.42× duration on the local RTX 3050 Laptop. Source and
-configuration remain frozen for the repeat. C3896 repeated exactly; the host slept from 13:13
-to 14:53 local time during C3897, so full repeat equality is still unproven. The root
+configuration remain frozen through export. The full repeat now also passes: all 163 events
+and 33,075 risk timestamp/value pairs match exactly (`calibrated/equality.json`). The host slept
+from 13:13 to 14:53 during C3897, then the same process resumed and passed. New matching
+annotated videos and EDA are being generated. The root
 predictions, run manifest and website media below still describe the previous revision until
 the new set is validated and promoted together; their provenance is not current during this work.
 The updated local suite has 89 passing tests (rechecked after dependency pinning), and Ruff
